@@ -36,23 +36,5 @@
     "unplugin-vue-components": "^28.7.0",
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2"
-  },
-  "i18n-ally.localesPaths": [
-    "src/locales"
-  ],
-  "i18n-ally.keystyle": "nested",
-  "i18n-ally.enabledParsers": [
-    "json",
-    "js"
-  ],
-  "i18n-ally.sourceLanguage": "zh-CN",
-  "i18n-ally.displayLanguage": "zh-CN",
-  "i18n-ally.enabledLocales": [
-    "zh-CN",
-    "ru-RU"
-  ],
-  "i18n-ally.enabledFrameworks": [
-    "vue-i18n",
-    "vue"
-  ]
+  }
 }

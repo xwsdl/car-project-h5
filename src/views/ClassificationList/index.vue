@@ -4,7 +4,7 @@
       class="home-search"
       @search="handleSearch"
       v-model="formData.modelName"
-      :placeholder="$t('home.searchTip')"
+      :placeholder="$t('common.welcome')"
     />
   </div>
 

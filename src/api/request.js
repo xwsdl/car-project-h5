@@ -16,7 +16,7 @@ console.log('service-----', service)
 service.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token')
-    const locale = localStorage.getItem('locale') || 'zh-CN'
+    const locale = localStorage.getItem('language') || 'zh-CN'
 
     if (token) {
       config.headers.Authorization = token

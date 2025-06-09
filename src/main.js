@@ -6,9 +6,9 @@ import { installRouterGuard } from '@/router/guard'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import App from './App.vue'
-import router from './router'
-import i18n from './locales' // 导入 i18n 配置
+import App from '@/App.vue'
+import router from '@/router'
+import i18n from '@/i18n' // 修正为正确的 locales 目录
 
 const app = createApp(App)
 // 安装路由和守卫

@@ -1,0 +1,48 @@
+// 全局混合器
+// 垂直水平居中
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// 响应式移动端适配
+@mixin mobile {
+    @media (max-width: $breakpoint-mobile) {
+        @content;
+    }
+}
+
+// 文字溢出省略号
+@mixin text-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+// BEM 命名规范混合宏
+@mixin b($block) {
+  $B: $block !global;
+  .#{$block} {
+    @content;
+  }
+}
+
+@mixin e($element) {
+  $E: $element !global;
+  $selector: &;
+  @at-root {
+    #{$selector}__#{$element} {
+      @content;
+    }
+  }
+}
+
+@mixin m($modifier) {
+  $selector: &;
+  @at-root {
+    #{$selector}--#{$modifier} {
+      @content;
+    }
+  }
+}

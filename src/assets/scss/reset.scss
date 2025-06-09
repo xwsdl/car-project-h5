@@ -1,0 +1,66 @@
+// src/assets/scss/reset.scss
+@forward "modern-normalize"; // 继承标准化样式
+
+/* 自定义重置 */
+:root {
+    // 禁用系统默认字体
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", system-ui, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    // 统一盒模型 (推荐方案)
+    box-sizing: border-box;
+
+    // 移除移动端点击高亮
+    -webkit-tap-highlight-color: transparent;
+
+    // 禁用文字长按菜单 (H5 常见需求)
+    -webkit-touch-callout: none;
+}
+
+/* 新代码（增加权重） */
+html body {
+    margin: 0 !important;
+}
+
+@layer reset {
+    body {
+        margin: 0 !important;
+    }
+}
+
+html {
+    // 禁止文字缩放 (适配系统字体大小设置)
+    text-size-adjust: 100%;
+
+    // 启用 GPU 加速字体渲染
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+
+    // 统一默认滚动条样式
+    &::-webkit-scrollbar {
+        display: none; // 移动端通常隐藏滚动条
+    }
+}
+
+// 图片默认样式
+img {
+    vertical-align: middle; // 消除底部间隙
+    max-width: 100%; // 响应式图片
+}
+
+// 表单元素重置
+input,
+button,
+textarea {
+    appearance: none; // 移除原生样式
+    background: none;
+    border: none;
+    outline: none;
+    font: inherit;
+}

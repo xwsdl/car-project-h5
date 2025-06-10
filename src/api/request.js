@@ -2,7 +2,7 @@ import axios from 'axios'
 import { closeToast, showLoadingToast, showFailToast } from 'vant'
 // 创建 Axios 实例
 const service = axios.create({
-  baseURL: '/api', // 使用环境变量或默认值
+  // baseURL: '/api', // 使用环境变量或默认值
   timeout: 10000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -41,9 +41,11 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
+    console.log('响应数据:', response)
     closeToast()
     // 根据实际 API 结构调整
-    if (response.data.status === 200) {
+    if (response.data.status === 200||response.data.status === 0) {
+    
       return response.data
     } else {
       showFailToast(response.data.message || '操作失败')
@@ -53,7 +55,7 @@ service.interceptors.response.use(
   (error) => {
     closeToast()
     let message = '请求失败'
-
+    console.log('响应数据:', error)
     if (error.response) {
       console.log(error.response.status)
       switch (error.response.status) {

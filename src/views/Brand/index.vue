@@ -1,8 +1,8 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-05 21:11:47
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-06-09 11:00:20
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-06-09 22:14:55
  * @FilePath: \car-h5-project\src\views\Brand\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -18,7 +18,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { fetchCarBrandList, fetchCarHotList } from '@/api/jiSuApi/index.js'
+import { ref,onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BrandHot from './components/BrandHot.vue'
@@ -28,91 +29,8 @@ import BrandSidebar from './components/BrandSidebar.vue'
 const { t } = useI18n()
 const router = useRouter()
 
-// 模拟热门品牌数据
-const hotBrands = ref([
-  {
-    id: 1,
-    name: t('brand.unlimited'),
-    logo: new URL('@/assets/images/more.png', import.meta.url).href,
-  },
-  { id: 2, name: t('brand.audi'), logo: new URL('@/assets/images/aodi.png', import.meta.url).href },
-  { id: 3, name: t('brand.bmw'), logo: new URL('@/assets/images/baoma.png', import.meta.url).href },
-  {
-    id: 4,
-    name: t('brand.benz'),
-    logo: new URL('@/assets/images/benchi.png', import.meta.url).href,
-  },
-  {
-    id: 5,
-    name: t('brand.volkswagen'),
-    logo: new URL('@/assets/images/dazhong.png', import.meta.url).href,
-  },
-  {
-    id: 6,
-    name: t('brand.toyota'),
-    logo: new URL('@/assets/images/fengtian.png', import.meta.url).href,
-  },
-  {
-    id: 7,
-    name: t('brand.honda'),
-    logo: new URL('@/assets/images/bentian.png', import.meta.url).href,
-  },
-  { id: 8, name: t('brand.byd'), logo: new URL('@/assets/images/BYD.png', import.meta.url).href },
-])
-
-// 模拟按字母分组的品牌数据
-const brandGroups = ref([
-  {
-    letter: 'A',
-    brands: [
-      {
-        id: 1,
-        name: t('brand.audi'),
-        logo: new URL('@/assets/images/aodi.png', import.meta.url).href,
-      },
-      {
-        id: 2,
-        name: t('brand.alfaRomeo'),
-        logo: new URL('@/assets/images/more.png', import.meta.url).href,
-      },
-    ],
-  },
-  {
-    letter: 'B',
-    brands: [
-      {
-        id: 3,
-        name: t('brand.bmw'),
-        logo: new URL('@/assets/images/baoma.png', import.meta.url).href,
-      },
-      {
-        id: 4,
-        name: t('brand.benz'),
-        logo: new URL('@/assets/images/benchi.png', import.meta.url).href,
-      },
-      {
-        id: 5,
-        name: t('brand.buick'),
-        logo: new URL('@/assets/images/more.png', import.meta.url).href,
-      },
-    ],
-  },
-  {
-    letter: 'D',
-    brands: [
-      {
-        id: 6,
-        name: t('brand.volkswagen'),
-        logo: new URL('@/assets/images/dazhong.png', import.meta.url).href,
-      },
-      {
-        id: 7,
-        name: t('brand.dodge'),
-        logo: new URL('@/assets/images/more.png', import.meta.url).href,
-      },
-    ],
-  },
-])
+const hotBrands = ref([])
+const brandGroups = ref([])
 
 // 字母索引数据
 const letters = ref([
@@ -154,6 +72,64 @@ function onBrandSelect(brand) {
   console.log('选中品牌:', brand)
   router.push(`/list/${brand.name}`)
 }
+
+// 按字母分组的品牌数据
+function groupBrandsByLetter(brands) {
+  const groups = {}
+  // 初始化26个字母的分组
+  letters.value.forEach(letter => {
+    groups[letter] = []
+  })
+  
+  // 将品牌按首字母分组
+  brands.forEach(brand => {
+    const initial = brand.initial.toUpperCase()
+    if (groups[initial]) {
+      groups[initial].push({
+        id: brand.id,
+        name: brand.name,
+        logo: brand.logo
+      })
+    }
+  })
+  
+  // 转换为数组格式
+  return Object.entries(groups)
+    .filter(([_, brands]) => brands.length > 0)
+    .map(([letter, brands]) => ({
+      letter,
+      brands
+    }))
+}
+
+onMounted(() => {
+  // 获取热门品牌
+  // fetchCarHotList({pricetype:1}).then((res) => {
+  //   if (res.result) {
+  //     hotBrands.value = res.result
+  //       .slice(0, 8) // 只取前8个品牌
+  //       .map(brand => ({
+  //         id: brand.id,
+  //         name: brand.name,
+  //         logo: brand.logo
+  //       }))
+  //   }
+  // })
+  
+  // 获取所有品牌并按字母分组
+  fetchCarBrandList().then((res) => {
+    if (res.result) {
+      brandGroups.value = groupBrandsByLetter(res.result)
+      hotBrands.value = res.result
+        .slice(0, 8) // 只取前8个品牌
+        .map(brand => ({
+          id: brand.id,
+          name: brand.name,
+          logo: brand.logo
+        }))
+    }
+  })
+})
 </script>
 
 <style lang="scss" scoped>

@@ -17,5 +17,8 @@
   "i18n-ally.enabledFrameworks": [
     "vue"
   ],
-  "i18n-ally.sourceLanguage": "zh-CN"
+  "i18n-ally.sourceLanguage": "zh-CN",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }

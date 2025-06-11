@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { closeToast, showLoadingToast, showFailToast } from 'vant'
+
+// 全局请求计数器
+let requestCount = 0
 // 创建 Axios 实例
 const service = axios.create({
   // baseURL: '/api', // 使用环境变量或默认值
@@ -9,14 +12,13 @@ const service = axios.create({
   },
 })
 
-console.log(import.meta.env.VITE_APP_BASE_API)
-console.log('service-----', service)
-
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token')
     const locale = localStorage.getItem('language') || 'zh-CN'
+    // 增加请求计数
+    requestCount++
 
     if (token) {
       config.headers.Authorization = token
@@ -24,15 +26,21 @@ service.interceptors.request.use(
     // 添加语言信息到请求头
     config.headers['Accept-Language'] = locale
     // 可在此处添加 token 等
-    showLoadingToast({
-      message: '加载中...',
-      forbidClick: true,
-      duration: 0,
-    })
+    if (requestCount === 1) {
+      showLoadingToast({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0,
+      })
+    }
     return config
   },
   (error) => {
-    closeToast()
+    requestCount = Math.max(0, requestCount - 1)
+    // 当没有请求时关闭Toast
+    if (requestCount === 0) {
+      closeToast()
+    }
     showFailToast('请求发送失败')
     return Promise.reject(error)
   },
@@ -41,11 +49,16 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
-    console.log('响应数据:', response)
-    closeToast()
+    // 减少请求计数
+    requestCount = Math.max(0, requestCount - 1);
+
+    // 当没有请求时关闭Toast
+    if (requestCount === 0) {
+      closeToast();
+    }
+
     // 根据实际 API 结构调整
-    if (response.data.status === 200||response.data.status === 0) {
-    
+    if (response.data.status === 200 || response.data.status === 0) {
       return response.data
     } else {
       showFailToast(response.data.message || '操作失败')
@@ -53,9 +66,13 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    closeToast()
+    requestCount = Math.max(0, requestCount - 1);
+
+    // 当没有请求时关闭Toast
+    if (requestCount === 0) {
+      closeToast();
+    }
     let message = '请求失败'
-    console.log('响应数据:', error)
     if (error.response) {
       console.log(error.response.status)
       switch (error.response.status) {

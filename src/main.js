@@ -1,5 +1,6 @@
 // 重置样式
 import '@/assets/scss/reset.scss'
+
 import 'vant/lib/index.css'
 
 import { installRouterGuard } from '@/router/guard'

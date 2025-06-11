@@ -15,7 +15,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-
+import { setLanguage, getCurrentLanguage } from '@/i18n/index.js'
 const { locale, t } = useI18n()
 
 // 语言选项
@@ -25,13 +25,6 @@ const languageOptions = computed(() => [
 ])
 
 const changeLanguage = (lang) => {
-  locale.value = lang
-  localStorage.setItem('language', lang)
-
-  // 更新 Vant 语言
-  // const vantLang = messages[lang]?.vant
-  // if (vantLang) {
-  //   Locale.use(lang, vantLang)
-  // }
+  setLanguage(lang)
 }
 </script>

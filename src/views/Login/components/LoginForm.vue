@@ -37,6 +37,16 @@
         <van-button round block type="primary" native-type="submit" color="223C61">
           {{ $t('login.login') }}
         </van-button>
+
+        <van-button
+          style="margin-top: 16px"
+          round
+          block
+          type="default"
+          @click="handleGoHome"
+        >
+          {{ $t('login.backHome') }}
+        </van-button>
       </div>
     </van-form>
   </div>
@@ -74,6 +84,10 @@ const onSubmit = (values) => {
       }
     }, 800)
   })
+}
+
+const handleGoHome = () => {
+  router.push('/')
 }
 </script>
 

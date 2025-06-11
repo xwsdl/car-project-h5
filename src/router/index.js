@@ -15,7 +15,7 @@ const router = createRouter({
           component: () => import('@/views/Home/index.vue'),
           meta: {
             title: '首页',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
           },
         },
         {
@@ -41,7 +41,7 @@ const router = createRouter({
           },
           meta: {
             title: '车辆详情',
-            requiresAuth: true, //
+            requiresAuth: false, //
           },
         },
         {
@@ -50,7 +50,7 @@ const router = createRouter({
           component: () => import('@/views/ClassificationList/index.vue'),
           meta: {
             title: '车辆列表',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
           },
         },
         {
@@ -77,7 +77,7 @@ const router = createRouter({
           component: () => import('@/views/Brand/index.vue'),
           meta: {
             title: '选择品牌',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
           },
         },
       ],

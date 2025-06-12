@@ -86,20 +86,20 @@ export default defineConfig(({ command, mode }) => {
       proxy: {
         // 代理所有以 /api 开头的请求
         '/base': {
-          target: env.VITE_APP_BASE_API || 'http://hyxexport.com', // 添加默认值
+          target: env.VITE_API_BASE_URL || 'http://8.211.38.230:8084', // 添加默认值
           changeOrigin: true, // 修改请求头中的host为目标URL
           rewrite: (path) => {
             const newPath = path.replace(/^\/base/, '')
             console.log('原始请求路径:', path)
             console.log('重写后的路径:', newPath)
-            console.log('目标服务器:', env.VITE_APP_BASE_API || 'http://hyxexport.com')
+            console.log('目标服务器:', env.VITE_API_BASE_URL)
             return newPath
           },
           secure: false,
         },
         // 可以配置多个代理
         '/jisuapi': {
-          target:'https://api.jisuapi.com', // 添加默认值
+          target: 'https://api.jisuapi.com', // 添加默认值
           changeOrigin: true,
           rewrite: (path) => {
             const newPath = path.replace(/^\/jisuapi/, '')

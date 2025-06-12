@@ -86,13 +86,13 @@ export default defineConfig(({ command, mode }) => {
       proxy: {
         // 代理所有以 /api 开头的请求
         '/base': {
-          target: env.VITE_APP_BASE_API || 'http://8.211.38.230:8084', // 添加默认值
+          target: env.VITE_APP_BASE_API || 'http://hyxexport.com', // 添加默认值
           changeOrigin: true, // 修改请求头中的host为目标URL
           rewrite: (path) => {
             const newPath = path.replace(/^\/base/, '')
             console.log('原始请求路径:', path)
             console.log('重写后的路径:', newPath)
-            console.log('目标服务器:', env.VITE_APP_BASE_API || 'http://8.211.38.230:8084')
+            console.log('目标服务器:', env.VITE_APP_BASE_API || 'http://hyxexport.com')
             return newPath
           },
           secure: false,

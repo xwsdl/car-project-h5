@@ -5,7 +5,7 @@ import { closeToast, showLoadingToast, showFailToast } from 'vant'
 let requestCount = 0
 // 创建 Axios 实例
 const service = axios.create({
-  // baseURL: '/api', // 使用环境变量或默认值
+  baseURL: '/api', // 使用环境变量或默认值
   timeout: 10000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',

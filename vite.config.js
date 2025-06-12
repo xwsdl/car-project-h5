@@ -85,11 +85,11 @@ export default defineConfig(({ command, mode }) => {
       open: false, // 禁止自动打开浏览器
       proxy: {
         // 代理所有以 /api 开头的请求
-        '/base': {
+        '/api': {
           target: env.VITE_API_BASE_URL || 'http://8.211.38.230:8084', // 添加默认值
           changeOrigin: true, // 修改请求头中的host为目标URL
           rewrite: (path) => {
-            const newPath = path.replace(/^\/base/, '')
+            const newPath = path.replace(/^\/api/, '')
             console.log('原始请求路径:', path)
             console.log('重写后的路径:', newPath)
             console.log('目标服务器:', env.VITE_API_BASE_URL)

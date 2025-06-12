@@ -5,8 +5,8 @@
     <div class="content-container">
       <CarSwiper :images="carImages" />
       <PriceInfo
-        :currentPrice="carBasicInfo.salesPrice || carBasicInfo.networkPrice"
-        :originalPrice="carBasicInfo.networkPrice"
+        :currentPrice="carBasicInfo.networkPrice"
+        :originalPrice="carBasicInfo.salesPrice||''"
       />
       <BasicInfo :car="carBasicInfo" />
       <DetailInfo :details="carDetails" />

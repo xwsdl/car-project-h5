@@ -92,7 +92,8 @@ export default defineConfig(({ command, mode }) => {
             const newPath = path.replace(/^\/api/, '')
             console.log('原始请求路径:', path)
             console.log('重写后的路径:', newPath)
-            console.log('目标服务器:', env.VITE_API_BASE_URL)
+            console.log('目标服务器:', env.VITE_API_BASE_URL + newPath)
+
             return newPath
           },
           secure: false,

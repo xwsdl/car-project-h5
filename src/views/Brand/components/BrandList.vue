@@ -8,12 +8,19 @@
 -->
 <template>
   <div class="brand-list">
-    <div v-for="group in brandGroups" :key="group.letter" class="brand-list__group">
-      <div class="brand-list__letter">{{ group.letter }}</div>
-      <div class="brand-list__items">
-        <div v-for="brand in group.brands" :key="brand.id" class="brand-list__item" @click="select(brand)">
-          <img :src="brand.logo" :alt="brand.name" class="brand-list__logo" />
-          <span class="brand-list__name">{{ brand.name }}</span>
+    <div v-for="group in brandGroups" :key="group.letter" class="brand-group" :data-letter="group.letter">
+      <div class="brand-group__header">{{ group.letter }}</div>
+      <div class="brand-group__content">
+        <div
+          v-for="brand in group.brands"
+          :key="brand.id"
+          class="brand-item"
+          @click="$emit('select', brand)"
+        >
+          <div class="brand-item__logo">
+            <img :src="brand.logo" :alt="brand.name" />
+          </div>
+          <div class="brand-item__name">{{ brand.name }}</div>
         </div>
       </div>
     </div>
@@ -24,50 +31,62 @@
 defineProps({
   brandGroups: {
     type: Array,
-    default: () => []
+    required: true
   }
 })
-const emit = defineEmits(['select'])
-function select(brand) {
-  emit('select', brand)
-}
+
+defineEmits(['select'])
 </script>
 
 <style lang="scss" scoped>
 .brand-list {
-  &__group {
-    margin-bottom: 16px;
-  }
-  &__letter {
-    font-size: 14px;
-    color: #999;
-    background: #f7f8fa;
-    padding: 4px 12px;
-    margin-bottom: 8px;
-  }
-  &__items {
-    display: block;
-    padding: 0 8px;
-  }
-  &__item {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    &:last-child {
-      border-bottom: none;
+  .brand-group {
+    &__header {
+      padding: 8px 16px;
+      background-color: #f5f5f5;
+      font-size: 14px;
+      color: #666;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    &__content {
+      background: #fff;
     }
   }
-  &__logo {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    margin-right: 12px;
-  }
-  &__name {
-    font-size: 15px;
-    color: #333;
+
+  .brand-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:active {
+      background-color: #f5f5f5;
+    }
+
+    &__logo {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    &__name {
+      font-size: 15px;
+      color: #333;
+      flex: 1;
+    }
   }
 }
 </style>

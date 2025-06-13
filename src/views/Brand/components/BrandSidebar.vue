@@ -8,22 +8,38 @@
 -->
 <template>
   <div class="brand-sidebar">
-    <div v-for="letter in letters" :key="letter" class="brand-sidebar__item" @click="select(letter)">
+    <div
+      v-for="letter in letters"
+      :key="letter"
+      class="brand-sidebar__item"
+      :class="{ 'brand-sidebar__item--active': activeLetter === letter }"
+      @click="handleClick(letter)"
+    >
       {{ letter }}
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref } from 'vue'
+
+const props = defineProps({
   letters: {
     type: Array,
-    default: () => []
+    required: true
   }
 })
+
 const emit = defineEmits(['select'])
-function select(letter) {
+const activeLetter = ref('')
+
+function handleClick(letter) {
+  activeLetter.value = letter
   emit('select', letter)
+  // 300ms后清除激活状态
+  setTimeout(() => {
+    activeLetter.value = ''
+  }, 300)
 }
 </script>
 
@@ -33,18 +49,28 @@ function select(letter) {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 8px 4px;
+  z-index: 100;
+
   &__item {
-    padding: 2px 4px;
+    color: #fff;
     font-size: 12px;
-    color: #999;
+    padding: 4px 8px;
+    text-align: center;
     cursor: pointer;
-    user-select: none;
+    transition: all 0.3s;
+    border-radius: 12px;
+
     &:hover {
-      color: #1989fa;
+      color: #1890ff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &--active {
+      color: #1890ff;
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }

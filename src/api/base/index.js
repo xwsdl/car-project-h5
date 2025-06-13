@@ -26,3 +26,9 @@ export const searchCars = (keyword) => {
 export const login = (data) => {
   return post(`/users/login`, data)
 }
+
+// 获取车辆列表
+export const fetchCarBrandList = (params) => {
+  return get(`/carinform/getCarBrand`, params)
+}
+

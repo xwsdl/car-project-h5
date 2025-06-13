@@ -9,7 +9,7 @@
 <template>
   <div class="price-info">
     <div class="current-price">{{ currentPrice }}{{ $t('home.tenThousand') }}</div>
-    <div class="original-price">{{ originalPrice }}{{ $t('home.tenThousand') }}</div>
+    <div class="original-price" v-if="false">{{ originalPrice }}{{ $t('home.tenThousand') }}</div>
     <div class="more-info">
       <span>{{ $t('detail.detail') }}</span>
       <van-icon name="arrow" />

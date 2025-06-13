@@ -4,7 +4,7 @@
       <img
         :src="car.carOtherPics && car.carOtherPics.split(',')[0]"
         class="car-image"
-        :alt="$t('car.picture')"
+        :alt="$t('carDetail.swiper.carImage')"
       />
       <div class="car-tag" v-if="car.carNature">{{ car.carNature }}</div>
     </div>
@@ -20,7 +20,7 @@
         <span>{{ car.displacement }}</span>
       </div>
 
-      <div class="car-price">{{ car.networkPrice }}{{$t('car.tenThousand')}}</div>
+      <div class="car-price">{{ car.networkPrice }}{{$t('home.tenThousand')}}</div>
     </div>
   </div>
 </template>

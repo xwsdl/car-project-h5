@@ -102,10 +102,11 @@
         "services": {
             "title": "Мои услуги",
             "customerService": "Служба поддержки",
-            "message": "Сообщения",
-            "partners": "Партнеры",
-            "address": "Адрес доставки",
+            "myContract": "Мой контракт",
+            "relatedData": "Связанные данные",
+            "myOrders": "Мои заказы",
             "favorite": "Избранное",
+            "history": "История просмотров",
             "coupon": "Купоны",
             "balance": "Баланс",
             "settings": "Настройки"

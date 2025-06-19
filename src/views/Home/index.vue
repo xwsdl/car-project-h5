@@ -1,11 +1,6 @@
 <template>
   <div class="home">
-    <van-search
-      class="home-search"
-      @search="handleSearch"
-      v-model="formData.modelName"
-      :placeholder="$t('home.searchTip')"
-    />
+    <!-- 轮播图 -->
     <van-swipe class="home-swipe" :autoplay="3000" indicator-color="white">
       <van-swipe-item
         v-for="(item, index) in swipeList"
@@ -15,126 +10,51 @@
         <img :src="item.mainImageUrl" width="50" height="50" class="swiper-img" />
       </van-swipe-item>
     </van-swipe>
-  </div>
-  <!-- 菜单 -->
-  <div class="home-menu">
-    <div class="home-menu__item" @click="handleGoToList(1)">
-      <div class="home-menu__icon">
-        <img src="@/assets/images/ershouche.png" width="50" height="50" />
-      </div>
-      <div class="home-menu__name">{{ $t('home.secondHand') }}</div>
-    </div>
 
-    <div class="home-menu__item" @click="handleGoToList(2)">
-      <div class="home-menu__icon">
-        <img src="@/assets/images/suv.png" width="50" height="50" />
-      </div>
-      <div class="home-menu__name">{{ $t('home.suv') }}</div>
-    </div>
-
-    <div class="home-menu__item" @click="handleGoToList(3)">
-      <div class="home-menu__icon">
-        <img src="@/assets/images/huoche.png" width="50" height="50" />
-      </div>
-      <div class="home-menu__name">{{ $t('home.truck') }}</div>
-    </div>
-
-    <div class="home-menu__item" @click="handleGoToList(4)">
-      <div class="home-menu__icon">
-        <img src="@/assets/images/gerenche.png  " width="50" height="50" />
-      </div>
-      <div class="home-menu__name">{{ $t('home.newEnergy') }}</div>
-    </div>
-    <div class="home-menu__item" v-if="false">
-      <div class="home-menu__icon">
-        <img src="@/assets/images/xinnengyuan.png" width="50" height="50" />
-      </div>
-      <div class="home-menu__name">{{ $t('home.personalCar') }}</div>
-    </div>
-  </div>
-
-  <!-- 分类 -->
-  <div class="home-brand">
-    <div
-      class="home-brand__item"
-      v-for="(brand, index) in brandList"
-      :key="index"
-      @click="handleGoCategory(brand)"
-    >
-      <img :src="brand.icon" class="home-brand__icon" />
-      <span class="home-brand__name">{{ brand.name }}</span>
-    </div>
-  </div>
-
-  <!-- 商品列表 -->
-  <div class="home-product">
-    <!-- <van-card
-      v-for="(item, index) in 5"
-      price="12.5万"
-      desc="2015年 13.20万公里"
-      title="宝马 5系 2014款 528Li 领先型"
-      :thumb="getFile('good.png')"
-      origin-price="15.5万"
-    /> -->
-
-    <CarList
-      :cars="cars"
-      :isLoadAll="isLoadAll"
-      @load-more="loadMoreCars"
-      :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
-      :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
+    <!-- 查询搜索框 -->
+    <van-search
+      class="home-search"
+      @search="handleSearch"
+      v-model="formData.modelName"
+      :placeholder="$t('home.searchTip')"
     />
+
+    <!-- 筛选区组件 -->
+    <CarFilter
+      v-model:sort="sortValue"
+      v-model:brand="brandValue"
+      v-model:price="priceValue"
+      v-model:filter="filterValue"
+      @sort-change="onSortChange"
+      @brand-change="onBrandChange"
+      @price-change="onPriceChange"
+    />
+
+    <!-- 商品列表 -->
+    <div class="home-product">
+      <CarList
+        :cars="cars"
+        :isLoadAll="isLoadAll"
+        @load-more="loadMoreCars"
+        :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
+        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { showFailToast } from 'vant'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import { useI18n } from 'vue-i18n'
 import { fetchCarList } from '@/api/base/index.js'
-import { getFile } from '@/utils/index.js'
+// import { getFile } from '@/utils/index.js' // 已移除未使用
 import { ref, onMounted, reactive, computed } from 'vue'
 import CarList from '@/components/CarList/CarList.vue'
+import CarFilter from '@/components/CarFilter.vue'
 const { t: $t } = useI18n()
 // 轮播图
 const swipeList = ref([])
-
-const brandList = ref([
-  {
-    name: $t('home.car'),
-    icon: getFile('dazhong.png'),
-  },
-  {
-    name: $t('home.toyota'),
-    icon: getFile('fengtian.png'),
-  },
-  {
-    name: $t('home.honda'),
-    icon: getFile('bentian.png'),
-  },
-  {
-    name: $t('home.audi'),
-    icon: getFile('aodi.png'),
-  },
-  {
-    name: $t('home.bmw'),
-    icon: getFile('baoma.png'),
-  },
-  {
-    name: $t('home.benz'),
-    icon: getFile('benchi.png'),
-  },
-  {
-    name: $t('home.byd'),
-    icon: getFile('BYD.png'),
-  },
-  {
-    name: $t('home.more'),
-    icon: getFile('more.png'),
-    key: 'more',
-  },
-])
 
 // 初始车辆数据
 const cars = ref([
@@ -227,28 +147,27 @@ const fetchCardList = () => {
   })
 }
 
-const handleGoToList = (index) => {
-  if (index > 2) {
-    showFailToast('暂未开放，联系客服')
-    return
-  }
-  if (index === 1) {
-    router.push(`/list/二手车`)
-  } else {
-    router.push(`/list/SUV`)
-  }
-}
-
-const handleGoCategory = (brand) => {
-  if (brand.key == 'more') {
-    router.push(`/brand`)
-  } else {
-    router.push(`/list/${brand.name}`)
-  }
-}
-
 const handleView = (index) => {
   router.push(`/car/${swipeList.value[index].id}`)
+}
+
+// 筛选相关变量
+const sortValue = ref(0)
+const brandValue = ref(0)
+const priceValue = ref(0)
+const filterValue = ref(0)
+
+function onSortChange() {
+  // 这里可以执行排序相关逻辑
+  fetchCardList()
+}
+function onBrandChange() {
+  // 这里可以执行品牌筛选相关逻辑
+  fetchCardList()
+}
+function onPriceChange() {
+  // 这里可以执行价格筛选相关逻辑
+  fetchCardList()
 }
 </script>
 
@@ -349,5 +268,8 @@ const handleView = (index) => {
   position: relative;
   height: 200px;
   overflow: hidden;
+}
+.home-filter {
+  margin: 10px 0 0 0;
 }
 </style>

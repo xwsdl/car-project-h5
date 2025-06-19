@@ -2,7 +2,7 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-01 13:57:50
  * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-06-05 23:08:32
+ * @LastEditTime: 2025-06-20 00:41:24
  * @FilePath: \car-h5-project\src\views\ProfileView\components\ServicesSection.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -37,13 +37,11 @@ const router = useRouter()
 // 服务数据
 const services = ref([
   { id: 1, icon: 'service', label: 'customerService' },
-  { id: 2, icon: 'chat', label: 'message' },
-  { id: 3, icon: 'friends', label: 'partners' },
-  { id: 4, icon: 'location', label: 'address' },
-  { id: 5, icon: 'star', label: 'favorite' },
-  { id: 6, icon: 'coupon', label: 'coupon' },
-  { id: 7, icon: 'balance', label: 'balance' },
-  { id: 8, icon: 'setting', label: 'settings' },
+  { id: 2, icon: 'description', label: 'myContract' },
+  { id: 3, icon: 'records', label: 'relatedData' },
+  { id: 4, icon: 'orders-o', label: 'myOrders' },
+  { id: 5, icon: 'star-o', label: 'favorite' },
+  { id: 6, icon: 'clock-o', label: 'history' },
 ])
 
 const handleGoPage = (icon) => {

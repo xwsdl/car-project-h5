@@ -102,14 +102,12 @@
         },
         "services": {
             "title": "我的服务",
-            "customerService": "客服中心",
-            "message": "消息中心",
-            "partners": "合作伙伴",
-            "address": "收货地址",
+            "customerService": "联系客服",
+            "myContract": "我的合同",
+            "relatedData": "相关资料",
+            "myOrders": "我的订单",
             "favorite": "我的收藏",
-            "coupon": "优惠券",
-            "balance": "我的余额",
-            "settings": "设置"
+            "history": "浏览历史"
         },
         "orders": {
             "title": "我的订单",

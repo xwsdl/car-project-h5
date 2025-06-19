@@ -24,7 +24,7 @@ const router = createRouter({
           component: () => import('@/views/ProfileView/index.vue'),
           meta: {
             title: '个人中心',
-            requiresAuth: true, // 需要登录
+            requiresAuth: false, // 需要登录
           },
         },
         {
@@ -77,6 +77,15 @@ const router = createRouter({
           component: () => import('@/views/Brand/index.vue'),
           meta: {
             title: '选择品牌',
+            requiresAuth: false, // 不需要登录
+          },
+        },
+        {
+          path: '/filterPage',
+          name: 'FilterPage',
+          component: () => import('@/views/FilterPage/index.vue'),
+          meta: {
+            title: '高级筛选',
             requiresAuth: false, // 不需要登录
           },
         },

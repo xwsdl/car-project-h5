@@ -2,43 +2,26 @@
   <div class="home">
     <!-- 轮播图 -->
     <van-swipe class="home-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item
-        v-for="(item, index) in swipeList"
-        :key="index"
-        @click="() => handleView(index)"
-      >
-        <img :src="item.mainImageUrl" width="50" height="50" class="swiper-img" />
+      <van-swipe-item v-for="(item, index) in swipeList" :key="index" @click="() => handleView(index)">
+        <img :src="item" width="50" height="50" class="swiper-img" />
       </van-swipe-item>
     </van-swipe>
 
-    <!-- 查询搜索框 -->
-    <van-search
-      class="home-search"
-      @search="handleSearch"
-      v-model="formData.modelName"
-      :placeholder="$t('home.searchTip')"
-    />
-
-    <!-- 筛选区组件 -->
-    <CarFilter
-      v-model:sort="sortValue"
-      v-model:brand="brandValue"
-      v-model:price="priceValue"
-      v-model:filter="filterValue"
-      @sort-change="onSortChange"
-      @brand-change="onBrandChange"
-      @price-change="onPriceChange"
-    />
-
+    <!-- 固钉：查询搜索框 -->
+    <van-sticky :offset-top="0" z-index="10">
+      <div class="home-search">
+        <van-search @search="handleSearch" @clear="handleSearch" v-model="formData.modelName"
+          :placeholder="$t('home.searchTip')" />
+        <CarFilter v-model:sort="sortValue" v-model:brand="brandValue" v-model:price="priceValue"
+          v-model:filter="filterValue" @sort-change="onSortChange" @brand-change="onBrandChange"
+          @price-change="onPriceChange" />
+      </div>
+    </van-sticky>
     <!-- 商品列表 -->
     <div class="home-product">
-      <CarList
-        :cars="cars"
-        :isLoadAll="isLoadAll"
-        @load-more="loadMoreCars"
+      <CarList :cars="cars" :isLoadAll="isLoadAll" @load-more="loadMoreCars"
         :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
-        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
-      />
+        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`" />
     </div>
   </div>
 </template>
@@ -48,53 +31,15 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 import { useI18n } from 'vue-i18n'
 import { fetchCarList } from '@/api/base/index.js'
-// import { getFile } from '@/utils/index.js' // 已移除未使用
+import { getFile, getBanner } from '@/utils/index.js'
 import { ref, onMounted, reactive, computed } from 'vue'
 import CarList from '@/components/CarList/CarList.vue'
 import CarFilter from '@/components/CarFilter.vue'
-const { t: $t } = useI18n()
-// 轮播图
-const swipeList = ref([])
+const { t: $t, locale } = useI18n()
+
 
 // 初始车辆数据
-const cars = ref([
-  {
-    id: 1,
-    title: 'HONDA 2022 VEZEL 1.5 Unlimited',
-    subtitle: 'Elite Intelligent Enjoyment Edition',
-    fullTitle: 'HONDA 2022 VEZEL 1.5 Unlimited',
-    date: '2025/05/30 15:18:19',
-    location: 'China',
-    tag: '二手车',
-    price: '$10,250.82 USD',
-    image:
-      'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 2,
-    title: 'Li Auto 2024 L6 Pro',
-    subtitle: 'Li Auto 2024 L6 Pro',
-    fullTitle: 'Li Auto 2024 L6 Pro',
-    date: '2025/05/30 15:15:04',
-    location: 'China',
-    tag: '二手车',
-    price: '$26,363.22 USD',
-    image:
-      'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 3,
-    title: 'Li Auto 2024 MEGA Ultra',
-    subtitle: 'Li Auto 2024 MEGA Ultra',
-    fullTitle: 'Li Auto 2024 MEGA Ultra',
-    date: '2025/05/30 14:52:57',
-    location: 'China',
-    tag: '二手车',
-    price: '$50,560.32 USD',
-    image:
-      'https://images.unsplash.com/photo-1617814076231-2c2f4e2b9c34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-  },
-])
+const cars = ref([])
 
 // 加载更多车辆
 const loadMoreCars = () => {
@@ -129,26 +74,47 @@ const handleSearch = () => {
 
 onMounted(() => {
   fetchCardList()
+
 })
 
-const fetchCardList = () => {
-  fetchCarList(formData).then((res) => {
+const zhBanners = [
+  getBanner('01.jpg'),
+  getBanner('02.jpg'),
+  getBanner('03.jpg'),
+  getBanner('04.jpg')
+]
+
+const ruBanners = [
+  getBanner('01-2.jpg'),
+  getBanner('02-2.jpg'),
+  getBanner('03-2.jpg'),
+  getBanner('04-2.jpg')
+]
+
+// 轮播图
+const swipeList = computed(() => {
+  return locale.value === 'zh-CN' ? zhBanners : ruBanners
+})
+
+
+
+const fetchCardList = (params = {}) => {
+
+  const searchParams = { ...formData, ...params }
+  fetchCarList(searchParams).then((res) => {
     formData.total = res.total
     formData.pages = res.pages
     cars.value = res.list
-    swipeList.value = res.list
       .map((item) => {
         item.mainImageUrl = item.carOtherPics && item.carOtherPics.split(',')[0]
         return item
       })
       .filter((item) => item.mainImageUrl)
-
-    console.log('swipeList', swipeList.value)
   })
 }
 
 const handleView = (index) => {
-  router.push(`/car/${swipeList.value[index].id}`)
+  // router.push(`/car/${swipeList.value[index].id}`)
 }
 
 // 筛选相关变量
@@ -157,17 +123,36 @@ const brandValue = ref(0)
 const priceValue = ref(0)
 const filterValue = ref(0)
 
-function onSortChange() {
+function onSortChange(type) {
+  // 排序 1-价格最低  2-价格最高  3-年限最近
+  const params = {
+    1: {
+      isAsc: true,
+      sortBy: 'networkPrice'
+    },
+    2: {
+      isAsc: false,
+      sortBy: 'networkPrice'
+    },
+    3: {
+      isAsc: false,
+      sortBy: 'firstRegTime'
+    }
+  }
+
+  console.log(params[type])
+
   // 这里可以执行排序相关逻辑
-  fetchCardList()
+  fetchCardList(params[type])
 }
 function onBrandChange() {
   // 这里可以执行品牌筛选相关逻辑
   fetchCardList()
 }
-function onPriceChange() {
+function onPriceChange(type = 0) {
+  const params = { sortBetweenPrice: type }
   // 这里可以执行价格筛选相关逻辑
-  fetchCardList()
+  fetchCardList(params)
 }
 </script>
 
@@ -177,17 +162,20 @@ function onPriceChange() {
   justify-content: $justify;
   align-items: $align;
 }
+
 .home {
   &-swipe {
     width: 100%;
     margin-top: 8px;
     border-radius: 10px;
   }
+
   .swiper-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   &-menu {
     margin-top: 8px;
     padding: 16px;
@@ -198,6 +186,7 @@ function onPriceChange() {
     align-items: center;
 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
     &__item {
       display: flex;
       flex-direction: column;
@@ -207,6 +196,7 @@ function onPriceChange() {
     &__icon {
       width: 40px;
       height: 40px;
+
       img {
         width: 100%;
         height: 100%;
@@ -239,6 +229,7 @@ function onPriceChange() {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     @include flex();
     flex-wrap: wrap;
+
     &__item {
       width: 25%;
       @include flex(flex-start, center);
@@ -264,12 +255,14 @@ function onPriceChange() {
     padding-bottom: 50px;
   }
 }
+
 .home-swipe {
   position: relative;
   height: 200px;
   overflow: hidden;
 }
-.home-filter {
-  margin: 10px 0 0 0;
+
+.home-search {
+  background-color: #fff;
 }
 </style>

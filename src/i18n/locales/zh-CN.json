@@ -160,5 +160,26 @@
             "carImage": "汽车图片",
             "viewImage": "查看图片"
         }
+    },
+    "carFilter": {
+        "sort": "排序",
+        "brand": "品牌",
+        "price": "价格",
+        "filter": "筛选",
+        "defaultSort": "默认排序",
+        "lowestPrice": "价格最低",
+        "highestPrice": "价格最高",
+        "latestYear": "年限最近",
+        "unlimited": "不限",
+        "price0_100": "0-100万",
+        "price100_200": "100-200万",
+        "price200_300": "200-300万",
+        "price300_400": "300-400万",
+        "price400_500": "400-500万",
+        "price500_up": "500万以上",
+        "minPrice": "最小价格",
+        "maxPrice": "最大价格",
+        "tenThousand": "万",
+        "confirm": "确定"
     }
 }

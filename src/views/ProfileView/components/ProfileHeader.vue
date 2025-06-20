@@ -17,8 +17,14 @@
       </div>
     </div>
 
-    <div class="logout-button" @click="logout">
-      <van-button type="danger" size="small">{{ $t('profile.header.logout') }}</van-button>
+    <!-- 顶部操作区：多语言+退出 -->
+    <div class="header-actions">
+      <div class="lang-switcher">
+        <LanguageSwitcher />
+      </div>
+      <div class="logout-button" @click="logout">
+        <van-button type="danger" size="small">{{ $t('profile.header.logout') }}</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +34,7 @@ import { closeToast, showLoadingToast } from 'vant'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -58,11 +65,20 @@ const logout = () => {
   height: 180px;
   position: relative;
 
-  .logout-button {
+  .header-actions {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 999;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    z-index: 1001;
+  }
+
+  .logout-button {
+    position: static;
+    margin: 0;
   }
 
   .header-content {
@@ -138,6 +154,11 @@ const logout = () => {
       width: 100px;
       height: 100px;
     }
+  }
+
+  .lang-switcher {
+    position: static;
+    margin: 0;
   }
 }
 

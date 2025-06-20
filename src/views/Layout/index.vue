@@ -10,7 +10,7 @@ import Tabbar from '@/components/Tabbar/index.vue'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-const tabbarRoutePath = ['/home', '/shoppingCart', '/profile']
+const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile']
 const route = useRoute()
 
 const isShowTabbar = computed(() => {

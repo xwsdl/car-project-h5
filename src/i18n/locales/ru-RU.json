@@ -6,8 +6,10 @@
             "zh": "Китайский",
             "ru": "Русский"
         },
-        "home": "Главная страница",
-        "personalCenter": "Личный кабинет",
+        "home": "Дом",
+        "orderProcess": "Заказ",
+        "message": "Чаты",
+        "personalCenter": "Профиль",
         "shoppingCart": "Корзина",
         "noMore": "Больше нечего"
     },
@@ -26,7 +28,7 @@
         "accountLogin": "Вход с использованием учетной записи"
     },
     "home": {
-        "title": "Главная страница",
+        "title": "Главная",
         "car": "Обычный",
         "toyota": "Тойота",
         "honda": "Хонда",
@@ -129,6 +131,31 @@
     "shoppingCart": {
         "title": "Корзина",
         "developing": "Настройка в разработке..."
+    },
+    "orderProcess": {
+        "title": "Процесс заказа",
+        "empty": "Нет заказов",
+        "orderId": "Номер заказа",
+        "createTime": "Время создания",
+        "pay": "Оплатить",
+        "confirmReceive": "Подтвердить получение",
+        "viewDetail": "Подробности",
+        "tabs": {
+            "all": "Все",
+            "unpaid": "Ожидает оплаты",
+            "unshipped": "Ожидает отправки",
+            "unreceived": "Ожидает получения",
+            "completed": "Завершено"
+        }
+    },
+    "message": {
+        "title": "Центр сообщений",
+        "empty": "Нет сообщений",
+        "tabs": {
+            "system": "Системные",
+            "order": "Заказы",
+            "promotion": "Акции"
+        }
     },
     "carDetail": {
         "swiper": {

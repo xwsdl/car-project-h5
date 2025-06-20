@@ -19,6 +19,24 @@ const router = createRouter({
           },
         },
         {
+          path: '/orderProcess',
+          name: 'orderProcess',
+          component: () => import('@/views/OrderProcess/index.vue'),
+          meta: {
+            title: '订单进程',
+            requiresAuth: false, // 需要登录
+          },
+        },
+        {
+          path: '/message',
+          name: 'message',
+          component: () => import('@/views/Message/index.vue'),
+          meta: {
+            title: '消息',
+            requiresAuth: false, // 需要登录
+          },
+        },
+        {
           path: '/profile',
           name: 'profile',
           component: () => import('@/views/ProfileView/index.vue'),

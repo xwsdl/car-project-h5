@@ -1,12 +1,24 @@
 {
   "recommendations": [
     "Vue.volar",
-    "dbaeumer.vscode-eslint",
-    "EditorConfig.EditorConfig",
+    "Vue.vscode-typescript-vue-plugin",
     "esbenp.prettier-vscode",
-    "johnsoncodehk.volar"
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "antfu.i18n-ally",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-vscode.vscode-css-peek",
+    "pranaygp.vscode-css-peek",
+    "ms-vscode.vscode-scss",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode.vscode-js-debug",
+    "ms-vscode.vscode-js-debug-companion"
   ],
   "unwantedRecommendations": [
-    "octref.vetur"
+    "ms-vscode.vscode-typescript-vue-plugin"
   ]
 }

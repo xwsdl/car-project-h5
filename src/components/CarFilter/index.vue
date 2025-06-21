@@ -2,7 +2,7 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-19 21:51:39
  * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-06-21 09:32:30
+ * @LastEditTime: 2025-06-21 17:31:01
  * @FilePath: \car-project-h5\src\components\CarFilter.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -14,7 +14,7 @@
       :title="$t('carFilter.sort')"
       @change="onSortChange"
     />
-    <van-dropdown-item>
+    <van-dropdown-item title-class="no-arrow">
       <template #title>
         <span @click.stop="goBrandPage">{{ $t('carFilter.brand') }}</span>
       </template>
@@ -76,7 +76,7 @@
         </div>
       </template>
     </van-dropdown-item>
-    <van-dropdown-item>
+    <van-dropdown-item title-class="no-arrow">
       <template #title>
         <span @click.stop="goFilterPage"
           >{{ $t('carFilter.filter') }} <van-icon name="filter-o"
@@ -289,4 +289,12 @@ watch(
   gap: 6px;
   margin-bottom: 14px;
 }
+/* 只隐藏品牌和筛选按钮的小三角图标 */
 </style>
+<style>
+.van-dropdown-menu__title.no-arrow::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+</style>
+

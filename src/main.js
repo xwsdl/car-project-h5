@@ -1,8 +1,8 @@
+
 // 重置样式
 import '@/assets/scss/reset.scss'
-
-import 'vant/lib/index.css'
-
+// 解决函数式调用toast样式问题（Vant 自动导入插件的局限性， 自动导入插件无法感知你在 JS 里用到了 Toast）
+import 'vant/es/toast/style';
 import { installRouterGuard } from '@/router/guard'
 
 import { createApp } from 'vue'

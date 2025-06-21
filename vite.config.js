@@ -22,7 +22,7 @@ export default defineConfig(({ command, mode }) => {
       vueDevTools(),
       Components({
         // 关键配置：使用 Vant 解析器
-        resolvers: [VantResolver()],
+        resolvers: [VantResolver({ importStyle: 'css' })],
         // 可选：关闭自动生成类型声明文件（避免 TS 报错）
         dts: false,
       }),

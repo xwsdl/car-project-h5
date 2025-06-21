@@ -181,5 +181,26 @@
         "maxPrice": "最大价格",
         "tenThousand": "万",
         "confirm": "确定"
+    },
+    "filterPage": {
+        "type": "车辆类型",
+        "age": "车龄",
+        "displacement": "排量",
+        "color": "车身颜色",
+        "emission": "排放标准",
+        "drive": "驱动方式"
+    },
+    "request": {
+        "loading": "加载中...",
+        "sendFail": "请求发送失败",
+        "fail": "请求失败",
+        "paramError": "请求参数错误",
+        "unauthorized": "未授权，请登录",
+        "forbidden": "拒绝访问",
+        "notFound": "请求地址不存在",
+        "serverError": "服务器内部错误",
+        "connectError": "连接错误",
+        "noResponse": "服务器无响应",
+        "operateFail": "操作失败"
     }
 }

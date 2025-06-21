@@ -2,7 +2,11 @@
   <div class="home">
     <!-- 轮播图 -->
     <van-swipe class="home-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item v-for="(item, index) in swipeList" :key="index" @click="() => handleView(index)">
+      <van-swipe-item
+        v-for="(item, index) in swipeList"
+        :key="index"
+        @click="() => handleView(index)"
+      >
         <img :src="item" width="50" height="50" class="swiper-img" />
       </van-swipe-item>
     </van-swipe>
@@ -10,51 +14,48 @@
     <!-- 固钉：查询搜索框 -->
     <van-sticky :offset-top="0" z-index="10">
       <div class="home-search">
-        <van-search @search="handleSearch" @clear="handleSearch" v-model="formData.modelName"
-          :placeholder="$t('home.searchTip')" />
-        <CarFilter v-model:sort="sortValue" v-model:brand="brandValue" v-model:price="priceValue"
-          v-model:filter="filterValue" @sort-change="onSortChange" @brand-change="onBrandChange"
-          @price-change="onPriceChange" />
+        <van-search
+          @search="handleSearch"
+          @clear="handleSearch"
+          v-model="formData.modelName"
+          :placeholder="$t('home.searchTip')"
+        />
+        <CarFilter
+          v-model:sort="sortValue"
+          v-model:brand="brandValue"
+          v-model:price="priceValue"
+          v-model:filter="filterValue"
+          @sort-change="onSortChange"
+          @brand-change="onBrandChange"
+          @price-change="onPriceChange"
+        />
       </div>
     </van-sticky>
     <!-- 商品列表 -->
     <div class="home-product">
-      <CarList :cars="cars" :isLoadAll="isLoadAll" @load-more="loadMoreCars"
+      <CarList
+        :cars="cars"
+        :isLoadAll="isLoadAll"
+        @load-more="loadMoreCars"
         :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
-        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`" />
+        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
 import { useI18n } from 'vue-i18n'
 import { fetchCarList } from '@/api/base/index.js'
-import { getFile, getBanner } from '@/utils/index.js'
-import { ref, onMounted, reactive, computed } from 'vue'
-import CarList from '@/components/CarList/CarList.vue'
-import CarFilter from '@/components/CarFilter.vue'
+import { getBanner } from '@/utils/index.js'
+import { ref, onMounted, computed } from 'vue'
+import CarList from '@/components/CarList/index.vue'
+import CarFilter from '@/components/CarFilter/index.vue'
 const { t: $t, locale } = useI18n()
-
 
 // 初始车辆数据
 const cars = ref([])
-
-// 加载更多车辆
-const loadMoreCars = () => {
-  if (isLoadAll.value) {
-    return
-  }
-  formData.pageNo++
-  fetchCarList(formData).then((res) => {
-    formData.total = res.total
-    formData.pages = res.pages
-    cars.value = [...cars.value, ...res.list]
-  })
-}
-
-const formData = reactive({
+const formData = ref({
   pageNo: 1,
   pageSize: 10,
   total: 0,
@@ -62,10 +63,24 @@ const formData = reactive({
   isAsc: false,
   sortBy: '',
   pages: '', //总页数
+  sortBetweenPrice: 0, //价格区间
 })
 
+// 加载更多车辆
+const loadMoreCars = () => {
+  if (isLoadAll.value) {
+    return
+  }
+  formData.value.pageNo++
+  fetchCarList({...formData.value}).then((res) => {
+    formData.value.total = res.total
+    formData.value.pages = res.pages
+    cars.value = [...cars.value, ...res.list]
+  })
+}
+
 const isLoadAll = computed(() => {
-  return formData.pageNo >= formData.pages
+  return formData.value.pageNo >= formData.value.pages
 })
 
 const handleSearch = () => {
@@ -74,21 +89,20 @@ const handleSearch = () => {
 
 onMounted(() => {
   fetchCardList()
-
 })
 
 const zhBanners = [
   getBanner('01.jpg'),
   getBanner('02.jpg'),
   getBanner('03.jpg'),
-  getBanner('04.jpg')
+  getBanner('04.jpg'),
 ]
 
 const ruBanners = [
   getBanner('01-2.jpg'),
   getBanner('02-2.jpg'),
   getBanner('03-2.jpg'),
-  getBanner('04-2.jpg')
+  getBanner('04-2.jpg'),
 ]
 
 // 轮播图
@@ -96,14 +110,10 @@ const swipeList = computed(() => {
   return locale.value === 'zh-CN' ? zhBanners : ruBanners
 })
 
-
-
-const fetchCardList = (params = {}) => {
-
-  const searchParams = { ...formData, ...params }
-  fetchCarList(searchParams).then((res) => {
-    formData.total = res.total
-    formData.pages = res.pages
+const fetchCardList = () => {
+  fetchCarList({ ...formData.value }).then((res) => {
+    formData.value.total = res.total
+    formData.value.pages = res.pages
     cars.value = res.list
       .map((item) => {
         item.mainImageUrl = item.carOtherPics && item.carOtherPics.split(',')[0]
@@ -128,31 +138,40 @@ function onSortChange(type) {
   const params = {
     1: {
       isAsc: true,
-      sortBy: 'networkPrice'
+      sortBy: 'networkPrice',
     },
     2: {
       isAsc: false,
-      sortBy: 'networkPrice'
+      sortBy: 'networkPrice',
     },
     3: {
       isAsc: false,
-      sortBy: 'firstRegTime'
-    }
+      sortBy: 'firstRegTime',
+    },
   }
 
-  console.log(params[type])
+  formData.value = {
+    ...formData.value,
+    sortBy: params[type].sortBy || '',
+    isAsc: params[type].isAsc || false,
+    pageNo: 1,
+  }
 
   // 这里可以执行排序相关逻辑
-  fetchCardList(params[type])
+  fetchCardList()
 }
 function onBrandChange() {
   // 这里可以执行品牌筛选相关逻辑
   fetchCardList()
 }
 function onPriceChange(type = 0) {
-  const params = { sortBetweenPrice: type }
   // 这里可以执行价格筛选相关逻辑
-  fetchCardList(params)
+  formData.value = {
+    ...formData.value,
+    sortBetweenPrice: type,
+    pageNo: 1,
+  }
+  fetchCardList()
 }
 </script>
 

@@ -25,7 +25,7 @@ import { fetchCarList } from '@/api/base/index.js'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import CarList from '@/components/CarList/CarList.vue'
+import CarList from '@/components/CarList/index.vue'
 const route = useRoute()
 const { t: $t } = useI18n()
 // 辆数据

@@ -30,29 +30,32 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 // 右侧内容的占位组件
 const Placeholder = {
   template: '<div style="padding:32px 0;text-align:center;color:#bbb;">此处为{{label}}内容</div>',
   props: ['label'],
 }
 const navList = [
-  { key: 'hot', label: '热门筛选' },
-  { key: 'type', label: '车辆类型' },
-  { key: 'price', label: '价格' },
-  { key: 'year', label: '上牌年份' },
-  { key: 'age', label: '车龄' },
-  { key: 'displacement', label: '排量' },
-  { key: 'mileage', label: '里程' },
-  { key: 'color', label: '车身颜色' },
-  { key: 'country', label: '国别' },
-  { key: 'gearbox', label: '变速箱' },
-  { key: 'factory', label: '厂家类型' },
-  { key: 'seat', label: '座位数量' },
-  { key: 'emission', label: '排放标准' },
-  { key: 'energy', label: '能源类型' },
-  { key: 'drive', label: '驱动方式' },
-  { key: 'structure', label: '车身结构' },
-  { key: 'tag', label: '车源标签' },
+  { key: 'type', label: t('filterPage.type') },
+  { key: 'age', label: t('filterPage.age') },
+  { key: 'displacement', label: t('filterPage.displacement') },
+  { key: 'color', label: t('filterPage.color') },
+  { key: 'emission', label: t('filterPage.emission') },
+  { key: 'drive', label: t('filterPage.drive') },
+
+  // { key: 'hot', label: '热门筛选' },
+  // { key: 'price', label: '价格' },
+  // { key: 'year', label: '上牌年份' },
+  // { key: 'mileage', label: '里程' },
+  // { key: 'country', label: '国别' },
+  // { key: 'gearbox', label: '变速箱' },
+  // { key: 'factory', label: '厂家类型' },
+  // { key: 'seat', label: '座位数量' },
+  // { key: 'energy', label: '能源类型' },
+  // { key: 'structure', label: '车身结构' },
+  // { key: 'tag', label: '车源标签' },
 ]
 const activeNav = ref(navList[0].key)
 const navMap = {}
@@ -219,4 +222,4 @@ $footer-height: 56px;
     }
   }
 }
-</style> 
+</style>

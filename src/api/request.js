@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { closeToast, showLoadingToast, showFailToast } from 'vant'
-
+import { t } from '@/i18n'
 // 全局请求计数器
 let requestCount = 0
 // 创建 Axios 实例
@@ -28,7 +28,7 @@ service.interceptors.request.use(
     // 可在此处添加 token 等
     if (requestCount === 1) {
       showLoadingToast({
-        message: '加载中...',
+        message: t('request.loading'),
         forbidClick: true,
         duration: 0,
       })
@@ -41,7 +41,7 @@ service.interceptors.request.use(
     if (requestCount === 0) {
       closeToast()
     }
-    showFailToast('请求发送失败')
+    showFailToast(t('request.sendFail'))
     return Promise.reject(error)
   },
 )
@@ -61,7 +61,7 @@ service.interceptors.response.use(
     if (response.data.status === 200 || response.data.status === 0) {
       return response.data
     } else {
-      showFailToast(response.data.message || '操作失败')
+      showFailToast(response.data.message || t('request.operateFail'))
       return Promise.reject(response.data)
     }
   },
@@ -72,30 +72,30 @@ service.interceptors.response.use(
     if (requestCount === 0) {
       closeToast();
     }
-    let message = '请求失败'
+    let message = t('request.fail')
     if (error.response) {
       console.log(error.response.status)
       switch (error.response.status) {
         case 400:
-          message = '请求参数错误'
+          message = t('request.paramError')
           break
         case 401:
-          message = '未授权，请登录'
+          message = t('request.unauthorized')
           break
         case 403:
-          message = '拒绝访问'
+          message = t('request.forbidden')
           break
         case 404:
-          message = '请求地址不存在'
+          message = t('request.notFound')
           break
         case 500:
-          message = '服务器内部错误'
+          message = t('request.serverError')
           break
         default:
-          message = `连接错误 ${error.response.status}`
+          message = t('request.connectError') + ' ' + error.response.status
       }
     } else if (error.request) {
-      message = '服务器无响应'
+      message = t('request.noResponse')
     } else {
       message = error.message
     }

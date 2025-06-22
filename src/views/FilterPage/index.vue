@@ -158,31 +158,41 @@ const ageMarks = { 0: '0', 2: '2', 4: '4', 6: '6', 8: '8', 10: '10', 11: t('filt
 const displacementMarks = { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: t('filterPage.unlimited') }
 
 const bodyColors = computed(() => [
-  { value: 'black', label: t('filterPage.colors.black') },
-  { value: 'white', label: t('filterPage.colors.white') },
-  { value: 'silverWhite', label: t('filterPage.colors.silverWhite') },
-  { value: 'red', label: t('filterPage.colors.red') },
-  { value: 'blue', label: t('filterPage.colors.blue') },
-  { value: 'silver', label: t('filterPage.colors.silver') },
-  { value: 'orange', label: t('filterPage.colors.orange') },
-  { value: 'purple', label: t('filterPage.colors.purple') },
-  { value: 'gold', label: t('filterPage.colors.gold') },
-  { value: 'gray', label: t('filterPage.colors.gray') },
-  { value: 'brown', label: t('filterPage.colors.brown') },
-  { value: 'green', label: t('filterPage.colors.green') }
+  { value: 'Арктический белый', label: t('filterPage.colors.arcticWhite') },
+  { value: 'Белая слоновая кость', label: t('filterPage.colors.ivoryWhite') },
+  { value: 'Белый', label: t('filterPage.colors.white') },
+  { value: 'Белый ледник', label: t('filterPage.colors.glacierWhite') },
+  { value: 'Желтый', label: t('filterPage.colors.yellow') },
+  { value: 'Зеленый', label: t('filterPage.colors.green') },
+  { value: 'Золотой', label: t('filterPage.colors.gold') },
+  { value: 'коричневый', label: t('filterPage.colors.brown') },
+  { value: 'Кофейный цвет', label: t('filterPage.colors.coffee') },
+  { value: 'Красный', label: t('filterPage.colors.red') },
+  { value: 'Красное дерево', label: t('filterPage.colors.mahogany') },
+  { value: 'Медный', label: t('filterPage.colors.copper') },
+  { value: 'Многоцветные', label: t('filterPage.colors.multicolor') },
+  { value: 'Оливковый цвет', label: t('filterPage.colors.olive') },
+  { value: 'Оранжевый', label: t('filterPage.colors.orange') },
+  { value: 'Прочее', label: t('filterPage.colors.other') },
+  { value: 'Серебряный', label: t('filterPage.colors.silver') },
+  { value: 'Серебряный серый', label: t('filterPage.colors.silverGray') },
+  { value: 'Серое', label: t('filterPage.colors.gray') },
+  { value: 'Синий', label: t('filterPage.colors.blue') },
+  { value: 'Синий цвет', label: t('filterPage.colors.cyan') },
+  { value: 'Темно-серый', label: t('filterPage.colors.darkGray') },
+  { value: 'Фиолетовый', label: t('filterPage.colors.purple') },
+  { value: 'Цвет графита', label: t('filterPage.colors.graphite') },
+  { value: 'Черный', label: t('filterPage.colors.black') },
+  { value: 'Шампанский', label: t('filterPage.colors.champagne') }
 ])
 
 const emissionStandards = computed(() => [
-  { value: 'guo1', label: t('filterPage.emissions.guo1') },
-  { value: 'guo2', label: t('filterPage.emissions.guo2') },
-  { value: 'guo3', label: t('filterPage.emissions.guo3') },
-  { value: 'guo4', label: t('filterPage.emissions.guo4') },
-  { value: 'guo5', label: t('filterPage.emissions.guo5') },
-  { value: 'guo6', label: t('filterPage.emissions.guo6') },
-  { value: 'ou1', label: t('filterPage.emissions.ou1') },
-  { value: 'ou2', label: t('filterPage.emissions.ou2') },
-  { value: 'ou3', label: t('filterPage.emissions.ou3') },
-  { value: 'ou4', label: t('filterPage.emissions.ou4') }
+  { value: 'Страна I', label: t('filterPage.emissions.guo1') },
+  { value: 'Страна II', label: t('filterPage.emissions.guo2') },
+  { value: 'Страна III', label: t('filterPage.emissions.guo3') },
+  { value: 'Страна IV', label: t('filterPage.emissions.guo4') },
+  { value: 'Страна V', label: t('filterPage.emissions.guo5') },
+  { value: 'Страна VI', label: t('filterPage.emissions.guo6') },
 ])
 
 const energyTypes = computed(() => [

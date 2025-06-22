@@ -2,7 +2,7 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-01 14:38:32
  * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-06-06 22:47:44
+ * @LastEditTime: 2025-06-22 21:47:31
  * @FilePath: \car-h5-project\src\views\CarDetailView\components\CarSwiper.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -65,6 +65,7 @@ const handleView = (images, index) => {
   position: relative;
   height: 280px;
   overflow: hidden;
+  border-radius: 8px;
 
   .swiper-img {
     width: 100%;
@@ -78,6 +79,7 @@ const handleView = (images, index) => {
     left: 0;
     right: 0;
     text-align: center;
+    white-space: nowrap;
 
     .indicator-dot {
       display: inline-block;
@@ -87,6 +89,7 @@ const handleView = (images, index) => {
       background: rgba(255, 255, 255, 0.5);
       margin: 0 4px;
       transition: all 0.3s;
+      vertical-align: middle;
 
       &.active {
         background: #fff;

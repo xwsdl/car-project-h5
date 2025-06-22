@@ -3,7 +3,7 @@
     <CarHeader />
 
     <div class="content-container">
-      <CarSwiper :images="carImages" />
+      <CarSwiper v-if="carImages.length" :images="carImages" />
       <PriceInfo
         :currentPrice="carBasicInfo.networkPrice"
         :originalPrice="carBasicInfo.salesPrice||''"
@@ -11,7 +11,7 @@
       <BasicInfo :car="carBasicInfo" />
       <DetailInfo :details="carDetails" />
       <PurchaseProcess :steps="purchaseSteps" />
-      <CarRecommend :cars="recommendedCars" />
+      <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars" />
     </div>
 
     <ActionBar />
@@ -49,13 +49,14 @@ onMounted(() => {
     })
   })
   fetchCardList()
+  initPurchaseSteps()
 })
 // 轮播图图片
 const carImages = ref([])
 
 // 价格信息
-const currentPrice = ref('$14,167.80 USD')
-const originalPrice = ref('$22,904.61 USD')
+// const currentPrice = ref('$14,167.80 USD')
+// const originalPrice = ref('$22,904.61 USD')
 
 // 汽车基本信息
 const carBasicInfo = ref({
@@ -70,23 +71,33 @@ const carBasicInfo = ref({
 
 // 汽车详细信息
 const carDetails = ref([
-  { label: $t('detail.appearanceColor'), value: '白色', valueKey: 'color' },
-  { label: $t('detail.carLicense'), value: 'SUV', valueKey: 'licensePlate' },
-  { label: $t('detail.power'), value: '1.5T 涡轮增压', valueKey: 'displacement' },
-  { label: $t('detail.transmission'), value: 'CVT无级变速' },
-  { label: $t('detail.mileage'), value: '15,000公里', valueKey: 'watchMile' },
-  { label: $t('detail.location'), value: '上海市', valueKey: 'storesAddress' },
+  { label: $t('detail.registrationDate'), valueKey: 'firstRegTime' },
+  { label: $t('detail.mileage'), valueKey: 'watchMile' },
+  { label: $t('detail.transmission'), valueKey: 'gearbox' },
+  { label: $t('detail.displacement'), valueKey: 'displacement' },
+  { label: $t('detail.color'), valueKey: 'color' },
+  { label: $t('detail.emissionStandard'), valueKey: 'emissionStandard' },
+  { label: $t('detail.manufacturerType'), valueKey: 'manufacturerType' },
+  { label: $t('detail.vehicleType'), valueKey: 'carAttribute' },
+  { label: $t('detail.msrp'), valueKey: 'networkPrice' },
+  { label: $t('detail.energyType'), valueKey: 'energyType' },
+  { label: $t('detail.insuranceExpiry'), valueKey: 'warrantyDate' },
+  { label: $t('detail.location'), valueKey: 'storesAddress' },
 ])
 
 // 购买流程
-const purchaseSteps = ref([
-  { index: 1, title: $t('detail.submitOrder'), desc: $t('detail.pick') },
-  { index: 2, title: $t('detail.pay'), desc: $t('detail.payTip') },
-  { index: 3, title: $t('detail.transport'), desc: $t('detail.transportTip') },
-  { index: 4, title: $t('detail.arrive'), desc: $t('detail.arriveTip') },
-  { index: 5, title: $t('detail.delivery'), desc: $t('detail.arriveTips') },
-  { index: 6, title: $t('detail.afterSale'), desc: $t('detail.afterSaleTip') },
-])
+const purchaseSteps = ref([])
+
+function initPurchaseSteps() {
+  purchaseSteps.value = [
+    { index: 1, title: $t('detail.submitOrder'), desc: $t('detail.submitOrderDesc') },
+    { index: 2, title: $t('detail.pay'), desc: $t('detail.payDesc') },
+    { index: 3, title: $t('detail.transport'), desc: $t('detail.transportDesc') },
+    { index: 4, title: $t('detail.arrive'), desc: $t('detail.arriveDesc') },
+    { index: 5, title: $t('detail.delivery'), desc: $t('detail.deliveryDesc') },
+    { index: 6, title: $t('detail.afterSale'), desc: $t('detail.afterSaleDesc') },
+  ]
+}
 
 // 推荐汽车
 const recommendedCars = ref([
@@ -117,12 +128,11 @@ const fetchCardList = () => {
     pageNo: 1,
     pageSize: 10,
     total: 0,
-    modelName: '丰田',
+    modelName: '',
     isAsc: false,
     sortBy: '',
     pages: '',
   }).then((res) => {
-    recommendedCars.value = res.list
     recommendedCars.value = res.list.map((item) => {
       return {
         title: item.modelName,
@@ -130,7 +140,7 @@ const fetchCardList = () => {
         date: item.firstRegTime,
         location: item.location,
         tag: item.carNature,
-        price: item.networkPrice,
+        price: `${item.networkPrice} ${$t('home.tenThousand')}`,
         image: item.carOtherPics && item.carOtherPics.split(',')[0],
       }
     })

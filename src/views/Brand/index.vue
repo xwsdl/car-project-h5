@@ -27,9 +27,11 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BrandHot from './components/BrandHot.vue'
 import BrandList from './components/BrandList.vue'
+import { useFilterStore } from '@/stores/filter'
 
 const { t } = useI18n()
 const router = useRouter()
+const filterStore = useFilterStore()
 
 const hotBrands = ref([])
 const brandGroups = ref([])
@@ -37,6 +39,10 @@ const loading = ref(false)
 const currentLetter = ref('A') // 默认选中字母A
 const isSidebarClick = ref(false)
 let sidebarClickTimer = null
+// 定义组件名称
+defineOptions({
+  name: 'Brand'
+})
 
 // 字母索引数据
 const letters = ref([
@@ -197,9 +203,8 @@ function onSidebarSelect(letter) {
 }
 
 function onBrandSelect(brand) {
-  // 处理品牌点击
-  console.log('选中品牌:', brand)
-  router.push(`/list/${brand.name}`)
+  filterStore.setFilter({ modelName:brand.name })
+  router.push('/home')
 }
 
 onMounted(() => {

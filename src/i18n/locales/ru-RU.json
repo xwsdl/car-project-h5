@@ -49,7 +49,10 @@
         "secondCar": "Второйhand",
         "qualityCar": "Качественные автомобили",
         "professionalService": "Профессиональный сервис",
-        "loadAll": "Загрузить все"
+        "loadAll": "Загрузить все",
+        "searchPlaceholder": "Search for brand, model",
+        "hotCategory": "Hot Categories",
+        "allBrands": "All Brands"
     },
     "detail": {
         "title": "Детали автомобиля",
@@ -78,7 +81,21 @@
         "afterSale": "Послепродажное обслуживание",
         "afterSaleDesc": "Онлайн-поддержка после продажи",
         "recommend": "Рекомендуемые автомобили",
-        "suggest": "Рекомендуемые автомобили"
+        "suggest": "Рекомендуемые автомобили",
+        "arriveTip": "Подтвердите адрес получения, и мы организуем для вас логистическую транспортировку.",
+        "deliveryTip": "После получения автомобиля, пожалуйста, подтвердите его состояние.",
+        "afterSaleTip": "Мы предоставляем комплексное послепродажное обслуживание, чтобы вы не беспокоились.",
+        "vehicleInfoTitle": "Информация об автомобиле",
+        "seeMoreParams": "Все параметры ›",
+        "registrationDate": "Дата регистрации",
+        "displacement": "Объем двигателя",
+        "color": "Цвет",
+        "emissionStandard": "Экостандарт",
+        "manufacturerType": "Производитель",
+        "vehicleType": "Тип автомобиля",
+        "msrp": "Цена нового",
+        "energyType": "Тип топлива",
+        "insuranceExpiry": "Страховка до"
     },
     "brand": {
         "title": "Выберите марку",
@@ -93,7 +110,9 @@
         "byd": "Бид",
         "alfaRomeo": "Альфа Ромео",
         "buick": "Бьюик",
-        "dodge": "Додж"
+        "dodge": "Додж",
+        "A": "A",
+        "B": "B"
     },
     "profile": {
         "header": {
@@ -204,5 +223,95 @@
         "connectError": "Ошибка подключения",
         "noResponse": "Сервер не отвечает",
         "operateFail": "Ошибка выполнения операции"
+    },
+    "app": {
+        "name": "H5 Car Project"
+    },
+    "tabbar": {
+        "profile": "Profile"
+    },
+    "filterPage": {
+        "type": "Vehicle Type",
+        "age": "Vehicle Age",
+        "displacement": "Displacement",
+        "color": "Color",
+        "emission": "Emission",
+        "drive": "Drive",
+        "vehicleType": "RU_Vehicle Type",
+        "customVehicleAge": "RU_Custom Vehicle Age",
+        "bodyColor": "RU_Body Color",
+        "emissionStandard": "RU_Emission Standard",
+        "driveMode": "RU_Drive Mode",
+        "energyType": "RU_Energy Type",
+        "unlimited": "RU_Unlimited",
+        "year": "RU_Year",
+        "displacementUnit": "RU_T/L",
+        "vehicleTypes": {
+            "sedan": "RU_Sedan (3-box)",
+            "suv": "RU_SUV",
+            "mpv": "RU_MPV",
+            "sportsCar": "RU_Sports Car",
+            "pickup": "RU_Pickup",
+            "van": "RU_Van",
+            "bus": "RU_Bus",
+            "truck": "RU_Truck",
+            "rv": "RU_RV",
+            "convertible": "RU_Convertible",
+            "coupe": "RU_Coupe",
+            "nev": "RU_NEV",
+            "wagon": "RU_Wagon",
+            "hatchback": "RU_Hatchback",
+            "hatchback_2box": "RU_Hatchback (2-box)",
+            "softTopConvertible": "RU_Soft-top Convertible",
+            "hardTopConvertible": "RU_Hard-top Convertible",
+            "hardTopCoupe": "RU_Hard-top Coupe"
+        },
+        "colors": {
+            "black": "RU_Black",
+            "white": "RU_White",
+            "silverWhite": "RU_Silver White",
+            "red": "RU_Red",
+            "blue": "RU_Blue",
+            "silver": "RU_Silver",
+            "orange": "RU_Orange",
+            "purple": "RU_Purple",
+            "gold": "RU_Gold",
+            "gray": "RU_Gray",
+            "brown": "RU_Brown",
+            "green": "RU_Green"
+        },
+        "emissions": {
+            "guo1": "RU_Guo I",
+            "guo2": "RU_Guo II",
+            "guo3": "RU_Guo III",
+            "guo4": "RU_Guo IV",
+            "guo5": "RU_Guo V",
+            "guo6": "RU_Guo VI",
+            "ou1": "RU_Euro I",
+            "ou2": "RU_Euro II",
+            "ou3": "RU_Euro III",
+            "ou4": "RU_Euro IV"
+        },
+        "driveModes": {
+            "unknown": "RU_Unknown",
+            "fwd": "RU_FWD",
+            "rwd": "RU_RWD",
+            "awd": "RU_AWD"
+        },
+        "energyTypes": {
+            "gasoline": "RU_Gasoline",
+            "diesel": "RU_Diesel",
+            "hybrid": "RU_Hybrid",
+            "naturalGas": "RU_Natural Gas",
+            "electric": "RU_Electric",
+            "phev": "RU_PHEV",
+            "erev": "RU_EREV",
+            "hydrogen": "RU_Hydrogen",
+            "gasoline48v": "RU_Gasoline + 48V Mild Hybrid",
+            "gasoline24v": "RU_Gasoline + 24V Mild Hybrid"
+        },
+        "title": "Расширенный фильтр",
+        "reset": "Сбросить",
+        "confirm": "Подтвердить"
     }
 }

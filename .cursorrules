@@ -20,6 +20,7 @@
 - 使用 Composition API 的 setup 语法糖
 - 页面命名规则：使用 views/Page1/index.vue 格式（如 views/Page1/index.vue、views/Page2/index.vue）
 - 页面尽量组件化开发 组件尽量独立，避免逻辑混杂 
+- 每添加新内容都要自动配置展示文案的多语言
 
 ## 移动端适配规则
 - 设计稿基准宽度：375px（iPhone 6/7/8）

@@ -2,11 +2,7 @@
   <div class="home">
     <!-- 轮播图 -->
     <van-swipe class="home-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item
-        v-for="(item, index) in swipeList"
-        :key="index"
-        @click="() => handleView(index)"
-      >
+      <van-swipe-item v-for="(item, index) in swipeList" :key="index" @click="() => handleView(index)">
         <img :src="item" width="50" height="50" class="swiper-img" />
       </van-swipe-item>
     </van-swipe>
@@ -14,32 +10,18 @@
     <!-- 固钉：查询搜索框 -->
     <van-sticky :offset-top="0" z-index="10">
       <div class="home-search">
-        <van-search
-          @search="handleSearch"
-          @clear="handleSearch"
-          v-model="formData.modelName"
-          :placeholder="$t('home.searchTip')"
-        />
-        <CarFilter
-          v-model:sort="sortValue"
-          v-model:brand="brandValue"
-          v-model:price="priceValue"
-          v-model:filter="filterValue"
-          @sort-change="onSortChange"
-          @brand-change="onBrandChange"
-          @price-change="onPriceChange"
-        />
+        <van-search @search="handleSearch" @clear="handleSearch" v-model="formData.modelName"
+          :placeholder="$t('home.searchTip')" />
+        <CarFilter v-model:sort="sortValue" v-model:brand="brandValue" v-model:price="priceValue"
+          v-model:filter="filterValue" @sort-change="onSortChange" @brand-change="onBrandChange"
+          @price-change="onPriceChange" />
       </div>
     </van-sticky>
     <!-- 商品列表 -->
     <div class="home-product">
-      <CarList
-        :cars="cars"
-        :isLoadAll="isLoadAll"
-        @load-more="loadMoreCars"
+      <CarList :cars="cars" :isLoadAll="isLoadAll" @load-more="loadMoreCars"
         :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
-        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
-      />
+        :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`" />
     </div>
   </div>
 </template>
@@ -48,10 +30,19 @@
 import { useI18n } from 'vue-i18n'
 import { fetchCarList } from '@/api/base/index.js'
 import { getBanner } from '@/utils/index.js'
-import { ref, onMounted, computed } from 'vue'
+import { restorePageState } from '@/utils/cache.js'
+import { ref, onMounted, computed, watch } from 'vue'
 import CarList from '@/components/CarList/index.vue'
 import CarFilter from '@/components/CarFilter/index.vue'
+import { useFilterStore } from '@/stores/filter'
+
+// 定义组件名称
+defineOptions({
+  name: 'homeIndex'
+})
+
 const { t: $t, locale } = useI18n()
+const filterStore = useFilterStore()
 
 // 初始车辆数据
 const cars = ref([])
@@ -66,13 +57,21 @@ const formData = ref({
   sortBetweenPrice: 0, //价格区间
 })
 
+// 筛选相关变量
+const sortValue = ref(0)
+const brandValue = ref(0)
+const priceValue = ref(0)
+const filterValue = ref(0)
+
 // 加载更多车辆
 const loadMoreCars = () => {
   if (isLoadAll.value) {
     return
   }
   formData.value.pageNo++
-  fetchCarList({...formData.value}).then((res) => {
+
+  const mergedQuery = getMergedQuery()
+  fetchCarList({ ...mergedQuery }).then((res) => {
     formData.value.total = res.total
     formData.value.pages = res.pages
     cars.value = [...cars.value, ...res.list]
@@ -87,8 +86,37 @@ const handleSearch = () => {
   fetchCardList()
 }
 
+const fetchCardList = () => {
+  // 不再判断 isQueryEmpty，始终请求接口
+  const mergedQuery = getMergedQuery()
+  fetchCarList({ ...mergedQuery }).then((res) => {
+    formData.value.total = res.total
+    formData.value.pages = res.pages
+    cars.value = res.list
+      .map((item) => {
+        item.mainImageUrl = item.carOtherPics && item.carOtherPics.split(',')[0]
+        return item
+      })
+      .filter((item) => item.mainImageUrl)
+  })
+}
+
 onMounted(() => {
-  fetchCardList()
+  // 尝试从缓存恢复状态
+  const cachedState = restorePageState('homeIndex')
+  if (cachedState) {
+    console.log('从缓存恢复首页状态')
+    formData.value = { ...formData.value, ...cachedState.formData }
+    sortValue.value = cachedState.sortValue || 0
+    brandValue.value = cachedState.brandValue || 0
+    priceValue.value = cachedState.priceValue || 0
+    filterValue.value = cachedState.filterValue || 0
+    cars.value = cachedState.cars || []
+  }
+  // 如果没有缓存数据或数据为空，始终请求接口
+  if (cars.value.length === 0) {
+    fetchCardList()
+  }
 })
 
 const zhBanners = [
@@ -110,28 +138,17 @@ const swipeList = computed(() => {
   return locale.value === 'zh-CN' ? zhBanners : ruBanners
 })
 
-const fetchCardList = () => {
-  fetchCarList({ ...formData.value }).then((res) => {
-    formData.value.total = res.total
-    formData.value.pages = res.pages
-    cars.value = res.list
-      .map((item) => {
-        item.mainImageUrl = item.carOtherPics && item.carOtherPics.split(',')[0]
-        return item
-      })
-      .filter((item) => item.mainImageUrl)
-  })
+// 合并全局筛选条件和本地分页参数
+function getMergedQuery() {
+  return {
+    ...formData.value,
+    ...filterStore.filter
+  }
 }
 
-const handleView = (index) => {
+const handleView = () => {
   // router.push(`/car/${swipeList.value[index].id}`)
 }
-
-// 筛选相关变量
-const sortValue = ref(0)
-const brandValue = ref(0)
-const priceValue = ref(0)
-const filterValue = ref(0)
 
 function onSortChange(type) {
   // 排序 1-价格最低  2-价格最高  3-年限最近
@@ -152,8 +169,8 @@ function onSortChange(type) {
 
   formData.value = {
     ...formData.value,
-    sortBy: params[type].sortBy || '',
-    isAsc: params[type].isAsc || false,
+    sortBy: params[type]?.sortBy || '',
+    isAsc: params[type]?.isAsc || false,
     pageNo: 1,
   }
 
@@ -173,6 +190,17 @@ function onPriceChange(type = 0) {
   }
   fetchCardList()
 }
+
+// 监听全局筛选条件变化，自动刷新数据
+watch(
+  () => filterStore.filter,
+  () => {
+    formData.value.pageNo = 1
+    cars.value = []
+    fetchCardList()
+  },
+  { deep: true }
+)
 </script>
 
 <style lang="scss" scoped>

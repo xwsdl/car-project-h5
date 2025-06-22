@@ -50,7 +50,10 @@
         "secondCar": "二手车",
         "qualityCar": "优质车源",
         "professionalService": "专业服务",
-        "loadAll": "已加载全部"
+        "loadAll": "已加载全部",
+        "searchPlaceholder": "搜索品牌、车型",
+        "hotCategory": "热门分类",
+        "allBrands": "全部品牌"
     },
     "detail": {
         "title": "汽车详情",
@@ -79,7 +82,21 @@
         "afterSale": "售后",
         "afterSaleDesc": "在线售后服务",
         "recommend": "推荐汽车",
-        "suggest": "推荐"
+        "suggest": "推荐",
+        "arriveTip": "确认收货地址，我们会为您安排物流运输",
+        "deliveryTip": "收到爱车后，请确认车辆状态",
+        "afterSaleTip": "提供完善的售后服务，让您无后顾之忧",
+        "vehicleInfoTitle": "车辆信息",
+        "seeMoreParams": "查看更多参数 ›",
+        "registrationDate": "上牌时间",
+        "displacement": "排量",
+        "color": "车身颜色",
+        "emissionStandard": "排放标准",
+        "manufacturerType": "厂家类型",
+        "vehicleType": "车辆类型",
+        "msrp": "新车指导价",
+        "energyType": "能源类型",
+        "insuranceExpiry": "强险到期"
     },
     "brand": {
         "title": "选择品牌",
@@ -94,7 +111,9 @@
         "byd": "比亚迪",
         "alfaRomeo": "阿尔法·罗密欧",
         "buick": "别克",
-        "dodge": "道奇"
+        "dodge": "道奇",
+        "A": "A",
+        "B": "B"
     },
     "profile": {
         "header": {
@@ -184,11 +203,87 @@
     },
     "filterPage": {
         "type": "车辆类型",
-        "age": "车龄",
+        "age": "自定义车龄",
         "displacement": "排量",
         "color": "车身颜色",
         "emission": "排放标准",
-        "drive": "驱动方式"
+        "drive": "驱动方式",
+        "vehicleType": "车辆类型",
+        "customVehicleAge": "自定义车龄",
+        "bodyColor": "车身颜色",
+        "emissionStandard": "排放标准",
+        "driveMode": "驱动方式",
+        "energyType": "能源类型",
+        "unlimited": "不限",
+        "year": "年",
+        "displacementUnit": "T/L",
+        "vehicleTypes": {
+            "sedan": "三厢车",
+            "suv": "SUV",
+            "mpv": "MPV",
+            "sportsCar": "跑车",
+            "pickup": "皮卡",
+            "van": "面包车",
+            "bus": "客车",
+            "truck": "货车",
+            "rv": "房车",
+            "convertible": "敞篷车",
+            "coupe": "轿跑车",
+            "nev": "新能源",
+            "wagon": "旅行车",
+            "hatchback": "掀背",
+            "hatchback_2box": "两厢车",
+            "softTopConvertible": "软顶敞篷车",
+            "hardTopConvertible": "硬顶敞篷车",
+            "hardTopCoupe": "硬顶跑车"
+        },
+        "colors": {
+            "black": "黑色",
+            "white": "白色",
+            "silverWhite": "银白色",
+            "red": "红色",
+            "blue": "蓝色",
+            "silver": "银色",
+            "orange": "橙色",
+            "purple": "紫色",
+            "gold": "金色",
+            "gray": "灰色",
+            "brown": "棕色",
+            "green": "绿色"
+        },
+        "emissions": {
+            "guo1": "国一",
+            "guo2": "国二",
+            "guo3": "国三",
+            "guo4": "国四",
+            "guo5": "国五",
+            "guo6": "国六",
+            "ou1": "欧一",
+            "ou2": "欧二",
+            "ou3": "欧三",
+            "ou4": "欧四"
+        },
+        "driveModes": {
+            "unknown": "未知",
+            "fwd": "前驱",
+            "rwd": "后驱",
+            "awd": "四驱"
+        },
+        "energyTypes": {
+            "gasoline": "汽油",
+            "diesel": "柴油",
+            "hybrid": "油电混合",
+            "naturalGas": "天然气",
+            "electric": "纯电动",
+            "phev": "插电式混合动力",
+            "erev": "增程式",
+            "hydrogen": "氢燃料",
+            "gasoline48v": "汽油+48V轻混",
+            "gasoline24v": "汽油+24V轻混"
+        },
+        "title": "高级筛选",
+        "reset": "重置",
+        "confirm": "确定"
     },
     "request": {
         "loading": "加载中...",

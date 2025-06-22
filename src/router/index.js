@@ -16,6 +16,7 @@ const router = createRouter({
           meta: {
             title: '首页',
             requiresAuth: false, // 不需要登录
+            keepAlive: true, // 需要缓存 ，注意：name的名称和组件名一致才生效
           },
         },
         {
@@ -25,6 +26,7 @@ const router = createRouter({
           meta: {
             title: '订单进程',
             requiresAuth: false, // 需要登录
+            keepAlive: false, // 需要缓存
           },
         },
         {
@@ -34,6 +36,7 @@ const router = createRouter({
           meta: {
             title: '消息',
             requiresAuth: false, // 需要登录
+            keepAlive: false, // 需要缓存
           },
         },
         {
@@ -43,6 +46,7 @@ const router = createRouter({
           meta: {
             title: '个人中心',
             requiresAuth: false, // 需要登录
+            keepAlive: false, // 需要缓存
           },
         },
         {
@@ -60,6 +64,7 @@ const router = createRouter({
           meta: {
             title: '车辆详情',
             requiresAuth: false, //
+            keepAlive: false, // 不需要缓存
           },
         },
         {
@@ -69,6 +74,7 @@ const router = createRouter({
           meta: {
             title: '车辆列表',
             requiresAuth: false, // 不需要登录
+            keepAlive: false, // 不需要缓存
           },
         },
         {
@@ -78,6 +84,7 @@ const router = createRouter({
           meta: {
             title: '车辆列表',
             requiresAuth: true, // 不需要登录
+            keepAlive: false, // 不需要缓存
           },
         },
         {
@@ -87,6 +94,7 @@ const router = createRouter({
           meta: {
             title: '客服',
             requiresAuth: true, // 不需要登录
+            keepAlive: false, // 不需要缓存
           },
         },
         {
@@ -96,6 +104,7 @@ const router = createRouter({
           meta: {
             title: '选择品牌',
             requiresAuth: false, // 不需要登录
+            keepAlive: true, // 不需要缓存
           },
         },
         {
@@ -105,6 +114,7 @@ const router = createRouter({
           meta: {
             title: '高级筛选',
             requiresAuth: false, // 不需要登录
+            keepAlive: true // 不需要缓存
           },
         },
       ],
@@ -116,6 +126,7 @@ const router = createRouter({
       meta: {
         title: '登录',
         requiresAuth: false, // 不需要登录
+        keepAlive: false, // 不需要缓存
       },
     },
   ],

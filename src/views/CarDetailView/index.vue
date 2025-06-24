@@ -1,7 +1,6 @@
 <template>
   <div class="car-detail-view">
     <CarHeader />
-
     <div class="content-container">
       <CarSwiper v-if="carImages.length" :images="carImages" />
       <PriceInfo
@@ -76,13 +75,14 @@ const carDetails = ref([
   { label: $t('detail.transmission'), valueKey: 'gearbox' },
   { label: $t('detail.displacement'), valueKey: 'displacement' },
   { label: $t('detail.color'), valueKey: 'color' },
-  { label: $t('detail.emissionStandard'), valueKey: 'emissionStandard' },
-  { label: $t('detail.manufacturerType'), valueKey: 'manufacturerType' },
-  { label: $t('detail.vehicleType'), valueKey: 'carAttribute' },
-  { label: $t('detail.msrp'), valueKey: 'networkPrice' },
   { label: $t('detail.energyType'), valueKey: 'energyType' },
-  { label: $t('detail.insuranceExpiry'), valueKey: 'warrantyDate' },
-  { label: $t('detail.location'), valueKey: 'storesAddress' },
+
+  // { label: $t('detail.emissionStandard'), valueKey: 'emissionStandard' },
+  // { label: $t('detail.manufacturerType'), valueKey: 'manufacturerType' },
+  // { label: $t('detail.vehicleType'), valueKey: 'carAttribute' },
+  // { label: $t('detail.msrp'), valueKey: 'networkPrice' },
+  // { label: $t('detail.insuranceExpiry'), valueKey: 'warrantyDate' },
+  // { label: $t('detail.location'), valueKey: 'storesAddress' },
 ])
 
 // 购买流程

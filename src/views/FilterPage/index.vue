@@ -12,7 +12,7 @@
       </div>
       <div class="filter-page__content" ref="contentRef" @scroll="handleScroll">
         <!-- 车辆类型 -->
-        <div id="type" class="filter-section">
+        <div id="type" class="filter-section" v-if="false">
           <h3 class="filter-section__title">{{ t('filterPage.vehicleType') }}</h3>
           <div class="option-grid">
             <van-button v-for="item in vehicleTypes" :key="item.value"
@@ -116,7 +116,7 @@ const router = useRouter()
 const filterStore = useFilterStore()
 
 const navList = [
-  { key: 'type', label: t('filterPage.vehicleType') },
+  // { key: 'type', label: t('filterPage.vehicleType') },
   { key: 'age', label: t('filterPage.customVehicleAge') },
   { key: 'displacement', label: t('filterPage.displacement') },
   { key: 'color', label: t('filterPage.bodyColor') },

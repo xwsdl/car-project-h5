@@ -5,7 +5,7 @@
       <CarSwiper v-if="carImages.length" :images="carImages" />
       <PriceInfo
         :currentPrice="carBasicInfo.networkPrice"
-        :originalPrice="carBasicInfo.salesPrice||''"
+        :originalPrice="carBasicInfo.salesPrice || ''"
       />
       <BasicInfo :car="carBasicInfo" />
       <DetailInfo :details="carDetails" />
@@ -72,12 +72,11 @@ const carBasicInfo = ref({
 const carDetails = ref([
   { label: $t('detail.registrationDate'), valueKey: 'firstRegTime' },
   { label: $t('detail.mileage'), valueKey: 'watchMile' },
-  { label: $t('detail.transmission'), valueKey: 'gearbox' },
+  { label: $t('detail.energyType'), valueKey: 'energyType' },
   { label: $t('detail.displacement'), valueKey: 'displacement' },
   { label: $t('detail.color'), valueKey: 'color' },
-  { label: $t('detail.energyType'), valueKey: 'energyType' },
-
-  // { label: $t('detail.emissionStandard'), valueKey: 'emissionStandard' },
+  { label: $t('detail.emissionStandard'), valueKey: 'emissionStandard' },
+  //  { label: $t('detail.transmission'), valueKey: 'gearbox' },
   // { label: $t('detail.manufacturerType'), valueKey: 'manufacturerType' },
   // { label: $t('detail.vehicleType'), valueKey: 'carAttribute' },
   // { label: $t('detail.msrp'), valueKey: 'networkPrice' },

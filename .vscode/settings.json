@@ -25,5 +25,8 @@
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "i18n-ally.keystyle": "nested"
+  "i18n-ally.keystyle": "nested",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

@@ -3,10 +3,15 @@
     <div class="filter-page__header">{{ t('filterPage.title') }}</div>
     <div class="filter-page__container">
       <div class="filter-page__sidebar">
-        <div v-for="item in navList" :key="item.key" :class="[
-          'filter-page__sidebar-item',
-          { 'filter-page__sidebar-item--active': activeNav === item.key }
-        ]" @click="scrollTo(item.key)">
+        <div
+          v-for="item in navList"
+          :key="item.key"
+          :class="[
+            'filter-page__sidebar-item',
+            { 'filter-page__sidebar-item--active': activeNav === item.key },
+          ]"
+          @click="scrollTo(item.key)"
+        >
           {{ item.label }}
         </div>
       </div>
@@ -15,9 +20,12 @@
         <div id="type" class="filter-section" v-if="false">
           <h3 class="filter-section__title">{{ t('filterPage.vehicleType') }}</h3>
           <div class="option-grid">
-            <van-button v-for="item in vehicleTypes" :key="item.value"
+            <van-button
+              v-for="item in vehicleTypes"
+              :key="item.value"
               :type="filterData.carType === item.value ? 'primary' : 'default'"
-              @click="filterData.carType = item.value">
+              @click="filterData.carType = item.value"
+            >
               {{ item.label }}
             </van-button>
           </div>
@@ -27,7 +35,14 @@
         <div id="age" class="filter-section">
           <h3 class="filter-section__title">{{ t('filterPage.customVehicleAge') }}</h3>
           <div class="slider-container">
-            <van-slider v-model="carBeginEnd" range :min="0" :max="11" :step="1" :marks="ageMarks" />
+            <van-slider
+              v-model="carBeginEnd"
+              range
+              :min="0"
+              :max="11"
+              :step="1"
+              :marks="ageMarks"
+            />
           </div>
           <div class="slider-inputs">
             <div class="input-item">
@@ -46,7 +61,13 @@
         <div id="displacement" class="filter-section">
           <h3 class="filter-section__title">{{ t('filterPage.displacement') }}</h3>
           <div class="slider-container">
-            <van-slider v-model="filterData.displacement" :min="0" :max="5" :step="0.1" :marks="displacementMarks" />
+            <van-slider
+              v-model="filterData.displacement"
+              :min="0"
+              :max="5"
+              :step="0.1"
+              :marks="displacementMarks"
+            />
           </div>
           <div class="slider-inputs">
             <div class="input-item">
@@ -60,8 +81,12 @@
         <div id="color" class="filter-section">
           <h3 class="filter-section__title">{{ t('filterPage.bodyColor') }}</h3>
           <div class="option-grid">
-            <van-button v-for="item in bodyColors" :key="item.value"
-              :type="filterData.color === item.value ? 'primary' : 'default'" @click="filterData.color = item.value">
+            <van-button
+              v-for="item in bodyColors"
+              :key="item.value"
+              :type="filterData.color === item.value ? 'primary' : 'default'"
+              @click="filterData.color = item.value"
+            >
               {{ item.label }}
             </van-button>
           </div>
@@ -71,9 +96,12 @@
         <div id="emission" class="filter-section">
           <h3 class="filter-section__title">{{ t('filterPage.emissionStandard') }}</h3>
           <div class="option-grid">
-            <van-button v-for="item in emissionStandards" :key="item.value"
+            <van-button
+              v-for="item in emissionStandards"
+              :key="item.value"
               :type="filterData.emissionStandard === item.value ? 'primary' : 'default'"
-              @click="filterData.emissionStandard = item.value">
+              @click="filterData.emissionStandard = item.value"
+            >
               {{ item.label }}
             </van-button>
           </div>
@@ -83,9 +111,12 @@
         <div id="energy" class="filter-section">
           <h3 class="filter-section__title">{{ t('filterPage.energyType') }}</h3>
           <div class="option-grid">
-            <van-button v-for="item in energyTypes" :key="item.value"
+            <van-button
+              v-for="item in energyTypes"
+              :key="item.value"
               :type="filterData.energyType === item.value ? 'primary' : 'default'"
-              @click="filterData.energyType = item.value">
+              @click="filterData.energyType = item.value"
+            >
               {{ item.label }}
             </van-button>
           </div>
@@ -94,7 +125,9 @@
       <div class="filter-page__footer">
         <div class="filter-page__footer-inner">
           <van-button block plain @click="onReset">{{ t('filterPage.reset') }}</van-button>
-          <van-button block type="primary" @click="onConfirm">{{ t('filterPage.confirm') }}</van-button>
+          <van-button block type="primary" @click="onConfirm">{{
+            t('filterPage.confirm')
+          }}</van-button>
         </div>
       </div>
     </div>
@@ -108,7 +141,7 @@ import { useRouter } from 'vue-router'
 import { useFilterStore } from '@/stores/filter'
 
 defineOptions({
-  name: 'FilterPage'
+  name: 'FilterPage',
 })
 
 const { t } = useI18n()
@@ -128,13 +161,13 @@ const contentRef = ref(null)
 let scrollTimeout = null // Timer to manage scroll event handling after a click
 
 const filterData = reactive({
-  carType: null,           // 车辆类型
-  carBegin: 0,            // 车龄起始
-  carEnd: 11,             // 车龄结束
-  displacement: 0.0,        // 排量
-  color: null,            // 颜色
+  carType: null, // 车辆类型
+  carBegin: 0, // 车龄起始
+  carEnd: 11, // 车龄结束
+  displacement: 0.0, // 排量
+  color: null, // 颜色
   emissionStandard: null, // 排放标准
-  energyType: null        // 能源类型
+  energyType: null, // 能源类型
 })
 
 const initialFilterData = JSON.parse(JSON.stringify(filterData))
@@ -183,7 +216,7 @@ const bodyColors = computed(() => [
   { value: 'Фиолетовый', label: t('filterPage.colors.purple') },
   { value: 'Цвет графита', label: t('filterPage.colors.graphite') },
   { value: 'Черный', label: t('filterPage.colors.black') },
-  { value: 'Шампанский', label: t('filterPage.colors.champagne') }
+  { value: 'Шампанский', label: t('filterPage.colors.champagne') },
 ])
 
 const emissionStandards = computed(() => [
@@ -230,7 +263,7 @@ const scrollTo = (key) => {
   if (targetEl) {
     contentRef.value.scrollTo({
       top: targetEl.offsetTop,
-      behavior: 'smooth'
+      behavior: 'smooth',
     })
   }
 }
@@ -280,7 +313,6 @@ function onConfirm() {
   console.log('onConfirm', filterData)
   filterStore.setFilter({ ...filterData })
   router.push('/home')
-
 }
 
 // 车龄双向绑定
@@ -289,7 +321,7 @@ const carBeginEnd = computed({
   set: ([begin, end]) => {
     filterData.carBegin = begin
     filterData.carEnd = end
-  }
+  },
 })
 </script>
 
@@ -352,7 +384,9 @@ $footer-height: 56px;
       cursor: pointer;
       font-size: 18px;
       border-left: 3px solid transparent;
-      transition: background 0.2s, color 0.2s;
+      transition:
+        background 0.2s,
+        color 0.2s;
       user-select: none;
       display: block;
       height: auto;
@@ -406,7 +440,7 @@ $footer-height: 56px;
       padding: 0 16px;
     }
 
-    >.van-button {
+    > .van-button {
       flex: 1;
       border-radius: 0;
       height: 36px;
@@ -415,7 +449,7 @@ $footer-height: 56px;
       width: auto;
     }
 
-    >.van-button:not(:last-child) {
+    > .van-button:not(:last-child) {
       margin-right: 0;
     }
   }
@@ -530,7 +564,7 @@ $footer-height: 56px;
       gap: 8px;
       padding: 6px 0;
 
-      >.van-button {
+      > .van-button {
         height: 32px;
         font-size: 14px;
         margin: 0 6px;

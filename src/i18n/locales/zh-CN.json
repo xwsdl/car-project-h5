@@ -96,7 +96,16 @@
         "vehicleType": "车辆类型",
         "msrp": "新车指导价",
         "energyType": "能源类型",
-        "insuranceExpiry": "强险到期"
+        "insuranceExpiry": "强险到期",
+        "carCondition": "车况描述",
+        "carSource": "车源情况",
+        "annualInspection": "年检",
+        "insurance": "保险",
+        "report": "车辆报告",
+        "publishTime": "发布时间",
+        "updateTime": "更新时间",
+        "viewReport": "去查看报告",
+        "noRecord": "暂无记录"
     },
     "brand": {
         "title": "选择品牌",

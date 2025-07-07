@@ -95,7 +95,16 @@
         "vehicleType": "Тип автомобиля",
         "msrp": "Цена нового",
         "energyType": "Тип топлива",
-        "insuranceExpiry": "Страховка до"
+        "insuranceExpiry": "Страховка до",
+        "carCondition": "Описание состояния",
+        "carSource": "Источник автомобиля",
+        "annualInspection": "Годность",
+        "insurance": "Страховка",
+        "report": "Автотранспортные средства",
+        "publishTime": "Время публикации",
+        "updateTime": "Время обновления",
+        "viewReport": "Посмотреть отчет",
+        "noRecord": "Нет записей"
     },
     "brand": {
         "title": "Выберите марку",

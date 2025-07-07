@@ -1,3 +1,11 @@
+<!--
+ * @Author: xiaowei 2902267627@qq.com
+ * @Date: 2025-06-11 11:20:46
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-07 17:27:06
+ * @FilePath: \car-project-h5\src\views\Home\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="home">
     <!-- 轮播图 -->
@@ -47,7 +55,7 @@
 <script setup>
   import { useI18n } from 'vue-i18n'
   import { fetchCarList } from '@/api/base/index.js'
-  import { getBanner } from '@/utils/index.js'
+  import { getBanner, extractImageUrls } from '@/utils/index.js'
   import { restorePageState } from '@/utils/cache.js'
   import { ref, onMounted, computed, watch } from 'vue'
   import CarList from '@/components/CarList/index.vue'
@@ -92,7 +100,15 @@
     fetchCarList({ ...mergedQuery }).then(res => {
       formData.value.total = res.total
       formData.value.pages = res.pages
-      cars.value = [...cars.value, ...res.list]
+      const list = res.list
+        .map(item => {
+          const imageList = (item.carOtherPics && extractImageUrls(item.carOtherPics)) || []
+          item.mainImageUrl = imageList[0]
+          item.carOtherPics = imageList
+          return item
+        })
+        .filter(item => item.mainImageUrl)
+      cars.value = [...cars.value, ...list]
     })
   }
 
@@ -112,7 +128,9 @@
       formData.value.pages = res.pages
       cars.value = res.list
         .map(item => {
-          item.mainImageUrl = item.carOtherPics && item.carOtherPics.split(',')[0]
+          const imageList = (item.carOtherPics && extractImageUrls(item.carOtherPics)) || []
+          item.mainImageUrl = imageList[0]
+          item.carOtherPics = imageList
           return item
         })
         .filter(item => item.mainImageUrl)
@@ -164,24 +182,22 @@
     }
   }
 
-  const handleView = () => {
-    // router.push(`/car/${swipeList.value[index].id}`)
-  }
+  const handleView = () => {}
 
   function onSortChange(type) {
     // 排序 1-价格最低  2-价格最高  3-年限最近
     const params = {
       1: {
         isAsc: true,
-        sortBy: 'networkPrice'
+        sortBy: 'ruble'
       },
       2: {
         isAsc: false,
-        sortBy: 'networkPrice'
+        sortBy: 'ruble'
       },
       3: {
         isAsc: false,
-        sortBy: 'firstRegTime'
+        sortBy: 'firstRegTimeStr'
       }
     }
 

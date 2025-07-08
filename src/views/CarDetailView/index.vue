@@ -58,7 +58,7 @@
 <script setup>
   import { useI18n } from 'vue-i18n'
   import { extractImageUrls } from '@/utils/index.js'
-  import { fetchCarDetail, fetchCarList } from '@/api/base/index.js'
+  import { fetchCarDetail, fetchRecommend } from '@/api/base/index.js'
   import { ref, onMounted } from 'vue'
   import CarHeader from './components/CarHeader.vue'
   import CarSwiper from './components/CarSwiper.vue'
@@ -75,7 +75,7 @@
     // 将页面滚动条滚动到顶部
     window.scrollTo(0, 0)
     fetchCarDetail(route.params.id).then(res => {
-      console.log('fetchCarDetail', res)
+      fetchCardList(res.brand)
       carBasicInfo.value = res
       carImages.value = res.carOtherPics && extractImageUrls(res.carOtherPics)
       carDetails.value = carDetails.value.map(item => {
@@ -85,7 +85,6 @@
         }
       })
     })
-    fetchCardList()
   })
   // 轮播图图片
   const carImages = ref([])
@@ -108,25 +107,16 @@
   // 推荐汽车
   const recommendedCars = ref([])
 
-  const fetchCardList = () => {
-    fetchCarList({
-      pageNo: 1,
-      pageSize: 10,
-      total: 0,
-      modelName: '',
-      isAsc: false,
-      sortBy: '',
-      pages: ''
+  const fetchCardList = brand => {
+    fetchRecommend({
+      brand
     }).then(res => {
-      recommendedCars.value = res.list.map(item => {
+      recommendedCars.value = res.map(item => {
+        const imageList = (item.carOtherPics && extractImageUrls(item.carOtherPics)) || []
         return {
-          title: item.modelName,
-          subtitle: item.emissionStandard,
-          date: item.firstRegTimeStr,
-          location: item.location,
-          tag: item.carNature,
-          price: `${item.ruble} ${$t('home.tenThousand')}`,
-          image: item.carOtherPics && item.carOtherPics.split(',')[0]
+          ...item,
+          mainImageUrl: imageList[0],
+          carOtherPics: imageList
         }
       })
     })

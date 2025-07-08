@@ -117,7 +117,7 @@
   })
 
   const handleSearch = () => {
-    fetchCardList()
+    filterStore.setFilter({ modelName: formData.value.modelName })
   }
 
   const fetchCardList = () => {

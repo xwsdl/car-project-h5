@@ -11,7 +11,8 @@
         "message": "消息",
         "personalCenter": "个人中心",
         "shoppingCart": "购物车",
-        "noMore": "没有更多了"
+        "noMore": "没有更多了",
+        "cancel": "取消"
     },
     "login": {
         "welcome": "欢迎回来",
@@ -58,6 +59,8 @@
     "detail": {
         "title": "汽车详情",
         "share": "分享汽车详情",
+        "defaultTitle": "优质汽车推荐",
+        "defaultDesc": "发现心仪的汽车，专业服务保障",
         "purchaseProcess": "购买流程",
         "sendMessage": "发送消息",
         "buyNow": "立即购买",
@@ -323,5 +326,18 @@
         "connectError": "连接错误",
         "noResponse": "服务器无响应",
         "operateFail": "操作失败"
+    },
+    "share": {
+        "title": "分享到",
+        "wechat": "微信好友",
+        "moments": "朋友圈",
+        "whatsapp": "WhatsApp",
+        "copy": "复制链接",
+        "sms": "短信",
+        "email": "邮件",
+        "success": "分享成功",
+        "copySuccess": "复制成功",
+        "error": "分享失败",
+        "openWechat": "请在微信中打开"
     }
 }

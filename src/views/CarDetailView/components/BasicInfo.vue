@@ -1,8 +1,16 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-07 18:03:07
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-08 20:08:50
+ * @FilePath: \car-project-h5\src\views\CarDetailView\components\BasicInfo.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!--
+ * @Author: 肖蔚 xiaowei@yw105.wecom.work
+ * @Date: 2025-06-09 20:54:50
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-06-28 12:34:42
  * @FilePath: \car-project-h5\src\views\CarDetailView\components\BasicInfo.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->

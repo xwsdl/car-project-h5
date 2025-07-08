@@ -2,7 +2,7 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-01 14:40:06
  * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-06-06 21:42:16
+ * @LastEditTime: 2025-06-28 16:14:34
  * @FilePath: \car-h5-project\src\views\CarDetailView\components\ActionBar.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -50,7 +50,7 @@ const buyNow = () => {
   display: flex;
   padding: 10px 15px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 100;
+  z-index: 10;
 
   .action-btn {
     flex: 1;

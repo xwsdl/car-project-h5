@@ -128,7 +128,10 @@
         "header": {
             "logout": "退出登录",
             "goldMember": "黄金会员",
-            "loggingOut": "退出中..."
+            "loggingOut": "退出中...",
+            "notLoggedIn": "您还未登录",
+            "login": "去登录",
+            "register": "注册账号"
         },
         "services": {
             "title": "我的服务",

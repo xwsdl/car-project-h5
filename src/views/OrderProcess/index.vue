@@ -1,3 +1,11 @@
+<!--
+ * @Author: xiaowei 2902267627@qq.com
+ * @Date: 2025-06-20 09:31:27
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-08 15:05:31
+ * @FilePath: \car-project-h5\src\views\OrderProcess\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="order-process">
     <van-nav-bar
@@ -5,36 +13,19 @@
       left-arrow
       @click-left="goBack"
     />
-
     <div class="order-content">
-      <van-tabs v-model="activeTab" sticky>
-        <van-tab :title="$t('orderProcess.tabs.all')" name="all">
-          <order-list :orders="allOrders" />
-        </van-tab>
-        <van-tab :title="$t('orderProcess.tabs.unpaid')" name="unpaid">
-          <order-list :orders="unpaidOrders" />
-        </van-tab>
-        <van-tab :title="$t('orderProcess.tabs.unshipped')" name="unshipped">
-          <order-list :orders="unshippedOrders" />
-        </van-tab>
-        <van-tab :title="$t('orderProcess.tabs.unreceived')" name="unreceived">
-          <order-list :orders="unreceivedOrders" />
-        </van-tab>
-        <van-tab :title="$t('orderProcess.tabs.completed')" name="completed">
-          <order-list :orders="completedOrders" />
-        </van-tab>
-      </van-tabs>
+      <!-- 直接渲染全部订单列表 -->
+      <order-list :orders="orders" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import OrderList from './components/OrderList.vue'
 
 const router = useRouter()
-const activeTab = ref('all')
 
 // 模拟订单数据
 const orders = ref([
@@ -71,13 +62,6 @@ const orders = ref([
     image: '/src/assets/images/BYD.png'
   }
 ])
-
-// 根据状态筛选订单
-const allOrders = computed(() => orders.value)
-const unpaidOrders = computed(() => orders.value.filter(order => order.status === 'unpaid'))
-const unshippedOrders = computed(() => orders.value.filter(order => order.status === 'unshipped'))
-const unreceivedOrders = computed(() => orders.value.filter(order => order.status === 'unreceived'))
-const completedOrders = computed(() => orders.value.filter(order => order.status === 'completed'))
 
 const goBack = () => {
   router.back()

@@ -127,7 +127,10 @@
         "header": {
             "logout": "Выйти",
             "goldMember": "Золотой член",
-            "loggingOut": "Выход..."
+            "loggingOut": "Выход...",
+            "notLoggedIn": "Не вошли",
+            "login": "Войти",
+            "register": "Регистрация"
         },
         "services": {
             "title": "Мои услуги",

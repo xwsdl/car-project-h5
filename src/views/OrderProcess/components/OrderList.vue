@@ -11,9 +11,7 @@
       >
         <div class="order-header">
           <span class="order-id">{{ $t('orderProcess.orderId') }}: {{ order.id }}</span>
-          <span class="order-status" :class="order.status">
-            {{ getStatusText(order.status) }}
-          </span>
+          <!-- 删除状态标签 -->
         </div>
 
         <div class="order-content">
@@ -24,34 +22,12 @@
             <h3 class="car-name">{{ order.carName }}</h3>
             <p class="car-price">{{ order.price }}</p>
             <p class="order-time">{{ $t('orderProcess.createTime') }}: {{ order.createTime }}</p>
+            <!-- 新增：实际进度展示 -->
+            <p class="order-progress">{{$t('orderProcess.progress')}}：{{ getStatusText(order.status) }}</p>
           </div>
         </div>
 
-        <div class="order-actions">
-          <van-button
-            v-if="order.status === 'unpaid'"
-            type="primary"
-            size="small"
-            @click.stop="payOrder(order)"
-          >
-            {{ $t('orderProcess.pay') }}
-          </van-button>
-          <van-button
-            v-if="order.status === 'unreceived'"
-            type="success"
-            size="small"
-            @click.stop="confirmReceive(order)"
-          >
-            {{ $t('orderProcess.confirmReceive') }}
-          </van-button>
-          <van-button
-            plain
-            size="small"
-            @click.stop="viewDetail(order)"
-          >
-            {{ $t('orderProcess.viewDetail') }}
-          </van-button>
-        </div>
+        <!-- 删除底部按钮 -->
       </div>
     </div>
   </div>
@@ -59,11 +35,12 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t: $t } = useI18n()
 
-const props = defineProps({
+defineProps({
   orders: {
     type: Array,
     default: () => []
@@ -71,28 +48,17 @@ const props = defineProps({
 })
 
 const getStatusText = (status) => {
+  // 建议后续用i18n多语言
   const statusMap = {
-    unpaid: '待付款',
-    unshipped: '待发货',
-    unreceived: '待收货',
-    completed: '已完成'
+    unpaid: $t('orderProcess.status.unpaid'),
+    unshipped: $t('orderProcess.status.unshipped'),
+    unreceived: $t('orderProcess.status.unreceived'),
+    completed: $t('orderProcess.status.completed')
   }
   return statusMap[status] || status
 }
 
 const viewOrderDetail = (order) => {
-  router.push(`/order/${order.id}`)
-}
-
-const payOrder = (order) => {
-  showToast('跳转到支付页面')
-}
-
-const confirmReceive = (order) => {
-  showToast('确认收货成功')
-}
-
-const viewDetail = (order) => {
   router.push(`/order/${order.id}`)
 }
 </script>
@@ -108,56 +74,30 @@ const viewDetail = (order) => {
       margin-bottom: 12px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+      &:active {
+        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      }
       .order-header {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
         margin-bottom: 12px;
         padding-bottom: 8px;
         border-bottom: 1px solid #f0f0f0;
-
         .order-id {
           font-size: 14px;
           color: #666;
         }
-
-        .order-status {
-          font-size: 12px;
-          padding: 2px 8px;
-          border-radius: 12px;
-
-          &.unpaid {
-            background: #fff2e8;
-            color: #ff6b35;
-          }
-
-          &.unshipped {
-            background: #e6f7ff;
-            color: #1890ff;
-          }
-
-          &.unreceived {
-            background: #f6ffed;
-            color: #52c41a;
-          }
-
-          &.completed {
-            background: #f0f0f0;
-            color: #666;
-          }
-        }
       }
-
       .order-content {
         display: flex;
         margin-bottom: 12px;
-
         .car-image {
           width: 80px;
           height: 60px;
           margin-right: 12px;
-
           img {
             width: 100%;
             height: 100%;
@@ -165,36 +105,31 @@ const viewDetail = (order) => {
             border-radius: 4px;
           }
         }
-
         .car-info {
           flex: 1;
-
           .car-name {
             font-size: 16px;
             font-weight: 500;
             margin: 0 0 4px 0;
             color: #333;
           }
-
           .car-price {
             font-size: 18px;
             font-weight: bold;
             color: #ff6b35;
             margin: 0 0 4px 0;
           }
-
           .order-time {
             font-size: 12px;
             color: #999;
             margin: 0;
           }
+          .order-progress {
+            font-size: 13px;
+            color: #1890ff;
+            margin: 4px 0 0 0;
+          }
         }
-      }
-
-      .order-actions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
       }
     }
   }

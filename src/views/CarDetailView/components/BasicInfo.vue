@@ -1,8 +1,8 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-08 20:08:50
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-10 15:11:19
  * @FilePath: \car-project-h5\src\views\CarDetailView\components\BasicInfo.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -16,7 +16,17 @@
 -->
 <template>
   <div class="basic-info">
-    <h1 class="car-title">{{ `${car.brand} ${car.vehicleSeries}` }}</h1>
+    <h1 class="car-title">
+      {{ `${car.brand} ${car.vehicleSeries}` }}
+      <span
+        style="margin-left: 10px"
+        v-clipboard:copy="car.id"
+        v-clipboard:success="onCopySuccess"
+        v-clipboard:error="onCopyError"
+      >
+        {{ car.id }}
+      </span>
+    </h1>
     <div class="car-subtitle">{{ car.carModel }}</div>
     <div class="car-subtitle">{{ car.color }}</div>
     <div class="car-meta">
@@ -27,6 +37,9 @@
 </template>
 
 <script setup>
+  import { showToast } from 'vant'
+  import { useI18n } from 'vue-i18n'
+  const { t: $t } = useI18n()
   defineProps({
     car: {
       type: Object,
@@ -41,6 +54,13 @@
       })
     }
   })
+
+  function onCopySuccess() {
+    showToast($t('common.copySuccess'))
+  }
+  function onCopyError() {
+    showToast($t('common.copyFail'))
+  }
 </script>
 
 <style lang="scss" scoped>

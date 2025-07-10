@@ -12,7 +12,9 @@
         "personalCenter": "个人中心",
         "shoppingCart": "购物车",
         "noMore": "没有更多了",
-        "cancel": "取消"
+        "cancel": "取消",
+        "copySuccess": "复制成功",
+        "copyFail": "复制失败"
     },
     "login": {
         "welcome": "欢迎回来",
@@ -54,7 +56,8 @@
         "loadAll": "已加载全部",
         "searchPlaceholder": "搜索品牌、车型",
         "hotCategory": "热门分类",
-        "allBrands": "全部品牌"
+        "allBrands": "全部品牌",
+        "horgosPrice": "霍尔果斯价"
     },
     "detail": {
         "title": "汽车详情",
@@ -102,6 +105,7 @@
         "insuranceExpiry": "强险到期",
         "carCondition": "车况描述",
         "carSource": "车源情况",
+        "carSourceNumber": "车源编号",
         "annualInspection": "年检",
         "insurance": "保险",
         "report": "车辆报告",

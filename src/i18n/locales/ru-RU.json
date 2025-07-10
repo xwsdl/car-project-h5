@@ -12,7 +12,9 @@
         "personalCenter": "Профиль",
         "shoppingCart": "Корзина",
         "noMore": "Больше нечего",
-        "cancel": "Отмена"
+        "cancel": "Отмена",
+        "copySuccess": "Скопировано успешно",
+        "copyFail": "Ошибка копирования"
     },
     "login": {
         "welcome": "Сардэчна запрашаем",
@@ -53,7 +55,8 @@
         "loadAll": "Загрузить все",
         "searchPlaceholder": "Search for brand, model",
         "hotCategory": "Hot Categories",
-        "allBrands": "All Brands"
+        "allBrands": "All Brands",
+        "horgosPrice": "Цена Хоргоса"
     },
     "detail": {
         "title": "Детали автомобиля",
@@ -101,6 +104,7 @@
         "insuranceExpiry": "Страховка до",
         "carCondition": "Описание состояния",
         "carSource": "Источник автомобиля",
+        "carSourceNumber": "Номер источника автомобиля",
         "annualInspection": "Годность",
         "insurance": "Страховка",
         "report": "Автотранспортные средства",

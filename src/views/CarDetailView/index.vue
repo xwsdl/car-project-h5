@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="CarDetailView">
   import { useI18n } from 'vue-i18n'
   import { extractImageUrls } from '@/utils/index.js'
   import { fetchCarDetail, fetchRecommend } from '@/api/base/index.js'
@@ -81,7 +81,7 @@
       carDetails.value = carDetails.value.map(item => {
         return {
           label: item.label,
-          value: res[item.valueKey]
+          value: item.valueKey != 'watchMile' ? res[item.valueKey] : `${res.watchMile} Km`
         }
       })
     })

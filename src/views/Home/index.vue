@@ -2,7 +2,7 @@
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
  * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-07 17:27:06
+ * @LastEditTime: 2025-07-10 10:15:38
  * @FilePath: \car-project-h5\src\views\Home\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -45,7 +45,7 @@
         :cars="cars"
         :isLoadAll="isLoadAll"
         @load-more="loadMoreCars"
-        :title="`${$t('home.newCar')}${$t('home.secondCar')}`"
+        :title="`${$t('home.secondCar')}`"
         :subtitle="`${$t('home.qualityCar')},${$t('home.professionalService')}`"
       />
     </div>
@@ -166,7 +166,10 @@
     getBanner('01-2.jpg'),
     getBanner('02-2.jpg'),
     getBanner('03-2.jpg'),
-    getBanner('04-2.jpg')
+    getBanner('04-2.jpg'),
+    getBanner('05-2.jpg'),
+    getBanner('06-2.jpg'),
+    getBanner('07-2.jpg')
   ]
 
   // 轮播图

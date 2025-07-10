@@ -4,6 +4,7 @@ import '@/assets/scss/reset.scss'
 import 'vant/es/toast/style';
 import 'vant/es/image-preview/style'; // 手动导入showImagePreview方法用到的样式
 import { installRouterGuard } from '@/router/guard'
+import VueClipboard from 'vue3-clipboard'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -17,6 +18,10 @@ installRouterGuard(app)
 app.use(i18n)
 app.use(createPinia())
 app.use(router)
+app.use(VueClipboard, {
+  autoSetContainer: true,
+  appendToBody: true
+})
 
 app.mount('#app')
 

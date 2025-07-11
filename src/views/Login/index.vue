@@ -2,28 +2,73 @@
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-09 09:14:40
  * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-06-20 10:36:57
+ * @LastEditTime: 2025-07-11 14:09:30
  * @FilePath: \car-h5-project\src\views\Login\index.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: 登录注册页面
 -->
 <template>
-  <div class="login">
-    <div v-if="false">
+  <div class="login-page">
+    <div class="login-page__language">
       <LanguageSwitcher />
     </div>
-    <LoginHeader />
-    <LoginForm />
+    <div class="login-page__tabs">
+      <van-tabs v-model:active="activeTab" @change="handleTabChange">
+        <van-tab :title="$t('login.login')" name="login">
+          <LoginForm />
+        </van-tab>
+        <van-tab :title="$t('login.register')" name="register">
+          <RegisterForm />
+        </van-tab>
+      </van-tabs>
+    </div>
   </div>
 </template>
 
 <script setup>
-import LoginForm from './components/LoginForm.vue'
-import LoginHeader from './components/LoginHeader.vue'
-import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
+  import { ref } from 'vue'
+  import LoginForm from './components/LoginForm.vue'
+  import RegisterForm from './components/RegisterForm.vue'
+  import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
+
+  // 定义组件名称
+  defineOptions({
+    name: 'LoginPage'
+  })
+
+  const activeTab = ref('login')
+
+  const handleTabChange = name => {
+    activeTab.value = name
+  }
 </script>
 
 <style lang="scss" scoped>
-.login {
-  width: 100%;
-}
+  .login-page {
+    width: 100%;
+    &__language {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px;
+    }
+
+    &__tabs {
+      margin-top: 20px;
+
+      :deep(.van-tabs__wrap) {
+        background-color: #fff;
+      }
+
+      :deep(.van-tab) {
+        color: #666;
+        font-size: 16px;
+      }
+      :deep(.van-tab--active) {
+        color: #223c61;
+        font-weight: 600;
+      }
+      :deep(.van-tabs__line) {
+        background-color: #223c61;
+      }
+    }
+  }
 </style>

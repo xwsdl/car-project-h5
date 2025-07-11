@@ -27,6 +27,11 @@ export const login = (data) => {
   return post(`/users/login`, data)
 }
 
+// 注册接口
+export const register = (data) => {
+  return post(`/users/register`, data)
+}
+
 // 获取车辆列表
 export const fetchCarBrandList = (params) => {
   return get(`/carinform/getCarBrand`, params)

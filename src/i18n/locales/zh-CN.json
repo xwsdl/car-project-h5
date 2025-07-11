@@ -29,7 +29,15 @@
         "backHome": "返回首页",
         "fillIn": "请填写",
         "individual": "同意个人隐私条款",
-        "accountLogin": "账号登录"
+        "accountLogin": "账号登录",
+        "confirmPassword": "确认密码",
+        "passwordNotMatch": "两次输入的密码不一致",
+        "passwordRule": "密码长度至少6位，包含字母和数字",
+        "accountRule": "账号长度至少3位，只能包含字母、数字和下划线",
+        "registerSuccess": "注册成功",
+        "registerFail": "注册失败",
+        "accountExists": "账号已存在",
+        "registerAccount": "注册账号"
     },
     "home": {
         "title": "首页",

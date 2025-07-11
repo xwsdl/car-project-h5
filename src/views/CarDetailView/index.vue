@@ -39,12 +39,15 @@
       <div class="section-block">
         <h2 class="section-title">{{ $t('detail.carSource') }}</h2>
         <div class="section-content car-source">
-          <img
+          <van-image
             class="car-source-img"
-            alt="car source"
+            fit="cover"
             v-for="item in carImages"
             :key="item"
             :src="item"
+            lazy-load
+            :alt="$t('carDetail.swiper.carImage')"
+            radius="8"
           />
         </div>
       </div>

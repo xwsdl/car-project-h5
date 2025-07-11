@@ -1,7 +1,15 @@
 <template>
   <div class="car-card" @click="viewCarDetail">
     <div class="car-image-container">
-      <img :src="car.mainImageUrl" class="car-image" :alt="$t('carDetail.swiper.carImage')" />
+      <van-image
+        class="car-image"
+        fit="cover"
+        :src="car.mainImageUrl"
+        width="100%"
+        height="200"
+        lazy-load
+        :alt="$t('carDetail.swiper.carImage')"
+      />
       <div class="car-tag" v-if="car.carNature">{{ car.carNature }}</div>
     </div>
 

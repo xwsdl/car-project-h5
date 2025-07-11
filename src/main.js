@@ -1,3 +1,11 @@
+/*
+ * @Author: xiaowei 2902267627@qq.com
+ * @Date: 2025-06-11 11:20:46
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-11 14:39:37
+ * @FilePath: \car-project-h5\src\main.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // 重置样式
 import '@/assets/scss/reset.scss'
 // 解决函数式调用toast样式问题（Vant 自动导入插件的局限性， 自动导入插件无法感知你在 JS 里用到了 Toast）
@@ -11,7 +19,7 @@ import { createPinia } from 'pinia'
 import App from '@/App.vue'
 import router from '@/router'
 import i18n from '@/i18n' // 修正为正确的 locales 目录
-
+import { Lazyload } from 'vant';
 const app = createApp(App)
 // 安装路由和守卫
 installRouterGuard(app)
@@ -22,6 +30,8 @@ app.use(VueClipboard, {
   autoSetContainer: true,
   appendToBody: true
 })
+
+app.use(Lazyload);
 
 app.mount('#app')
 

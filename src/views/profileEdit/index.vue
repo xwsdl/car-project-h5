@@ -173,6 +173,8 @@
       // 如果有头像文件，添加到 FormData
       if (form.avatarFile) {
         formData.append('avatarFile', form.avatarFile)
+      }else{
+        formData.append('avatar', authStore.user.avatar)
       }
       
       await updateUserInfo(formData)

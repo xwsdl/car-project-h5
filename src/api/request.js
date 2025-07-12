@@ -25,6 +25,12 @@ service.interceptors.request.use(
     }
     // 添加语言信息到请求头
     config.headers['Accept-Language'] = locale
+
+    // 如果是 FormData，不设置 Content-Type，让浏览器自动设置
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
+    }
+
     // 可在此处添加 token 等
     if (requestCount === 1) {
       showLoadingToast({

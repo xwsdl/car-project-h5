@@ -31,6 +31,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['select'])
+
 const activeLetter = ref('')
 
 function handleClick(letter) {

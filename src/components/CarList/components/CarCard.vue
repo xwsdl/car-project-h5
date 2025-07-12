@@ -23,7 +23,7 @@
         <span>{{ car.displacement }}</span>
       </div>
 
-      <div class="car-price">{{ car.ruble }}{{ $t('home.tenThousand') }}</div>
+      <div class="car-price">{{ car.ruble }} ₽</div>
     </div>
   </div>
 </template>
@@ -32,7 +32,6 @@
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   const router = useRouter()
-  import { defineProps } from 'vue'
 
   const { t: $t } = useI18n()
 

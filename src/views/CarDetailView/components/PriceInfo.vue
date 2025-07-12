@@ -1,15 +1,15 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-01 14:38:52
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-10 10:12:23
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-12 15:10:53
  * @FilePath: \car-h5-project\src\views\CarDetailView\components\PriceInfo.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="price-info">
-    <div class="current-price">{{ currentPrice }}{{ $t('home.tenThousand') }}₽ ({{ $t('home.horgosPrice') }})</div>
-    <div class="original-price" v-if="false">{{ originalPrice }} {{ $t('home.tenThousand') }}</div>
+    <div class="current-price">{{ currentPrice }}  ₽ ({{ $t('home.horgosPrice') }})</div>
+    <div class="original-price" v-if="false">{{ originalPrice }}</div>
     <div class="more-info" v-if="false">
       <span>{{ $t('detail.detail') }}</span>
       <van-icon name="arrow" />

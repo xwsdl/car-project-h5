@@ -1,8 +1,8 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-09 09:14:40
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-11 14:09:30
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-11 22:18:04
  * @FilePath: \car-h5-project\src\views\Login\index.vue
  * @Description: 登录注册页面
 -->
@@ -17,7 +17,7 @@
           <LoginForm />
         </van-tab>
         <van-tab :title="$t('login.register')" name="register">
-          <RegisterForm />
+          <RegisterForm @login="() => (activeTab = 'login')" />
         </van-tab>
       </van-tabs>
     </div>

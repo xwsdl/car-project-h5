@@ -1,3 +1,11 @@
+/*
+ * @Author: 肖蔚 xiaowei@yw105.wecom.work
+ * @Date: 2025-06-20 20:46:32
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-12 09:50:20
+ * @FilePath: \car-project-h5\src\router\index.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 const router = createRouter({
@@ -48,6 +56,12 @@ const router = createRouter({
             requiresAuth: false, // 需要登录
             keepAlive: false, // 需要缓存
           },
+        },
+        {
+          path: '/profileEdit',
+          name: 'profileEdit',
+          component: () => import('@/views/profileEdit/index.vue'),
+          meta: { title: '修改信息' }
         },
         {
           path: '/car/:id',
@@ -113,6 +127,16 @@ const router = createRouter({
           component: () => import('@/views/FilterPage/index.vue'),
           meta: {
             title: '高级筛选',
+            requiresAuth: false, // 不需要登录
+            keepAlive: true // 不需要缓存
+          },
+        },
+        {
+          path: '/test',
+          name: 'Test',
+          component: () => import('@/views/Test/index.vue'),
+          meta: {
+            title: '测试页面',
             requiresAuth: false, // 不需要登录
             keepAlive: true // 不需要缓存
           },

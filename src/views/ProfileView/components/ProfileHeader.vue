@@ -88,7 +88,12 @@
     router.push('/login')
   }
   const goRegister = () => {
-    router.push('/register')
+    router.push({
+      path: '/login',
+      query: {
+        activeTab: 'register'
+      }
+    })
   }
 
   // 登录状态下点击头像跳转到 profileEdit
@@ -100,167 +105,167 @@
 </script>
 
 <style lang="scss" scoped>
-.profile-header {
-  background: linear-gradient(to right, #1a365d, #2a4365);
-  color: white;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  height: 180px;
-
-  .header-actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    z-index: 1001;
-    pointer-events: auto;
-    gap: 12px; // 按钮间距
-  }
-  .lang-switcher-fixed {
-    position: static;
-    margin: 0;
-  }
-  .logout-button {
-    position: static;
-    margin: 0;
-  }
-
-  .header-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap; // 允许内容换行
-    width: 100%;
-  }
-
-  .avatar-container {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    overflow: hidden;
-    // 增加点击手势提示
-    &.clickable {
-      cursor: pointer;
-      box-shadow: 0 0 0 2px #ffd700;
-      transition: box-shadow 0.2s;
-    }
-    &.clickable:active {
-      box-shadow: 0 0 0 4px #ffd700;
-    }
-  }
-
-  .avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .user-info {
-    flex: 1;
-    min-width: 0; // 防止flex子项溢出
-
-    .username {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .uid {
-      font-size: 14px;
-      opacity: 0.8;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 3px 8px;
-      border-radius: 10px;
-      display: inline-block;
-    }
-
-    .vip-tag {
-      display: inline-block;
-      background: linear-gradient(to right, #ffd700, #ffb400);
-      color: #8a6d06;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      margin-top: 8px;
-      font-weight: bold;
-    }
-
-    .login-actions {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: row; // 垂直排列，按钮直接换行堆叠
-      gap: 8px;
-      width: 100%;
-      align-items: stretch;
-
-      .van-button {
-        width: 100%; // 按钮宽度100%，堆叠展示
-        min-width: 0;
-        font-size: 15px;
-        padding: 0 8px;
-        white-space: normal; // 允许按钮内文字换行
-      }
-    }
-  }
-
-  .circle-decoration {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-
-    &.circle-1 {
-      top: -50px;
-      right: -50px;
-    }
-
-    &.circle-2 {
-      bottom: -30px;
-      left: -30px;
-      width: 100px;
-      height: 100px;
-    }
-  }
-
-  .lang-switcher {
-    position: static;
-    margin: 0;
-  }
-}
-
-@media (max-width: 480px) {
   .profile-header {
-    height: 160px;
+    background: linear-gradient(to right, #1a365d, #2a4365);
+    color: white;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    height: 180px;
+
+    .header-actions {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      z-index: 1001;
+      pointer-events: auto;
+      gap: 12px; // 按钮间距
+    }
+    .lang-switcher-fixed {
+      position: static;
+      margin: 0;
+    }
+    .logout-button {
+      position: static;
+      margin: 0;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap; // 允许内容换行
+      width: 100%;
+    }
 
     .avatar-container {
-      width: 70px;
-      height: 70px;
-    }
-
-    .username {
-      font-size: 18px;
-    }
-    .login-actions {
-      gap: 6px;
-      .van-button {
-        font-size: 13px;
-        padding: 0 4px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      overflow: hidden;
+      // 增加点击手势提示
+      &.clickable {
+        cursor: pointer;
+        box-shadow: 0 0 0 2px #ffd700;
+        transition: box-shadow 0.2s;
+      }
+      &.clickable:active {
+        box-shadow: 0 0 0 4px #ffd700;
       }
     }
-    .header-actions {
-      gap: 8px;
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0; // 防止flex子项溢出
+
+      .username {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .uid {
+        font-size: 14px;
+        opacity: 0.8;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 3px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+
+      .vip-tag {
+        display: inline-block;
+        background: linear-gradient(to right, #ffd700, #ffb400);
+        color: #8a6d06;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        margin-top: 8px;
+        font-weight: bold;
+      }
+
+      .login-actions {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: row; // 垂直排列，按钮直接换行堆叠
+        gap: 8px;
+        width: 100%;
+        align-items: stretch;
+
+        .van-button {
+          width: 100%; // 按钮宽度100%，堆叠展示
+          min-width: 0;
+          font-size: 15px;
+          padding: 0 8px;
+          white-space: normal; // 允许按钮内文字换行
+        }
+      }
+    }
+
+    .circle-decoration {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+
+      &.circle-1 {
+        top: -50px;
+        right: -50px;
+      }
+
+      &.circle-2 {
+        bottom: -30px;
+        left: -30px;
+        width: 100px;
+        height: 100px;
+      }
+    }
+
+    .lang-switcher {
+      position: static;
+      margin: 0;
     }
   }
-}
+
+  @media (max-width: 480px) {
+    .profile-header {
+      height: 160px;
+
+      .avatar-container {
+        width: 70px;
+        height: 70px;
+      }
+
+      .username {
+        font-size: 18px;
+      }
+      .login-actions {
+        gap: 6px;
+        .van-button {
+          font-size: 13px;
+          padding: 0 4px;
+        }
+      }
+      .header-actions {
+        gap: 8px;
+      }
+    }
+  }
 </style>

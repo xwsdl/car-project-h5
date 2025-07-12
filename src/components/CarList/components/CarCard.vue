@@ -23,12 +23,15 @@
         <span>{{ car.displacement }}</span>
       </div>
 
-      <div class="car-price">{{ car.ruble }} ₽</div>
+      <div class="car-price">
+        <PriceDisplay :price="car.ruble" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+  import PriceDisplay from '@/components/PriceDisplay/index.vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   const router = useRouter()

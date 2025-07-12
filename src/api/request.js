@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { closeToast, showLoadingToast, showFailToast } from 'vant'
+import { closeToast, showLoadingToast, showToast } from 'vant'
 import { t } from '@/i18n'
 // 全局请求计数器
 let requestCount = 0
@@ -47,7 +47,7 @@ service.interceptors.request.use(
     if (requestCount === 0) {
       closeToast()
     }
-    showFailToast(t('request.sendFail'))
+    showToast(t('request.sendFail'))
     return Promise.reject(error)
   },
 )
@@ -67,11 +67,12 @@ service.interceptors.response.use(
     if (response.data.status === 200 || response.data.status === 0) {
       return response.data
     } else {
-      showFailToast(response.data.message || t('request.operateFail'))
-      return Promise.reject(response.data)
+      showToast(response.data.msg || t('request.operateFail'))
+      return Promise.reject(error)
     }
   },
   (error) => {
+    console.log('请求失败：', error)
     requestCount = Math.max(0, requestCount - 1);
 
     // 当没有请求时关闭Toast
@@ -106,7 +107,7 @@ service.interceptors.response.use(
       message = error.message
     }
 
-    showFailToast(message)
+    showToast(message)
     return Promise.reject(error)
   },
 )

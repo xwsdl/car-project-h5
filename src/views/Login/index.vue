@@ -29,13 +29,16 @@
   import LoginForm from './components/LoginForm.vue'
   import RegisterForm from './components/RegisterForm.vue'
   import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
-
+  import { useRoute } from 'vue-router'
+  const route = useRoute()
   // 定义组件名称
   defineOptions({
     name: 'LoginPage'
   })
+  
+  console.log(route)
 
-  const activeTab = ref('login')
+  const activeTab = ref(route.query.activeTab || 'login')
 
   const handleTabChange = name => {
     activeTab.value = name

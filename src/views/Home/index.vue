@@ -155,21 +155,22 @@
     }
   })
 
-  const zhBanners = [
-    getBanner('01.jpg'),
-    getBanner('02.jpg'),
-    getBanner('03.jpg'),
-    getBanner('04.jpg')
+  const ruBanners = [
+    getBanner('1.jpg'),
+    getBanner('2.jpg'),
+    getBanner('3.jpg'),
+    getBanner('4.jpg'),
+    getBanner('5.jpg'),
+    getBanner('6.jpg')
   ]
 
-  const ruBanners = [
-    getBanner('01-2.jpg'),
-    getBanner('02-2.jpg'),
-    getBanner('03-2.jpg'),
-    getBanner('04-2.jpg'),
-    getBanner('05-2.jpg'),
-    getBanner('06-2.jpg'),
-    getBanner('07-2.jpg')
+  const zhBanners = [
+    getBanner('1-2.jpg'),
+    getBanner('2-2.jpg'),
+    getBanner('3-2.jpg'),
+    getBanner('4-2.jpg'),
+    getBanner('5-2.jpg'),
+    getBanner('6-2.jpg')
   ]
 
   // 轮播图

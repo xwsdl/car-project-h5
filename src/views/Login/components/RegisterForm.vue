@@ -112,12 +112,12 @@
     loading.value = true
 
     try {
-      await register({
+      const result = await register({
         username: values.username,
         password: values.password
       })
 
-      showSuccessToast(t('login.registerSuccess'))
+      showSuccessToast(result.msg)
 
       // 注册成功后可以选择自动登录或跳转到登录页
       setTimeout(() => {
@@ -125,17 +125,6 @@
         // 目前先跳转到登录页
         emit('login')
       }, 1500)
-    } catch (error) {
-      console.error('注册失败:', error)
-
-      // 根据错误类型显示不同的错误信息
-      if (error.response?.data?.message) {
-        showToast(error.response.data.message)
-      } else if (error.message?.includes('already exists')) {
-        showToast(t('login.accountExists'))
-      } else {
-        showToast(t('login.registerFail'))
-      }
     } finally {
       loading.value = false
     }

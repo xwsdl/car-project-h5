@@ -18,6 +18,8 @@
         "copyFail": "复制失败",
         "save": "保存",
         "saveSuccess": "保存成功",
+        "saveFail": "保存失败",
+        "saving": "保存中...",
         "selectDate": "选择日期",
         "year": "年",
         "month": "月",
@@ -170,10 +172,17 @@
         "birthday": "生日",
         "birthdayPlaceholder": "请选择生日",
         "selectBirthday": "选择生日",
+        "birthdayRequired": "请选择生日",
         "email": "邮箱",
         "emailPlaceholder": "请输入邮箱",
         "emailRequired": "请输入邮箱",
         "emailInvalid": "邮箱格式不正确",
+        "avatarSizeLimit": "头像文件大小不能超过3MB",
+        "avatarTypeLimit": "只支持JPG、PNG、GIF格式的图片",
+        "compressing": "正在压缩图片...",
+        "compressSuccess": "图片压缩成功，体积减少{ratio}%",
+        "compressFail": "图片压缩失败，请重试",
+        "avatarTips": "支持JPG、PNG、GIF格式，图片会自动压缩至3MB以下",
         "services": {
             "title": "我的服务",
             "customerService": "联系客服",
@@ -377,5 +386,8 @@
         "copySuccess": "复制成功",
         "error": "分享失败",
         "openWechat": "请在微信中打开"
+    },
+    "currency": {
+        "rub": "₽"
     }
 }

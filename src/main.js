@@ -18,7 +18,6 @@ import VueClipboard from 'vue3-clipboard'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from '@/App.vue'
-import router from '@/router'
 import i18n from '@/i18n' // 修正为正确的 locales 目录
 import { Lazyload } from 'vant';
 const app = createApp(App)
@@ -26,7 +25,6 @@ const app = createApp(App)
 installRouterGuard(app)
 app.use(i18n)
 app.use(createPinia())
-app.use(router)
 app.use(VueClipboard, {
   autoSetContainer: true,
   appendToBody: true

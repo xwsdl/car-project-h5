@@ -4,7 +4,7 @@
     <div class="content-container">
       <CarSwiper v-if="carImages.length" :images="carImages" />
       <PriceInfo
-        :currentPrice="carBasicInfo.ruble"
+        :currentPrice="carBasicInfo.ruble || 0"
         :originalPrice="carBasicInfo.salesPrice || ''"
       />
       <BasicInfo :car="carBasicInfo" />

@@ -24,7 +24,7 @@
   import PriceDisplay from '@/components/PriceDisplay/index.vue'
   defineProps({
     currentPrice: {
-      type: String,
+      type:[String , Number],
       required: true
     },
     originalPrice: {
@@ -39,7 +39,7 @@
     padding: 20px 15px;
     background: #fff;
     border-bottom: 1px solid #f0f0f0;
-    &__unit{
+    &__unit {
       margin-left: 10px;
       font-size: 16px;
       color: #1a365d;

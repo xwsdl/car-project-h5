@@ -68,7 +68,7 @@ service.interceptors.response.use(
       return response.data
     } else {
       showToast(response.data.msg || t('request.operateFail'))
-      return Promise.reject(error)
+      return Promise.reject(response.data)
     }
   },
   (error) => {

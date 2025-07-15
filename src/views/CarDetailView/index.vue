@@ -51,7 +51,7 @@
           />
         </div>
       </div>
-      <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars" />
+      <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars"/>
     </div>
 
     <ActionBar />
@@ -77,7 +77,7 @@
   onMounted(() => {
     // 将页面滚动条滚动到顶部
     window.scrollTo(0, 0)
-    fetchCarDetail(route.params.id).then(res => {
+    fetchCarDetail(route.query.id).then(res => {
       fetchCardList(res.brand)
       carBasicInfo.value = res
       carImages.value = res.carOtherPics && extractImageUrls(res.carOtherPics)

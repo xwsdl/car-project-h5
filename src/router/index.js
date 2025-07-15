@@ -1,8 +1,8 @@
 /*
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-20 20:46:32
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-12 09:50:20
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-15 14:50:40
  * @FilePath: \car-project-h5\src\router\index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,7 +22,7 @@ const router = createRouter({
           name: 'homeIndex',
           component: () => import('@/views/Home/index.vue'),
           meta: {
-            title: '首页',
+            title: 'route.home',
             requiresAuth: false, // 不需要登录
             keepAlive: true, // 需要缓存 ，注意：name的名称和组件名一致才生效
           },
@@ -32,7 +32,7 @@ const router = createRouter({
           name: 'orderProcess',
           component: () => import('@/views/OrderProcess/index.vue'),
           meta: {
-            title: '订单进程',
+            title: 'route.orderProcess',
             requiresAuth: false, // 需要登录
             keepAlive: false, // 需要缓存
           },
@@ -42,7 +42,7 @@ const router = createRouter({
           name: 'message',
           component: () => import('@/views/Message/index.vue'),
           meta: {
-            title: '消息',
+            title: 'route.message',
             requiresAuth: false, // 需要登录
             keepAlive: false, // 需要缓存
           },
@@ -52,7 +52,7 @@ const router = createRouter({
           name: 'profile',
           component: () => import('@/views/ProfileView/index.vue'),
           meta: {
-            title: '个人中心',
+            title: 'route.profile',
             requiresAuth: false, // 需要登录
             keepAlive: false, // 需要缓存
           },
@@ -64,19 +64,20 @@ const router = createRouter({
           meta: { title: '修改信息' }
         },
         {
-          path: '/car/:id',
-          name: 'car-detail',
+          path: '/car',
+          name: 'carDetail',
           component: () => import('@/views/CarDetailView/index.vue'),
           props: true, // 将路由参数传递给组件
           beforeEnter: (to, from, next) => {
-            if (!to.params.id) {
+            if (!to.query.id) {
               next(false) // 阻止导航
             } else {
+              console.log('to.params.id', to.query.id)
               next() // 允许导航
             }
           },
           meta: {
-            title: '车辆详情',
+            title: 'route.carDetail',
             requiresAuth: false, //
             keepAlive: false, // 不需要缓存
           },
@@ -86,7 +87,7 @@ const router = createRouter({
           name: 'carList',
           component: () => import('@/views/ClassificationList/index.vue'),
           meta: {
-            title: '车辆列表',
+            title: 'route.carList',
             requiresAuth: false, // 不需要登录
             keepAlive: false, // 不需要缓存
           },
@@ -96,7 +97,7 @@ const router = createRouter({
           name: 'shoppingCart',
           component: () => import('@/views/ShoppingCart/index.vue'),
           meta: {
-            title: '车辆列表',
+            title: 'route.shoppingCart',
             requiresAuth: true, // 不需要登录
             keepAlive: false, // 不需要缓存
           },
@@ -106,7 +107,7 @@ const router = createRouter({
           name: 'customerService',
           component: () => import('@/views/CustomerService/index.vue'),
           meta: {
-            title: '客服',
+            title: 'route.customerService',
             requiresAuth: true, // 不需要登录
             keepAlive: false, // 不需要缓存
           },
@@ -116,7 +117,7 @@ const router = createRouter({
           name: 'Brand',
           component: () => import('@/views/Brand/index.vue'),
           meta: {
-            title: '选择品牌',
+            title: 'route.brand',
             requiresAuth: false, // 不需要登录
             keepAlive: true, // 不需要缓存
           },
@@ -126,7 +127,7 @@ const router = createRouter({
           name: 'FilterPage',
           component: () => import('@/views/FilterPage/index.vue'),
           meta: {
-            title: '高级筛选',
+            title: 'route.filterPage',
             requiresAuth: false, // 不需要登录
             keepAlive: true // 不需要缓存
           },
@@ -148,7 +149,7 @@ const router = createRouter({
       name: 'login',
       component: () => import('@/views/Login/index.vue'),
       meta: {
-        title: '登录',
+        title: 'route.login',
         requiresAuth: false, // 不需要登录
         keepAlive: false, // 不需要缓存
       },

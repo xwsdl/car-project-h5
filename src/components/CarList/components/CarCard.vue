@@ -47,7 +47,7 @@
   })
 
   const viewCarDetail = () => {
-    router.push(`/car/${props.car.id}`)
+    router.push(`/car?id=${props.car.id}`)
     // 实际项目中：
   }
 </script>

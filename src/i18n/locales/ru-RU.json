@@ -405,5 +405,18 @@
     },
     "currency": {
         "rub": "₽"
+    },
+    "route": {
+        "home": "Главная",
+        "orderProcess": "Процесс заказа",
+        "message": "Сообщения",
+        "profile": "Профиль",
+        "carDetail": "Детали автомобиля",
+        "carList": "Список автомобилей",
+        "shoppingCart": "Корзина",
+        "customerService": "Служба поддержки",
+        "brand": "Выбрать бренд",
+        "filterPage": "Расширенный фильтр",
+        "login": "Вход"
     }
 }

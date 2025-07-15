@@ -389,5 +389,18 @@
     },
     "currency": {
         "rub": "₽"
+    },
+    "route": {
+        "home": "首页",
+        "orderProcess": "订单进程",
+        "message": "消息",
+        "profile": "个人中心",
+        "carDetail": "车辆详情",
+        "carList": "车辆列表",
+        "shoppingCart": "购物车",
+        "customerService": "客服",
+        "brand": "选择品牌",
+        "filterPage": "高级筛选",
+        "login": "登录"
     }
 }

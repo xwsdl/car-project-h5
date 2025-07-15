@@ -1,13 +1,22 @@
+/*
+ * @Author: xiaowei 2902267627@qq.com
+ * @Date: 2025-06-11 11:20:46
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-15 11:42:41
+ * @FilePath: \car-project-h5\src\router\guard.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // src/router/guard.js
 import router from './index'
 import { useAuthStore } from '@/stores/auth'
+import i18n from '@/i18n'
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
   // 设置页面标题
-  document.title = to.meta.title || '汽车云平台'
+  document.title = i18n.global.t(to.meta.title) || '汽车云平台'
 
   // 检查路由是否需要登录
   if (to.meta.requiresAuth) {
@@ -30,8 +39,9 @@ router.beforeEach(async (to, from, next) => {
 
 // 全局后置守卫
 router.afterEach((to) => {
-  // 可以在这里添加页面访问统计
-  console.log(`访问了页面: ${to.name}`)
+  if (to.meta && to.meta.title) {
+    document.title = i18n.global.t(to.meta.title)
+  }
 })
 
 // 导出路由守卫安装函数

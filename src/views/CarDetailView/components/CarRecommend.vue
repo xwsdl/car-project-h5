@@ -2,7 +2,12 @@
   <div class="car-recommend">
     <h2 class="section-title">{{ $t('detail.suggest') }}</h2>
     <div class="recommend-list">
-      <div v-for="(car, index) in cars" :key="index" class="recommend-item">
+      <div
+        v-for="(car, index) in cars"
+        :key="index"
+        class="recommend-item"
+        @click="viewCarDetail(car)"
+      >
         <div class="recommend-img-container">
           <img
             :src="car.mainImageUrl"
@@ -28,9 +33,11 @@
 </template>
 
 <script setup>
+  import { useRouter } from 'vue-router'
   import PriceDisplay from '@/components/PriceDisplay/index.vue'
   import { useI18n } from 'vue-i18n'
   const { t: $t } = useI18n()
+  const router = useRouter()
   defineProps({
     cars: {
       type: Array,
@@ -38,6 +45,15 @@
       default: () => []
     }
   })
+
+  const viewCarDetail = car => {
+    router.push({
+      name: '/car',
+      params: {
+        id: car.id
+      }
+    })
+  }
 </script>
 
 <style lang="scss" scoped>

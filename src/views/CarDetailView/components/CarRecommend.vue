@@ -48,8 +48,8 @@
 
   const viewCarDetail = car => {
     router.push({
-      name: '/car',
-      params: {
+      path: '/car',
+      query: {
         id: car.id
       }
     })

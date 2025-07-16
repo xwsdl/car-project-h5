@@ -2,7 +2,7 @@
   <div class="car-detail-view">
     <CarHeader />
     <div class="content-container">
-      <CarSwiper v-if="carImages.length" :images="carImages" />
+      <CarSwiper :key="route.query.id" v-if="carImages.length" :images="carImages" />
       <PriceInfo
         :currentPrice="carBasicInfo.ruble || 0"
         :originalPrice="carBasicInfo.salesPrice || ''"
@@ -51,7 +51,7 @@
           />
         </div>
       </div>
-      <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars"/>
+      <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars" />
     </div>
 
     <ActionBar />
@@ -62,7 +62,7 @@
   import { useI18n } from 'vue-i18n'
   import { extractImageUrls } from '@/utils/index.js'
   import { fetchCarDetail, fetchRecommend } from '@/api/base/index.js'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import CarHeader from './components/CarHeader.vue'
   import CarSwiper from './components/CarSwiper.vue'
   import PriceInfo from './components/PriceInfo.vue'
@@ -73,8 +73,7 @@
   import { useRoute } from 'vue-router'
   const { t: $t } = useI18n()
   const route = useRoute()
-
-  onMounted(() => {
+  const pageInit = () => {
     // 将页面滚动条滚动到顶部
     window.scrollTo(0, 0)
     fetchCarDetail(route.query.id).then(res => {
@@ -88,7 +87,17 @@
         }
       })
     })
+  }
+  onMounted(() => {
+    pageInit()
   })
+
+  watch(
+    () => route.query.id,
+    () => {
+      pageInit()
+    }
+  )
   // 轮播图图片
   const carImages = ref([])
 

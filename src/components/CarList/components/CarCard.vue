@@ -63,7 +63,7 @@
     }
     .car-image {
       width: 100%;
-      height: 200px;
+      height: 200px !important;
       object-fit: cover;
       transition: transform 0.5s ease;
 

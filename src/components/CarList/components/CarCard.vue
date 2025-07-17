@@ -1,17 +1,12 @@
 <template>
   <div class="car-card" @click="viewCarDetail">
-    <div class="car-image-container">
-      <van-image
-        class="car-image"
-        fit="cover"
-        :src="car.mainImageUrl"
-        width="100%"
-        height="200"
-        lazy-load
-        :alt="$t('carDetail.swiper.carImage')"
-      />
-      <div class="car-tag" v-if="car.carNature">{{ car.carNature }}</div>
-    </div>
+    <van-image
+      class="car-image"
+      fit="cover"
+      :src="car.mainImageUrl"
+      lazy-load
+      :alt="$t('carDetail.swiper.carImage')"
+    />
 
     <div class="car-info">
       <h2 class="car-title">{{ `${car.brand} ${car.vehicleSeries}` }}</h2>
@@ -66,33 +61,14 @@
       transform: translateY(-5px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
-
-    .car-image-container {
-      position: relative;
+    .car-image {
+      width: 100%;
       height: 200px;
-      overflow: hidden;
+      object-fit: cover;
+      transition: transform 0.5s ease;
 
-      .car-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-      }
-
-      &:hover .car-image {
+      &:hover {
         transform: scale(1.05);
-      }
-
-      .car-tag {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: rgba(231, 76, 60, 0.9);
-        color: white;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: bold;
       }
     }
 
@@ -146,10 +122,6 @@
 
       .car-price {
         font-size: 20px;
-      }
-
-      .car-image-container {
-        height: 180px;
       }
     }
   }

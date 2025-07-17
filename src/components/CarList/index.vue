@@ -72,7 +72,7 @@ export default {
     const loadingTextComputed = computed(() => {
       // 如果 loadingText prop 被提供，则使用提供的值
       // 否则，使用国际化的默认值
-      return props.loadingText !== undefined ? props.loadingText : $t('common.loading')
+      return props.loadingText !== undefined ? props.loadingText : $t('request.loading')
     })
 
     const onLoad = () => {

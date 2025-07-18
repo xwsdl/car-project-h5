@@ -148,4 +148,13 @@ export const post = (url, data = {}, config = {}) => {
   })
 }
 
+export const put = (url, data = {}, config = {}) => {
+  return createRequest({
+    url,
+    method: 'put',
+    data,
+    ...config,
+  })
+}
+
 export default service

@@ -54,7 +54,7 @@
       <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars" />
     </div>
 
-    <ActionBar />
+    <ActionBar @buy="handleBuy" />
   </div>
 </template>
 
@@ -62,6 +62,7 @@
   import { useI18n } from 'vue-i18n'
   import { extractImageUrls } from '@/utils/index.js'
   import { fetchCarDetail, fetchRecommend } from '@/api/base/index.js'
+  import { createOrder } from '@/api'
   import { ref, onMounted, watch } from 'vue'
   import CarHeader from './components/CarHeader.vue'
   import CarSwiper from './components/CarSwiper.vue'
@@ -71,6 +72,9 @@
   import CarRecommend from './components/CarRecommend.vue'
   import ActionBar from './components/ActionBar.vue'
   import { useRoute } from 'vue-router'
+  import { useAuthStore } from '@/stores/auth'
+  import { showFailToast,showToast} from 'vant'
+  const authStore = useAuthStore()
   const { t: $t } = useI18n()
   const route = useRoute()
   const pageInit = () => {
@@ -131,6 +135,23 @@
           carOtherPics: imageList
         }
       })
+    })
+  }
+
+  const handleBuy = () => {
+    if (!authStore.isAuthenticated) {
+      showFailToast('请先登录')
+      return false
+    }
+    const { id, username } = authStore.user
+    const params = {
+      csId: 1, ///客服ID
+      customerContact: '', //客户联系方式
+      customerId: id, //客户ID
+      customerName: username //客户姓名
+    }
+    createOrder(params).then(() => {
+      showToast('已加入订单进程成功')
     })
   }
 </script>

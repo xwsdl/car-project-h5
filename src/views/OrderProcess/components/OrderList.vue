@@ -53,7 +53,6 @@
   })
 
   const getStatusText = status => {
-    // 建议后续用i18n多语言
     const statusMap = {
       unpaid: $t('orderProcess.status.unpaid'),
       unshipped: $t('orderProcess.status.unshipped'),
@@ -64,7 +63,10 @@
   }
 
   const viewOrderDetail = order => {
-    router.push(`/order/${order.id}`)
+    router.push({
+      path: '/orderDetail',
+      query: { id: order.id }
+    })
   }
 </script>
 

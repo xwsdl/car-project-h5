@@ -218,9 +218,16 @@
         "empty": "Нет заказов",
         "orderId": "Номер заказа",
         "createTime": "Время создания",
+        "progress": "Прогресс",
         "pay": "Оплатить",
         "confirmReceive": "Подтвердить получение",
         "viewDetail": "Подробности",
+        "status": {
+            "unpaid": "Ожидает оплаты",
+            "unshipped": "Ожидает отправки",
+            "unreceived": "Ожидает получения",
+            "completed": "Завершено"
+        },
         "tabs": {
             "all": "Все",
             "unpaid": "Ожидает оплаты",
@@ -228,6 +235,38 @@
             "unreceived": "Ожидает получения",
             "completed": "Завершено"
         }
+    },
+    "orderDetail": {
+        "title": "Детали заказа",
+        "orderInfo": "Информация о заказе",
+        "orderId": "Номер заказа",
+        "createTime": "Время создания",
+        "carName": "Название автомобиля",
+        "price": "Цена",
+        "progressTitle": "Прогресс заказа",
+        "attachments": "Вложения",
+        "status": {
+            "unpaid": "Ожидает оплаты",
+            "unshipped": "Ожидает отправки",
+            "unreceived": "Ожидает получения",
+            "completed": "Завершено"
+        },
+        "progress": {
+            "orderCreated": "Заказ создан",
+            "orderCreatedDesc": "Ваш заказ успешно создан, пожалуйста, завершите оплату вовремя",
+            "paymentCompleted": "Оплата завершена",
+            "paymentCompletedDesc": "Оплата заказа завершена, продавец обрабатывает ваш заказ",
+            "merchantAccepted": "Продавец принял заказ",
+            "merchantAcceptedDesc": "Продавец подтвердил принятие заказа, готовит автомобиль",
+            "preparingDelivery": "Подготовка к отправке",
+            "preparingDeliveryDesc": "Автомобиль готовится, скоро будет организована транспортировка",
+            "deliveryCompleted": "Доставка завершена",
+            "deliveryCompletedDesc": "Автомобиль успешно доставлен, сделка завершена"
+        },
+        "uploadAttachment": "Загрузить вложение",
+        "attachments": "Вложения",
+        "operator": "Оператор",
+        "viewer": "Просмотрщик"
     },
     "message": {
         "title": "Центр сообщений",
@@ -409,6 +448,7 @@
     "route": {
         "home": "Главная",
         "orderProcess": "Процесс заказа",
+        "orderDetail": "Детали заказа",
         "message": "Сообщения",
         "profile": "Профиль",
         "carDetail": "Детали автомобиля",

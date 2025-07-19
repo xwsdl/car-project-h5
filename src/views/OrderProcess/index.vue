@@ -62,7 +62,7 @@
   ])
 
   fetchUserOrder(authStore.user.id).then(data => {
-    orders.value = data
+    orders.value = data || []
   })
 
   const goBack = () => {

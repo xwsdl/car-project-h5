@@ -1,11 +1,3 @@
-/*
- * @Author: 肖蔚 xiaowei@yw105.wecom.work
- * @Date: 2025-06-20 20:46:32
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-15 14:50:40
- * @FilePath: \car-project-h5\src\router\index.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 const router = createRouter({
@@ -33,8 +25,19 @@ const router = createRouter({
           component: () => import('@/views/OrderProcess/index.vue'),
           meta: {
             title: 'route.orderProcess',
-            requiresAuth: false, // 需要登录
+            requiresAuth: true, // 需要登录
             keepAlive: false, // 需要缓存
+          },
+        },
+        {
+          path: '/orderDetail',
+          name: 'orderDetail',
+          component: () => import('@/views/OrderDetail/index.vue'),
+          props: true,
+          meta: {
+            title: 'route.orderDetail',
+            requiresAuth: false,
+            keepAlive: false,
           },
         },
         {

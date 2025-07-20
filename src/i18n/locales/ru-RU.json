@@ -234,7 +234,8 @@
             "unshipped": "Ожидает отправки",
             "unreceived": "Ожидает получения",
             "completed": "Завершено"
-        }
+        },
+        "cancel": "Отмена"
     },
     "orderDetail": {
         "title": "Детали заказа",

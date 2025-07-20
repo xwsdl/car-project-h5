@@ -232,7 +232,8 @@
             "unshipped": "待发货",
             "unreceived": "待收货",
             "completed": "已完成"
-        }
+        },
+        "cancel": "取消"
     },
     "orderDetail": {
         "title": "订单详情",

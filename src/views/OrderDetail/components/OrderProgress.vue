@@ -6,37 +6,17 @@
       active-color="#1890ff"
       inactive-color="#bbb"
     >
-      <van-step
-        v-for="(item, idx) in progressData"
-        :key="item.id"
-        :title="item.title"
-        :description="item.time"
-      >
-        <template #icon>
-          <div
-            class="custom-step-icon"
-            :class="{
-              active: idx === activeStep,
-              completed: item.status === 'completed'
-            }"
-          >
-            <template v-if="item.status === 'completed'">
-              <van-icon name="success" />
-            </template>
-            <template v-else>
-              {{ idx + 1 }}
-            </template>
-          </div>
-        </template>
+      <van-step v-for="(item, idx) in progressData" :key="item.id">
         <div class="step-content">
-          <div class="desc">{{ item.description }}</div>
-          <div v-if="item.status === 'processing' && canUpload(item)" class="upload-area">
+          <div class="desc">{{ item.processDesc }}</div>
+          <div v-if="item.isCompleteSign === 2 && canUpload(item)" class="upload-area">
             <AttachmentUploader
               v-model="item.attachments"
               :accept="'image/*,application/pdf'"
               :max-count="3"
               :button-text="$t('orderDetail.uploadAttachment')"
               @uploaded="onAttachmentUploaded"
+              :onUpload="uploadAttachmentsCallBack(item.id)"
             />
           </div>
           <div v-else-if="item.attachments && item.attachments.length" class="attachments">
@@ -60,21 +40,23 @@
 </template>
 
 <script setup>
+  import { uploadAttachments } from '@/api'
   import { Steps as VanSteps, Step as VanStep, Icon as VanIcon, showToast } from 'vant'
   import { computed } from 'vue'
   import { useI18n } from 'vue-i18n'
   import AttachmentUploader from './AttachmentUploader.vue'
+  import { useAuthStore } from '@/stores/auth'
   const { t: $t } = useI18n()
-
+  const authStore = useAuthStore()
   const props = defineProps({
     progressData: {
       type: Array,
       default: () => []
     }
   })
-
+  console.log(props.progressData)
   const activeStep = computed(() => {
-    const idx = props.progressData.findIndex(i => i.status !== 'completed')
+    const idx = props.progressData.findIndex(i => +i.isCompleteSign === 2)
     return idx === -1 ? props.progressData.length - 1 : idx
   })
 
@@ -93,13 +75,24 @@
     showToast('预览/下载功能')
   }
 
-  const canUpload = (item) => {
+  const canUpload = item => {
     // TODO: 根据实际业务判断当前用户是否有上传权限
     // 例如 return item.form && item.form.uploader === userRole
     return true
   }
-  const onAttachmentUploaded = (result) => {
+  const onAttachmentUploaded = result => {
+    console.log('上传成功:', result)
     // TODO: 上传成功后的处理逻辑，如刷新数据、提示等
+  }
+
+  // 文件上传
+  const uploadAttachmentsCallBack = processNodeId => {
+    return file => {
+      const FromData = new FormData()
+      FromData.append('file', file)
+      FromData.append('processNodeId', processNodeId)
+      uploadAttachments(FromData, authStore.user.id)
+    }
   }
 </script>
 

@@ -35,6 +35,14 @@ export const updateOrderStatus = (id, data) => {
   return put(`/orders/${id}/status`, data)
 }
 
+/**
+ * @description 取消订单
+ * @param {Object} orderId
+ */
+export const cancelOrderStatus = (orderId) => {
+  return put(`/orders/${orderId}/cancel`)
+}
+
 
 
 /**
@@ -69,12 +77,13 @@ export const completeProcessNodes = (data) => {
  * @param {FormData} data FormData格式
  * @returns {Promise}
  */
-export const uploadAttachments = (data) => {
+export const uploadAttachments = (data, userId) => {
   // 如果是 FormData，需要特殊处理
   if (data instanceof FormData) {
     return post('/attachments/upload', data, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'X-User-Id': userId
       }
     })
   }

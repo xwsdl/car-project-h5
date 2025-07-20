@@ -73,7 +73,7 @@
   import ActionBar from './components/ActionBar.vue'
   import { useRoute } from 'vue-router'
   import { useAuthStore } from '@/stores/auth'
-  import { showFailToast,showToast} from 'vant'
+  import { showFailToast, showToast } from 'vant'
   const authStore = useAuthStore()
   const { t: $t } = useI18n()
   const route = useRoute()
@@ -145,6 +145,8 @@
     }
     const { id, username } = authStore.user
     const params = {
+      address: '用户收货地址', //用户收货地址
+      carId: +route.query.id, //汽车编号
       csId: 1, ///客服ID
       customerContact: '', //客户联系方式
       customerId: id, //客户ID

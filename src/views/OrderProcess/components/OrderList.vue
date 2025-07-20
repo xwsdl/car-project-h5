@@ -12,27 +12,35 @@
         <div class="order-header">
           <span class="order-id">{{ $t('orderProcess.orderId') }}: {{ order.id }}</span>
           <!-- 删除状态标签 -->
-          <span class="order-status" :class="order.status">
+          <span class="order-status">
             {{ order.orderStatus }}
           </span>
         </div>
 
         <div class="order-content">
           <div class="car-image">
-            <img :src="order.image" :alt="order.carName" />
+            <img :src="order.mainImageUrl" :alt="order.carName" />
           </div>
           <div class="car-info">
             <h3 class="car-name">{{ order.carName }}</h3>
-            <p class="car-price">{{ order.price }}</p>
+            <div class="car-price">
+              <PriceDisplay :price="order.carPrice" />
+            </div>
             <p class="order-time">{{ $t('orderProcess.createTime') }}: {{ order.createTime }}</p>
-            <!-- 新增：实际进度展示 -->
-            <p class="order-progress">
-              {{ $t('orderProcess.progress') }}：{{ getStatusText(order.status) }}
-            </p>
           </div>
         </div>
 
         <!-- 删除底部按钮 -->
+        <div class="order-actions">
+          <van-button
+            type="danger"
+            size="small"
+            @click.stop="cancelOrder(order)"
+            class="cancel-btn"
+          >
+            {{ $t('orderProcess.cancel') }}
+          </van-button>
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +49,7 @@
 <script setup>
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
-
+  import PriceDisplay from '@/components/PriceDisplay/index.vue'
   const router = useRouter()
   const { t: $t } = useI18n()
 
@@ -67,6 +75,11 @@
       path: '/orderDetail',
       query: { id: order.id }
     })
+  }
+
+  const emit = defineEmits(['cancel'])
+  const cancelOrder = (order) => {
+    emit('cancel', order)
   }
 </script>
 
@@ -161,6 +174,14 @@
               color: #1890ff;
               margin: 4px 0 0 0;
             }
+          }
+        }
+        .order-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 8px;
+          .cancel-btn {
+            min-width: 72px;
           }
         }
       }

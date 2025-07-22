@@ -52,8 +52,10 @@
             class="step-node__action"
             v-if="item.isCompleteSign === 2 && item.attachments.length && canUpload(item)"
           >
-            <van-button type="primary" size="small" @click="handleNodeAction(3)">通过</van-button>
-            <van-button type="default" size="small" @click="handleNodeAction(1)">不通过</van-button>
+            <van-button type="primary" size="small" @click="handleNodeAction(3, item.id)">
+              通过
+            </van-button>
+            <!-- <van-button type="default" size="small" @click="handleNodeAction(1,item.id)">不通过</van-button> -->
           </div>
         </div>
       </van-step>
@@ -132,16 +134,15 @@
 
   const handleNodeAction = (status, nodeId) => {
     const params = {
-      id: nodeId,
       csAction: status
     }
-    completeProcessNodes(params, authStore.user.id).then(res => {
+    completeProcessNodes(params, nodeId, authStore.user.id).then(res => {
       showToast(res.message)
     })
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .order-progress-steps {
     padding: 16px;
   }
@@ -244,5 +245,8 @@
   }
 
   .step-node {
+    &__action {
+      margin-top: 8px;
+    }
   }
 </style>

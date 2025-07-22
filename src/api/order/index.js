@@ -67,8 +67,12 @@ export const fetchOrderNextProcessNodes = (orderId) => {
  * @description 完成流程节点
  * @param {Object} data
  */
-export const completeProcessNodes = (data) => {
-  return post(`/processNodes/{id}/complete`, data)
+export const completeProcessNodes = (data, userId) => {
+  return post(`/processNodes/{id}/complete`, data, {
+    headers: {
+      'X-User-Id': userId
+    }
+  })
 }
 
 

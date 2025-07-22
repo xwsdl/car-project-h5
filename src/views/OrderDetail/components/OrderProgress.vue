@@ -46,6 +46,15 @@
               />
             </div>
           </div>
+
+          <!-- 节点操作区域 -->
+          <div
+            class="step-node__action"
+            v-if="item.isCompleteSign === 2 && item.attachments.length && canUpload(item)"
+          >
+            <van-button type="primary" size="small" @click="handleNodeAction(3)">通过</van-button>
+            <van-button type="default" size="small" @click="handleNodeAction(1)">不通过</van-button>
+          </div>
         </div>
       </van-step>
     </van-steps>
@@ -53,7 +62,7 @@
 </template>
 
 <script setup>
-  import { uploadAttachments } from '@/api'
+  import { uploadAttachments, completeProcessNodes } from '@/api'
   import { Steps as VanSteps, Step as VanStep, Icon as VanIcon, showToast } from 'vant'
   import { computed } from 'vue'
   import { useI18n } from 'vue-i18n'
@@ -119,6 +128,16 @@
       FromData.append('processNodeId', processNodeId)
       uploadAttachments(FromData, authStore.user.id)
     }
+  }
+
+  const handleNodeAction = (status, nodeId) => {
+    const params = {
+      id: nodeId,
+      csAction: status
+    }
+    completeProcessNodes(params, authStore.user.id).then(res => {
+      showToast(res.message)
+    })
   }
 </script>
 
@@ -222,5 +241,8 @@
 
   .upload-status {
     color: #1890ff;
+  }
+
+  .step-node {
   }
 </style>

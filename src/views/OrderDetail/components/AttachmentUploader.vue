@@ -53,6 +53,7 @@
 
   const handleAfterRead = async file => {
     if (props.onUpload) {
+      console.log('file', file.file)
       const result = await props.onUpload(file.file)
       emit('uploaded', result)
     }

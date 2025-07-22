@@ -6,20 +6,13 @@
       active-color="#1890ff"
       inactive-color="#bbb"
     >
-      <van-step v-for="(item, idx) in progressData" :key="item.id">
+      <van-step v-for="item in progressData" :key="item.id">
         <div class="step-content">
           <div class="desc">{{ item.processDesc }}</div>
-          <div v-if="item.isCompleteSign === 2 && canUpload(item)" class="upload-area">
-            <AttachmentUploader
-              v-model="item.attachments"
-              :accept="'image/*,application/pdf'"
-              :max-count="3"
-              :button-text="$t('orderDetail.uploadAttachment')"
-              @uploaded="onAttachmentUploaded"
-              :onUpload="uploadAttachmentsCallBack(item.id)"
-            />
-          </div>
-          <div v-else-if="item.attachments && item.attachments.length" class="attachments">
+          <div
+            v-if="Array.isArray(item.attachments) && item.attachments.length > 0"
+            class="attachments"
+          >
             <div class="attachments-title">{{ $t('orderDetail.attachments') }}</div>
             <div class="attachments-list">
               <div
@@ -28,9 +21,29 @@
                 class="attachment-item"
                 @click="previewAttachment(att)"
               >
-                <van-icon :name="getAttachmentIcon(att.type)" :class="att.type" />
-                <span>{{ att.name }}</span>
+                <van-icon :name="getAttachmentIcon(att.fileType)" />
+                <div class="attachment-info">
+                  <div class="attachment-name">{{ att.fileName }}</div>
+                  <div class="attachment-meta">
+                    <span class="upload-time">{{ att.uploadTime }}</span>
+                    <span class="upload-user" v-if="att.uploadUserId">
+                      ID: {{ att.uploadUserId }}
+                    </span>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+          <div v-if="item.isCompleteSign === 2 && canUpload(item)" class="attachments upload-area">
+            <div class="attachments-header">
+              <div class="attachments-title">{{ $t('orderDetail.uploadAttachment') }}</div>
+              <AttachmentUploader
+                :accept="'video/*,image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                :max-count="6"
+                :button-text="$t('orderDetail.uploadAttachment')"
+                @uploaded="onAttachmentUploaded"
+                :onUpload="uploadAttachmentsCallBack(item.id)"
+              />
             </div>
           </div>
         </div>
@@ -62,11 +75,24 @@
 
   const getAttachmentIcon = type => {
     const iconMap = {
-      pdf: 'description',
-      image: 'photo-o',
-      doc: 'description',
-      xls: 'description',
-      txt: 'description'
+      // pdf: 'description',
+      // image: 'photo-o',
+      // doc: 'description',
+      // xls: 'description',
+      // txt: 'description',
+
+      'application/pdf': 'PDF文档',
+      'image/jpeg': 'photo-o',
+      'image/png': 'photo-o',
+      'image/gif': 'photo-o',
+      'image/webp': 'photo-o',
+      'image/svg+xml': 'photo-o',
+      'application/msword': 'doc',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'doc',
+      'application/vnd.ms-excel': 'description',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'description',
+      'application/vnd.ms-powerpoint': 'description',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'description'
     }
     return iconMap[type] || 'description'
   }
@@ -100,48 +126,101 @@
   .order-progress-steps {
     padding: 16px;
   }
-  .custom-step-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid #bbb;
-    background: #fff;
-    color: #bbb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    transition: all 0.2s;
-  }
-  .custom-step-icon.active {
-    border-color: #1890ff;
-    color: #1890ff;
-    background: #fff;
-  }
-  .custom-step-icon.completed {
-    border-color: #52c41a;
-    color: #52c41a;
-    background: #fff;
-  }
-  .custom-step-icon .van-icon {
-    font-size: 18px;
-  }
+
   .step-content {
     margin-top: 8px;
   }
+
+  .desc {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
+  .attachments {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+
+  .attachments.upload-area {
+    background: #f0f7ff;
+    border: 1px dashed #1890ff;
+  }
+
+  .attachments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
   .attachments-title {
     font-size: 14px;
     font-weight: 500;
-    margin: 8px 0 4px 0;
+    color: #666;
+    margin: 0;
   }
+
+  .attachments-list {
+    margin-top: 8px;
+  }
+
   .attachment-item {
     display: flex;
-    align-items: center;
-    margin-bottom: 4px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 6px;
     cursor: pointer;
+    transition: all 0.2s;
   }
+
+  .attachment-item:hover {
+    background: #f0f2f5;
+  }
+
+  .attachment-item:last-child {
+    margin-bottom: 0;
+  }
+
   .attachment-item .van-icon {
-    margin-right: 6px;
+    margin-right: 12px;
+    margin-top: 2px;
+    font-size: 20px;
+    color: #1890ff;
+  }
+
+  .attachment-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .attachment-name {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+    word-break: break-all;
+    line-height: 1.4;
+  }
+
+  .attachment-meta {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    gap: 12px;
+    line-height: 1.4;
+  }
+
+  .upload-time,
+  .upload-user {
+    display: flex;
+    align-items: center;
+  }
+
+  .upload-status {
+    color: #1890ff;
   }
 </style>

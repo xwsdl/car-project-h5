@@ -271,7 +271,9 @@
     "uploadFail": "上传失败",
     "noUploadHandler": "未配置上传处理方法",
     "noFileSelected": "请先选择文件",
-    "operationSuccess": "操作成功"
+    "operationSuccess": "操作成功",
+    "previewFailed": "预览失败",
+    "downloadFailed": "下载失败"
   },
   "message": {
     "title": "消息中心",

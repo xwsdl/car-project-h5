@@ -273,7 +273,9 @@
     "uploadFail": "Ошибка загрузки",
     "noUploadHandler": "Метод загрузки не настроен",
     "noFileSelected": "Пожалуйста, выберите файл",
-    "operationSuccess": "Операция успешна"
+    "operationSuccess": "Операция успешна",
+    "previewFailed": "Не удалось просмотреть",
+    "downloadFailed": "Не удалось скачать"
   },
   "message": {
     "title": "Центр сообщений",

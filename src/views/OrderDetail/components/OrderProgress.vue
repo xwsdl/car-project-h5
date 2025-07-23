@@ -70,6 +70,7 @@
   import { useI18n } from 'vue-i18n'
   import AttachmentUploader from './AttachmentUploader.vue'
   import { useAuthStore } from '@/stores/auth'
+  import { showImagePreview } from 'vant'
   const { t: $t } = useI18n()
   const authStore = useAuthStore()
   const props = defineProps({
@@ -109,8 +110,44 @@
     return iconMap[type] || 'description'
   }
 
+  // 支持的图片类型
+  const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+
+  /**
+   * 附件预览：图片用 ImagePreview，其他类型下载或新窗口打开
+   * @param {Object} att 附件对象，需包含 filePath、fileType、fileName、id
+   */
   const previewAttachment = att => {
-    showToast('预览/下载功能')
+    if (!att || !att.filePath) {
+      showToast($t('orderDetail.previewFailed') || '预览失败')
+      return
+    }
+    if (imageTypes.includes(att.fileType)) {
+      // 多图预览，收集所有图片类型附件
+      const allImages = props.progressData
+        .flatMap(item => item.attachments || [])
+        .filter(a => imageTypes.includes(a.fileType))
+      const urls = allImages.map(a => a.filePath)
+      const startIndex = allImages.findIndex(a => a.id === att.id)
+      console.log(urls, 'urls')
+      showImagePreview({
+        images: urls,
+        startPosition: startIndex >= 0 ? startIndex : 0,
+        closeable: true
+      })
+    } else {
+      // 其他类型优先下载，失败则新窗口打开
+      try {
+        const link = document.createElement('a')
+        link.href = att.filePath
+        link.download = att.fileName || 'download'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch {
+        window.open(att.filePath, '_blank')
+      }
+    }
   }
 
   const canUpload = item => {

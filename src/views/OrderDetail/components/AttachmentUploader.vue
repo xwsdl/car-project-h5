@@ -22,11 +22,31 @@
       </div>
     </template>
   </van-uploader>
+  <!-- 文件列表展示及预览/下载功能 -->
+  <div v-if="fileList.length" class="file-list">
+    <div v-for="(file, idx) in fileList" :key="file.url || file.name || idx" class="file-item">
+      <div class="file-info" @click="handlePreview(file)">
+        <img v-if="isImage(file)" :src="file.url || file.content || file" class="thumb" />
+        <span class="file-name">
+          {{ file.name || (file.url ? file.url.split('/').pop() : $t('orderDetail.unnamed')) }}
+        </span>
+      </div>
+      <a
+        v-if="!isImage(file) && (file.url || file.content)"
+        :href="file.url || file.content"
+        :download="file.name"
+        class="download-link"
+        @click.stop
+      >
+        {{ $t('orderDetail.download') }}
+      </a>
+    </div>
+  </div>
 </template>
 
 <script setup>
   import { ref, watch } from 'vue'
-  import { Uploader as VanUploader, Icon as VanIcon } from 'vant'
+  import { Uploader as VanUploader, Icon as VanIcon, ImagePreview } from 'vant'
   import { useI18n } from 'vue-i18n'
   const { t: $t } = useI18n()
 
@@ -58,6 +78,33 @@
       emit('uploaded', result)
     }
     emit('update:modelValue', fileList.value)
+  }
+
+  // 判断是否为图片类型
+  function isImage(file) {
+    // file.type 可能不存在，兼容 url/name 后缀
+    const type = file.type || ''
+    const name = file.name || (file.url ? file.url.split('/').pop() : '')
+    return (
+      /image\/(jpeg|png|gif|webp|bmp|svg\+xml)/.test(type) ||
+      /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(name)
+    )
+  }
+
+  // 文件预览/下载逻辑
+  function handlePreview(file) {
+    if (isImage(file)) {
+      // 支持多图预览
+      const images = fileList.value.filter(isImage).map(f => f.url || f.content || f)
+      const startIdx = images.indexOf(file.url || file.content || file)
+      ImagePreview({
+        images,
+        startPosition: startIdx >= 0 ? startIdx : 0
+      })
+    } else if (file.url || file.content) {
+      // 其他文件直接下载
+      window.open(file.url || file.content, '_blank')
+    }
   }
 </script>
 
@@ -93,5 +140,44 @@
     color: #666;
     font-weight: 500;
     letter-spacing: 1px;
+  }
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+  .file-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex: 1;
+  }
+  .thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 8px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+  .file-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #333;
+  }
+  .download-link {
+    color: #1989fa;
+    font-size: 14px;
+    text-decoration: underline;
   }
 </style>

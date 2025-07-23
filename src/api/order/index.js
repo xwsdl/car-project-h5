@@ -68,7 +68,9 @@ export const fetchOrderNextProcessNodes = (orderId) => {
  * @param {Object} data
  */
 export const completeProcessNodes = (data, nodeId, userId) => {
-  return post(`/processNodes/${nodeId}/complete`, data, {
+  const formData = new FormData()
+  formData.append('csAction', data.csAction)
+  return post(`/processNodes/${nodeId}/complete`, formData, {
     headers: {
       'X-User-Id': userId
     }

@@ -35,7 +35,10 @@
       <!-- 垂直进度条 -->
       <div class="progress-section">
         <h3 class="section-title">{{ $t('orderDetail.progressTitle') }}</h3>
-        <order-progress :progress-data="progressData" />
+        <order-progress
+          :progress-data="progressData"
+          @refresh="() => getOrderDetail(orderDetail.id)"
+        />
       </div>
     </div>
   </div>

@@ -78,6 +78,7 @@
       default: () => []
     }
   })
+  const emit = defineEmits(['refresh'])
   console.log(props.progressData)
   const activeStep = computed(() => {
     const idx = props.progressData.findIndex(i => +i.isCompleteSign === 2)
@@ -128,7 +129,14 @@
       const FromData = new FormData()
       FromData.append('file', file)
       FromData.append('processNodeId', processNodeId)
-      uploadAttachments(FromData, authStore.user.id)
+      uploadAttachments(FromData, authStore.user.id).then(res => {
+        if (res) {
+          showToast($t('orderDetail.uploadSuccess'))
+          setTimeout(() => {
+            emit('refresh')
+          }, 200)
+        }
+      })
     }
   }
 
@@ -137,7 +145,12 @@
       csAction: status
     }
     completeProcessNodes(params, nodeId, authStore.user.id).then(res => {
-      showToast(res.message)
+      if (res) {
+        showToast($t('orderDetail.operationSuccess'))
+        setTimeout(() => {
+          emit('refresh')
+        }, 200)
+      }
     })
   }
 </script>

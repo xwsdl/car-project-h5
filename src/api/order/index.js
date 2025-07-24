@@ -67,14 +67,8 @@ export const fetchOrderNextProcessNodes = (orderId) => {
  * @description 完成流程节点
  * @param {Object} data
  */
-export const completeProcessNodes = (data, nodeId, userId) => {
-  const formData = new FormData()
-  formData.append('csAction', data.csAction)
-  return post(`/processNodes/${nodeId}/complete`, formData, {
-    headers: {
-      'X-User-Id': userId
-    }
-  })
+export const completeProcessNodes = (data) => {
+  return post(`/processNodes/complete`, data)
 }
 
 
@@ -83,13 +77,12 @@ export const completeProcessNodes = (data, nodeId, userId) => {
  * @param {FormData} data FormData格式
  * @returns {Promise}
  */
-export const uploadAttachments = (data, userId) => {
+export const uploadAttachments = (data) => {
   // 如果是 FormData，需要特殊处理
   if (data instanceof FormData) {
     return post('/attachments/upload', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'X-User-Id': userId
       }
     })
   }

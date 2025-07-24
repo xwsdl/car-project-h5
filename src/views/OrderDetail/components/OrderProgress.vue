@@ -166,7 +166,8 @@
       const FromData = new FormData()
       FromData.append('file', file)
       FromData.append('processNodeId', processNodeId)
-      uploadAttachments(FromData, authStore.user.id).then(res => {
+      FromData.append('userId', authStore.user.id)
+      uploadAttachments(FromData).then(res => {
         if (res) {
           showToast($t('orderDetail.uploadSuccess'))
           setTimeout(() => {
@@ -179,9 +180,11 @@
 
   const handleNodeAction = (status, nodeId) => {
     const params = {
-      csAction: status
+      csAction: status,
+      nodeId,
+      userId: authStore.user.id
     }
-    completeProcessNodes(params, nodeId, authStore.user.id).then(res => {
+    completeProcessNodes(params).then(res => {
       if (res) {
         showToast($t('orderDetail.operationSuccess'))
         setTimeout(() => {

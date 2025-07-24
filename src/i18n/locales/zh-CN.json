@@ -273,7 +273,9 @@
     "noFileSelected": "请先选择文件",
     "operationSuccess": "操作成功",
     "previewFailed": "预览失败",
-    "downloadFailed": "下载失败"
+    "downloadFailed": "下载失败",
+    "unnamed": "未命名文件",
+    "download": "下载"
   },
   "message": {
     "title": "消息中心",

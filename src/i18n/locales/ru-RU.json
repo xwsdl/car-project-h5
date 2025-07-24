@@ -275,7 +275,9 @@
     "noFileSelected": "Пожалуйста, выберите файл",
     "operationSuccess": "Операция успешна",
     "previewFailed": "Не удалось просмотреть",
-    "downloadFailed": "Не удалось скачать"
+    "downloadFailed": "Не удалось скачать",
+    "unnamed": "Неизвестный файл",
+    "download": "Скачать"
   },
   "message": {
     "title": "Центр сообщений",

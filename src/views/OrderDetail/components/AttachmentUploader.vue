@@ -1,8 +1,8 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-07-19 22:22:03
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-20 18:58:06
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-24 10:49:45
  * @FilePath: \car-project-h5\src\views\OrderDetail\components\AttachmentUploader.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -22,26 +22,6 @@
       </div>
     </template>
   </van-uploader>
-  <!-- 文件列表展示及预览/下载功能 -->
-  <div v-if="fileList.length" class="file-list">
-    <div v-for="(file, idx) in fileList" :key="file.url || file.name || idx" class="file-item">
-      <div class="file-info" @click="handlePreview(file)">
-        <img v-if="isImage(file)" :src="file.url || file.content || file" class="thumb" />
-        <span class="file-name">
-          {{ file.name || (file.url ? file.url.split('/').pop() : $t('orderDetail.unnamed')) }}
-        </span>
-      </div>
-      <a
-        v-if="!isImage(file) && (file.url || file.content)"
-        :href="file.url || file.content"
-        :download="file.name"
-        class="download-link"
-        @click.stop
-      >
-        {{ $t('orderDetail.download') }}
-      </a>
-    </div>
-  </div>
 </template>
 
 <script setup>

@@ -74,7 +74,8 @@
     "searchPlaceholder": "搜索品牌、车型",
     "hotCategory": "热门分类",
     "allBrands": "全部品牌",
-    "horgosPrice": "霍尔果斯价"
+    "horgosPrice": "霍尔果斯价",
+    "reset": "重置"
   },
   "detail": {
     "title": "汽车详情",

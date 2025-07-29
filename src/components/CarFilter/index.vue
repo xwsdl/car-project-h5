@@ -1,27 +1,37 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-19 21:51:39
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-15 16:26:16
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-29 23:26:16
  * @FilePath: \car-project-h5\src\components\CarFilter.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <van-dropdown-menu class="home-filter">
-    <van-dropdown-item
-      v-model="sortValue"
-      :options="sortOptions"
-      :title="$t('carFilter.sort')"
-      @change="onSortChange"
-    />
+    <van-dropdown-item v-model="sortValue" :options="sortOptions" @change="onSortChange">
+      <template #title>
+        <span :class="{ 'dropdown-title--active': isSortActive }">
+          {{ $t('carFilter.sort') }}
+        </span>
+      </template>
+    </van-dropdown-item>
     <van-dropdown-item title-class="no-arrow" disabled>
       <template #title>
-        <div class="filter-action" @click="goBrandPage">
+        <div
+          class="filter-action"
+          :style="{ color: isBrandActive ? '#1989fa' : '#323233' }"
+          @click="goBrandPage"
+        >
           {{ $t('carFilter.brand') }}
         </div>
       </template>
     </van-dropdown-item>
-    <van-dropdown-item :title="$t('carFilter.price')" ref="itemRef">
+    <van-dropdown-item ref="itemRef">
+      <template #title>
+        <span :class="{ 'dropdown-title--active': isPriceActive }">
+          {{ $t('carFilter.price') }}
+        </span>
+      </template>
       <template #default>
         <div class="price-filter-panel">
           <!-- 价格区间按钮 -->
@@ -80,7 +90,11 @@
     </van-dropdown-item>
     <van-dropdown-item title-class="no-arrow" disabled>
       <template #title>
-        <div class="filter-action" @click="goFilterPage">
+        <div
+          class="filter-action"
+          :style="{ color: isFilterActive ? '#1989fa' : '#323233' }"
+          @click="goFilterPage"
+        >
           {{ $t('carFilter.filter') }}
           <van-icon name="filter-o" />
         </div>
@@ -93,6 +107,8 @@
   import { ref, watch, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
+  import { useFilterStore } from '@/stores/filter'
+  const filterStore = useFilterStore()
   const { t } = useI18n()
   const props = defineProps({
     sort: Number,
@@ -250,6 +266,18 @@
     () => props.filter,
     v => (filterValue.value = v)
   )
+
+  // 高亮逻辑
+  const isSortActive = computed(
+    () => sortValue.value !== 0 && sortValue.value !== undefined && sortValue.value !== null
+  )
+  const isBrandActive = computed(() => !!filterStore.filter.brand)
+  const isPriceActive = computed(
+    () => priceValue.value !== 0 && priceValue.value !== undefined && priceValue.value !== null
+  )
+  const isFilterActive = computed(
+    () => filterValue.value !== 0 && filterValue.value !== undefined && filterValue.value !== null
+  )
 </script>
 
 <style scoped>
@@ -304,6 +332,9 @@
   .filter-action:active {
     color: #1989fa;
   }
+  .dropdown-title--active {
+    color: #1989fa !important;
+  }
 </style>
 <style>
   .van-dropdown-menu__title.no-arrow::after {
@@ -311,3 +342,4 @@
     opacity: 0 !important;
   }
 </style>
+::v-deep .van-dropdown-menu__title.dropdown-title--active { color: #1989fa !important; }

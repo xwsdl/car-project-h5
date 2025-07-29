@@ -1,8 +1,8 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-10 10:15:38
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-07-29 23:38:34
  * @FilePath: \car-project-h5\src\views\Home\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -27,7 +27,12 @@
           @clear="handleSearch"
           v-model="formData.modelName"
           :placeholder="$t('home.searchTip')"
-        />
+          show-action
+        >
+          <template #action>
+            <span class="reset-btn" @click="handleReset">{{ $t('home.reset') }}</span>
+          </template>
+        </van-search>
         <CarFilter
           v-model:sort="sortValue"
           v-model:brand="brandValue"
@@ -120,6 +125,25 @@
     filterStore.setFilter({ modelName: formData.value.modelName })
   }
 
+  const handleReset = () => {
+    formData.value.modelName = ''
+    sortValue.value = 0
+    brandValue.value = 0
+    priceValue.value = 0
+    filterValue.value = 0
+    filterStore.setFilter({
+      modelName: null,
+      price: null,
+      carType: null,
+      color: null,
+      emissionStandard: null,
+      energyType: null,
+      displacement: null,
+      brand: null
+    })
+    fetchCardList()
+  }
+
   const fetchCardList = () => {
     // 不再判断 isQueryEmpty，始终请求接口
     const mergedQuery = getMergedQuery()
@@ -201,7 +225,7 @@
       },
       3: {
         isAsc: false,
-        sortBy: 'firstRegTimeStr'
+        sortBy: 'firstRegTime'
       }
     }
 
@@ -349,5 +373,12 @@
 
   .home-search {
     background-color: #fff;
+  }
+
+  .reset-btn {
+    color: #1989fa;
+    margin-left: 8px;
+    font-size: 15px;
+    cursor: pointer;
   }
 </style>

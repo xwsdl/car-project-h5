@@ -11,6 +11,7 @@ export const useFilterStore = defineStore('filter', () => {
     emissionStandard: null,
     energyType: null,
     displacement: null,
+    brand: null,//汽车品牌
     // ...其他筛选项
   })
 

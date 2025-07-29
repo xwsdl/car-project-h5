@@ -73,7 +73,8 @@
     "searchPlaceholder": "Search for brand, model",
     "hotCategory": "Hot Categories",
     "allBrands": "All Brands",
-    "horgosPrice": "Цена Хоргоса"
+    "horgosPrice": "Цена Хоргоса",
+    "reset": "Сброс"
   },
   "detail": {
     "title": "Детали автомобиля",

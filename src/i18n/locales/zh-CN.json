@@ -439,7 +439,7 @@
     "openWechat": "请在微信中打开"
   },
   "currency": {
-    "rub": "₽"
+    "rub": "¥"
   },
   "route": {
     "home": "首页",
@@ -453,6 +453,22 @@
     "customerService": "客服",
     "brand": "选择品牌",
     "filterPage": "高级筛选",
-    "login": "登录"
+    "login": "登录",
+    "test": "测试页面"
+  },
+  "test": {
+    "title": "语言切换测试页面",
+    "description": "用于测试语言切换时的数据刷新功能",
+    "languageInfo": "语言信息",
+    "currentLanguage": "当前语言",
+    "lastRefresh": "最后刷新时间",
+    "dataInfo": "数据信息",
+    "loading": "加载中...",
+    "error": "加载失败",
+    "actions": "操作",
+    "refreshData": "刷新数据",
+    "clearCache": "清除缓存",
+    "refreshSuccess": "数据刷新成功",
+    "cacheCleared": "缓存已清除"
   }
 }

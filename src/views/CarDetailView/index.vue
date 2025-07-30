@@ -63,6 +63,7 @@
   import { extractImageUrls } from '@/utils/index.js'
   import { fetchCarDetail, fetchRecommend } from '@/api/base/index.js'
   import { createOrder } from '@/api'
+  import { useDataRefresh } from '@/hooks/useDataRefresh.js'
   import { ref, onMounted, watch } from 'vue'
   import CarHeader from './components/CarHeader.vue'
   import CarSwiper from './components/CarSwiper.vue'
@@ -92,6 +93,13 @@
       })
     })
   }
+  // 强制刷新车辆详情数据
+  const refreshCarDetail = () => {
+    if (route.query.id) {
+      pageInit()
+    }
+  }
+
   onMounted(() => {
     pageInit()
   })
@@ -137,6 +145,14 @@
       })
     })
   }
+
+  // 使用数据刷新组合式函数
+  useDataRefresh(refreshCarDetail, {
+    autoRefresh: true,
+    refreshOnLanguageChange: true,
+    refreshOnMount: false, // 手动控制初始加载
+    debounceTime: 300
+  })
 
   const handleBuy = () => {
     if (!authStore.isAuthenticated) {

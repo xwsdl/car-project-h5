@@ -1,9 +1,19 @@
+/*
+ * @Author: xiaowei 2902267627@qq.com
+ * @Date: 2025-06-11 11:20:46
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-30 15:40:24
+ * @FilePath: \car-project-h5\src\i18n\index.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { createI18n } from 'vue-i18n'
 import zhCN from './locales/zh-CN.json'
 import ruRU from './locales/ru-RU.json'
 import { Locale } from 'vant'
 import vantZhCN from 'vant/es/locale/lang/zh-CN'
 import vantRuRU from 'vant/es/locale/lang/ru-RU'
+import { clearAllPageCache } from '@/utils/cache.js'
+import eventBus, { EVENT_TYPES } from '@/utils/eventBus.js'
 // 检查语言文件是否正确加载
 console.log('加载的语言文件:', { zhCN, ruRU })
 console.log('加载的语言文件22:', { vantZhCN, vantRuRU })
@@ -28,10 +38,35 @@ Locale.use(i18n.global.locale.value === 'zh-CN' ? vantZhCN : vantRuRU)
 // 导出切换语言的方法
 export const setLanguage = (lang) => {
   try {
+    // 如果语言没有变化，直接返回
+    if (i18n.global.locale.value === lang) {
+      return
+    }
+
+    // 设置新语言
     i18n.global.locale.value = lang
     localStorage.setItem('language', lang)
     document.querySelector('html').setAttribute('lang', lang)
     Locale.use(lang === 'zh-CN' ? vantZhCN : vantRuRU)
+
+    // 清除所有页面缓存
+    clearAllPageCache()
+    console.log('已清除所有页面缓存')
+
+    // 触发语言切换事件，通知所有页面重新获取数据
+    eventBus.emit(EVENT_TYPES.LANGUAGE_CHANGED, {
+      newLanguage: lang,
+      oldLanguage: i18n.global.locale.value,
+      timestamp: Date.now()
+    })
+
+    // 触发数据刷新事件
+    eventBus.emit(EVENT_TYPES.DATA_REFRESH_NEEDED, {
+      reason: 'language_changed',
+      language: lang,
+      timestamp: Date.now()
+    })
+
     console.log('语言切换成功:', lang)
   } catch (error) {
     console.error('语言切换失败:', error)

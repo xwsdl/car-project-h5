@@ -61,7 +61,8 @@
   import { useI18n } from 'vue-i18n'
   import { fetchCarList } from '@/api/base/index.js'
   import { getBanner, extractImageUrls } from '@/utils/index.js'
-  import { restorePageState } from '@/utils/cache.js'
+  import { restorePageState, savePageState } from '@/utils/cache.js'
+  import { useDataRefresh } from '@/hooks/useDataRefresh.js'
   import { ref, onMounted, computed, watch } from 'vue'
   import CarList from '@/components/CarList/index.vue'
   import CarFilter from '@/components/CarFilter/index.vue'
@@ -145,9 +146,13 @@
   }
 
   const fetchCardList = () => {
+    // 重置分页
+    formData.value.pageNo = 1
+    cars.value = []
+
     // 不再判断 isQueryEmpty，始终请求接口
     const mergedQuery = getMergedQuery()
-    fetchCarList({ ...mergedQuery }).then(res => {
+    return fetchCarList({ ...mergedQuery }).then(res => {
       formData.value.total = res.total
       formData.value.pages = res.pages
       cars.value = res.list
@@ -158,8 +163,26 @@
           return item
         })
         .filter(item => item.mainImageUrl)
+
+      // 保存页面状态到缓存
+      savePageState('homeIndex', {
+        formData: formData.value,
+        sortValue: sortValue.value,
+        brandValue: brandValue.value,
+        priceValue: priceValue.value,
+        filterValue: filterValue.value,
+        cars: cars.value
+      })
     })
   }
+
+  // 使用数据刷新组合式函数
+  useDataRefresh(fetchCardList, {
+    autoRefresh: true,
+    refreshOnLanguageChange: true,
+    refreshOnMount: false, // 手动控制初始加载
+    debounceTime: 300
+  })
 
   onMounted(() => {
     // 尝试从缓存恢复状态

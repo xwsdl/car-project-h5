@@ -1,8 +1,8 @@
 /*
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-09 20:54:50
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-12 14:28:56
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-30 16:28:52
  * @FilePath: \car-project-h5\src\api\base\index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -67,4 +67,14 @@ export const updateUserInfo = (data) => {
     })
   }
   return post('/users/updateUser', data)
+}
+
+// 获取车辆颜色
+export const fetchCarColor = () => {
+  return get(`/carinform/getCarColor`)
+}
+
+// 获取车辆能源类型
+export const fetchCarEnergyType = () => {
+  return get(`/carinform/getEnergyType`)
 }

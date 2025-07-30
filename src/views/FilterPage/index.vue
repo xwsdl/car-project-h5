@@ -139,6 +139,8 @@
   import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
   import { useFilterStore } from '@/stores/filter'
+  import { fetchCarColor, fetchCarEnergyType } from '@/api'
+  import { useDataRefresh } from '@/hooks/useDataRefresh.js'
 
   defineOptions({
     name: 'FilterPage'
@@ -198,34 +200,42 @@
   }
   const displacementMarks = { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: t('filterPage.unlimited') }
 
-  const bodyColors = computed(() => [
-    { value: 'Арктический белый', label: t('filterPage.colors.arcticWhite') },
-    { value: 'Белая слоновая кость', label: t('filterPage.colors.ivoryWhite') },
-    { value: 'Белый', label: t('filterPage.colors.white') },
-    { value: 'Белый ледник', label: t('filterPage.colors.glacierWhite') },
-    { value: 'Желтый', label: t('filterPage.colors.yellow') },
-    { value: 'Зеленый', label: t('filterPage.colors.green') },
-    { value: 'Золотой', label: t('filterPage.colors.gold') },
-    { value: 'коричневый', label: t('filterPage.colors.brown') },
-    { value: 'Кофейный цвет', label: t('filterPage.colors.coffee') },
-    { value: 'Красный', label: t('filterPage.colors.red') },
-    { value: 'Красное дерево', label: t('filterPage.colors.mahogany') },
-    { value: 'Медный', label: t('filterPage.colors.copper') },
-    { value: 'Многоцветные', label: t('filterPage.colors.multicolor') },
-    { value: 'Оливковый цвет', label: t('filterPage.colors.olive') },
-    { value: 'Оранжевый', label: t('filterPage.colors.orange') },
-    { value: 'Прочее', label: t('filterPage.colors.other') },
-    { value: 'Серебряный', label: t('filterPage.colors.silver') },
-    { value: 'Серебряный серый', label: t('filterPage.colors.silverGray') },
-    { value: 'Серое', label: t('filterPage.colors.gray') },
-    { value: 'Синий', label: t('filterPage.colors.blue') },
-    { value: 'Синий цвет', label: t('filterPage.colors.cyan') },
-    { value: 'Темно-серый', label: t('filterPage.colors.darkGray') },
-    { value: 'Фиолетовый', label: t('filterPage.colors.purple') },
-    { value: 'Цвет графита', label: t('filterPage.colors.graphite') },
-    { value: 'Черный', label: t('filterPage.colors.black') },
-    { value: 'Шампанский', label: t('filterPage.colors.champagne') }
-  ])
+  const bodyColors = ref([])
+  const energyTypes = ref([])
+
+  // 加载车辆颜色数据
+  const loadCarColors = async () => {
+    try {
+      const list = await fetchCarColor()
+      bodyColors.value = list.map(item => ({
+        value: item.num,
+        label: item.color
+      }))
+      console.log('车辆颜色数据已加载:', bodyColors.value)
+    } catch (error) {
+      console.error('加载车辆颜色数据失败:', error)
+    }
+  }
+
+  // 加载车辆能源类型数据
+  const loadCarEnergyTypes = async () => {
+    try {
+      const list = await fetchCarEnergyType()
+      energyTypes.value = list.map(item => ({
+        value: item.num,
+        label: item.energyType
+      }))
+      console.log('车辆能源类型数据已加载:', energyTypes.value)
+    } catch (error) {
+      console.error('加载车辆能源类型数据失败:', error)
+    }
+  }
+
+  // 刷新所有筛选数据
+  const refreshFilterData = async () => {
+    console.log('刷新筛选页面数据...')
+    await Promise.all([loadCarColors(), loadCarEnergyTypes()])
+  }
 
   const emissionStandards = computed(() => [
     { value: 'Страна I', label: t('filterPage.emissions.guo1') },
@@ -236,18 +246,13 @@
     { value: 'Страна VI', label: t('filterPage.emissions.guo6') }
   ])
 
-  const energyTypes = computed(() => [
-    { value: 1, label: t('filterPage.energyTypes.gasoline') },
-    { value: 2, label: t('filterPage.energyTypes.diesel') },
-    { value: 3, label: t('filterPage.energyTypes.hybrid') },
-    { value: 4, label: t('filterPage.energyTypes.naturalGas') },
-    { value: 5, label: t('filterPage.energyTypes.electric') },
-    { value: 6, label: t('filterPage.energyTypes.phev') },
-    { value: 7, label: t('filterPage.energyTypes.erev') },
-    { value: 8, label: t('filterPage.energyTypes.hydrogen') },
-    { value: 9, label: t('filterPage.energyTypes.gasoline48v') },
-    { value: 10, label: t('filterPage.energyTypes.gasoline24v') }
-  ])
+  // 使用数据刷新组合式函数
+  useDataRefresh(refreshFilterData, {
+    autoRefresh: true,
+    refreshOnLanguageChange: true,
+    refreshOnMount: true,
+    debounceTime: 300
+  })
 
   function formatAge(val) {
     return val >= 11 ? t('filterPage.unlimited') : val

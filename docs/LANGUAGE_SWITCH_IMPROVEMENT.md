@@ -143,6 +143,146 @@ useDataRefresh(refreshCarDetail, {
 })
 ```
 
+### 4. FilterPage页面 (`src/views/FilterPage/index.vue`)
+
+```javascript
+// 加载车辆颜色数据
+const loadCarColors = async () => {
+  try {
+    const list = await fetchCarColor()
+    bodyColors.value = list.map(item => ({
+      value: item.num,
+      label: item.color
+    }))
+    console.log('车辆颜色数据已加载:', bodyColors.value)
+  } catch (error) {
+    console.error('加载车辆颜色数据失败:', error)
+  }
+}
+
+// 加载车辆能源类型数据
+const loadCarEnergyTypes = async () => {
+  try {
+    const list = await fetchCarEnergyType()
+    energyTypes.value = list.map(item => ({
+      value: item.num,
+      label: item.energyType
+    }))
+    console.log('车辆能源类型数据已加载:', energyTypes.value)
+  } catch (error) {
+    console.error('加载车辆能源类型数据失败:', error)
+  }
+}
+
+// 刷新所有筛选数据
+const refreshFilterData = async () => {
+  console.log('刷新筛选页面数据...')
+  await Promise.all([loadCarColors(), loadCarEnergyTypes()])
+}
+
+// 使用数据刷新组合式函数
+useDataRefresh(refreshFilterData, {
+  autoRefresh: true,
+  refreshOnLanguageChange: true,
+  refreshOnMount: true,
+  debounceTime: 300
+})
+```
+
+### 5. ClassificationList页面 (`src/views/ClassificationList/index.vue`)
+
+```javascript
+const fetchCardList = () => {
+  // 重置分页
+  formData.pageNo = 1
+  cars.value = []
+
+  return fetchCarList(formData).then(res => {
+    formData.total = res.total
+    formData.pages = res.pages
+    cars.value = res.list
+  })
+}
+
+// 使用数据刷新组合式函数
+useDataRefresh(fetchCardList, {
+  autoRefresh: true,
+  refreshOnLanguageChange: true,
+  refreshOnMount: false, // 手动控制初始加载
+  debounceTime: 300
+})
+```
+
+### 5. ClassificationList页面 (`src/views/ClassificationList/index.vue`)
+
+```javascript
+const fetchCardList = () => {
+  // 重置分页
+  formData.pageNo = 1
+  cars.value = []
+
+  return fetchCarList(formData).then(res => {
+    formData.total = res.total
+    formData.pages = res.pages
+    cars.value = res.list
+  })
+}
+
+// 使用数据刷新组合式函数
+useDataRefresh(fetchCardList, {
+  autoRefresh: true,
+  refreshOnLanguageChange: true,
+  refreshOnMount: false, // 手动控制初始加载
+  debounceTime: 300
+})
+```
+
+### 4. FilterPage页面 (`src/views/FilterPage/index.vue`)
+
+```javascript
+// 加载车辆颜色数据
+const loadCarColors = async () => {
+  try {
+    const list = await fetchCarColor()
+    bodyColors.value = list.map(item => ({
+      value: item.num,
+      label: item.color
+    }))
+    console.log('车辆颜色数据已加载:', bodyColors.value)
+  } catch (error) {
+    console.error('加载车辆颜色数据失败:', error)
+  }
+}
+
+// 加载车辆能源类型数据
+const loadCarEnergyTypes = async () => {
+  try {
+    const list = await fetchCarEnergyType()
+    energyTypes.value = list.map(item => ({
+      value: item.num,
+      label: item.energyType
+    }))
+    console.log('车辆能源类型数据已加载:', energyTypes.value)
+  } catch (error) {
+    console.error('加载车辆能源类型数据失败:', error)
+  }
+}
+
+// 刷新所有筛选数据
+const refreshFilterData = async () => {
+  console.log('刷新筛选页面数据...')
+  await Promise.all([loadCarColors(), loadCarEnergyTypes()])
+}
+
+// 使用数据刷新组合式函数
+useDataRefresh(refreshFilterData, {
+  autoRefresh: true,
+  refreshOnLanguageChange: true,
+  refreshOnMount: true,
+  debounceTime: 300
+})
+```
+
 ## 测试页面
 
 创建了测试页面 `src/views/Test/index.vue` 来验证语言切换功能：

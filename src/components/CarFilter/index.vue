@@ -1,8 +1,8 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-19 21:51:39
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-29 23:26:16
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-07-30 17:29:59
  * @FilePath: \car-project-h5\src\components\CarFilter.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -275,8 +275,22 @@
   const isPriceActive = computed(
     () => priceValue.value !== 0 && priceValue.value !== undefined && priceValue.value !== null
   )
+  // carType: null, // 车辆类型
+  //   carBegin: 0, // 车龄起始
+  //   carEnd: 11, // 车龄结束
+  //   displacement: 0.0, // 排量
+  //   color: null, // 颜色
+  //   emissionStandard: null, // 排放标准
+  //   energyType: null // 能源类型
   const isFilterActive = computed(
-    () => filterValue.value !== 0 && filterValue.value !== undefined && filterValue.value !== null
+    () =>
+      !!filterStore.filter.carType ||
+      !!filterStore.filter.carBegin ||
+      !!filterStore.filter.carEnd ||
+      !!filterStore.filter.displacement ||
+      !!filterStore.filter.emissionStandard ||
+      !!filterStore.filter.color ||
+      !!filterStore.filter.energyType
   )
 </script>
 

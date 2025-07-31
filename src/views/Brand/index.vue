@@ -255,7 +255,7 @@
   }
 
   function onBrandSelect(brand) {
-    filterStore.setFilter({ modelName: brand.name })
+    filterStore.setFilter({ modelName: brand.name, brand: brand.name })
     router.push('/home')
   }
 

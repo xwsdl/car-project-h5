@@ -2,7 +2,7 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-01 11:25:52
  * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-12 15:31:36
+ * @LastEditTime: 2025-08-07 21:52:31
  * @FilePath: \car-h5-project\src\views\Login\components\LoginForm.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -65,9 +65,9 @@
       rememberMe: checked.value
     }).then(async res => {
       const userInfo = await getUserInfo(res.userId)
-      console.log('userInfo', userInfo)
+
       // 保存用户信息和token
-      authStore.login(userInfo, res.token)
+      authStore.loginSuccess(userInfo, res.token)
       // 检查是否有重定向路径
       const redirect = route.query.redirect
 

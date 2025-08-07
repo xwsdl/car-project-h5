@@ -77,7 +77,7 @@
       duration: 0
     })
 
-    authStore.logout()
+    authStore.logoutSuccess()
     setTimeout(() => {
       closeToast()
       router.push('/login')

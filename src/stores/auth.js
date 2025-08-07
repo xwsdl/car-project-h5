@@ -2,14 +2,15 @@
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-09 20:54:50
  * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-12 13:56:55
+ * @LastEditTime: 2025-08-07 22:00:35
  * @FilePath: \car-project-h5\src\stores\auth.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // 用户信息
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
+import { useWebSocketStore } from './websocket'
+const wsUrl = 'ws://8.211.38.230:8084/ws/chat?token='
 export const useAuthStore = defineStore('auth', () => {
   // 从本地存储恢复用户信息
   const getUserFromStorage = () => {
@@ -60,6 +61,20 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_user')
   }
 
+  // 登录成功后建立 WebSocket 连接
+  const loginSuccess = (userData, authToken) => {
+    login(userData, authToken)
+    const wsStore = useWebSocketStore()
+    wsStore.initWebSocket(wsUrl + authToken)
+  }
+
+  // 登出时断开 WebSocket
+  const logoutSuccess = () => {
+    logout()
+    const wsStore = useWebSocketStore()
+    wsStore.closeWebSocket()
+  }
+
   return {
     user,
     token,
@@ -68,5 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     updateUser,
     clearUser,
+    loginSuccess,
+    logoutSuccess,
   }
 })

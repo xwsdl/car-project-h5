@@ -67,7 +67,7 @@
       const userInfo = await getUserInfo(res.userId)
 
       // 保存用户信息和token
-      authStore.loginSuccess(userInfo, res.token)
+      authStore.login(userInfo, res.token)
       // 检查是否有重定向路径
       const redirect = route.query.redirect
 

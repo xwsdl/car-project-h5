@@ -15,7 +15,7 @@ const router = createRouter({
           component: () => import('@/views/Home/index.vue'),
           meta: {
             title: 'route.home',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
             keepAlive: true, // 需要缓存 ，注意：name的名称和组件名一致才生效
           },
         },
@@ -81,7 +81,7 @@ const router = createRouter({
           },
           meta: {
             title: 'route.carDetail',
-            requiresAuth: true, //
+            requiresAuth: false, //
             keepAlive: false, // 不需要缓存
           },
         },
@@ -91,7 +91,7 @@ const router = createRouter({
           component: () => import('@/views/ClassificationList/index.vue'),
           meta: {
             title: 'route.carList',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
             keepAlive: false, // 不需要缓存
           },
         },
@@ -121,7 +121,7 @@ const router = createRouter({
           component: () => import('@/views/Brand/index.vue'),
           meta: {
             title: 'route.brand',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
             keepAlive: true, // 不需要缓存
           },
         },
@@ -131,7 +131,7 @@ const router = createRouter({
           component: () => import('@/views/FilterPage/index.vue'),
           meta: {
             title: 'route.filterPage',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
             keepAlive: true // 不需要缓存
           },
         },
@@ -141,7 +141,7 @@ const router = createRouter({
           component: () => import('@/views/Test/index.vue'),
           meta: {
             title: '测试页面',
-            requiresAuth: true, // 不需要登录
+            requiresAuth: false, // 不需要登录
             keepAlive: true // 不需要缓存
           },
         },

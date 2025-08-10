@@ -1,6 +1,6 @@
 <template>
   <div class="chat-container">
-    <ChatHeader @close-chat="closeChat" />
+    <ChatHeader @close-chat="closeChat" :receiverId="receiverId" />
 
     <ChatMessages
       :messages="messages"
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+  import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
   import ChatHeader from './components/ChatHeader.vue'
   import ChatMessages from './components/ChatMessages.vue'
   import ChatInput from './components/ChatInput.vue'
@@ -97,6 +97,10 @@
   const isFirstConversation = ref(false)
   const conversationInfo = ref(null)
   const currentConversationId = ref(route.query.conversationId || '')
+  // 对话接收者id
+  const receiverId = computed(() => {
+    return route.query.receiverId || conversationInfo.value?.customerServiceId || ''
+  })
   // 判断是首次对话还是继续对话
   if (route.query.carId && route.query.conversationId) {
     isFirstConversation.value = false

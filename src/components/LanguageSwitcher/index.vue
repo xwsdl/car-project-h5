@@ -18,9 +18,10 @@
   import { setLanguage } from '@/i18n/index.js'
   const { locale, t } = useI18n()
 
+  // 语言映射(取反，中文显示俄文，俄文显示中文，切换交互)
   const langMap = {
-    'zh-CN': () => t('common.languages.zh'),
-    'ru-RU': () => t('common.languages.ru')
+    'zh-CN': () => t('common.languages.ru'),
+    'ru-RU': () => t('common.languages.zh')
   }
 
   const currentLangText = computed(() => {
@@ -51,6 +52,7 @@
     border: 1px solid #f0f0f0;
     transition: box-shadow 0.2s;
     padding: 0 5px;
+    box-sizing: content-box;
     &:active {
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }

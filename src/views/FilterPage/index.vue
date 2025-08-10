@@ -38,8 +38,8 @@
             <van-slider
               v-model="carBeginEnd"
               range
-              :min="0"
-              :max="11"
+              :min="3"
+              :max="6"
               :step="1"
               :marks="ageMarks"
             />
@@ -190,12 +190,9 @@
   ])
 
   const ageMarks = {
-    0: '0',
-    2: '2',
+    3: '3',
     4: '4',
-    6: '6',
-    8: '8',
-    10: '10',
+    5: '5',
     11: t('filterPage.unlimited')
   }
   const displacementMarks = { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: t('filterPage.unlimited') }
@@ -255,7 +252,7 @@
   })
 
   function formatAge(val) {
-    return val >= 11 ? t('filterPage.unlimited') : val
+    return val >= 6 ? t('filterPage.unlimited') : val
   }
 
   function formatDisplacement(val) {

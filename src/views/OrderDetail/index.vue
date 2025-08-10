@@ -23,7 +23,9 @@
           </div>
           <div class="info-item">
             <span class="label">{{ $t('orderDetail.carName') }}:</span>
-            <span class="value">{{ orderDetail.carName }}</span>
+            <span class="value" @click="goCarDetailPage(orderDetail.carId)">
+              {{ orderDetail.carName }}
+            </span>
           </div>
           <div class="info-item">
             <span class="label">{{ $t('orderDetail.price') }}:</span>
@@ -96,6 +98,10 @@
   // 返回上一页
   const goBack = () => {
     router.back()
+  }
+
+  const goCarDetailPage = carId => {
+    router.push(`/car?id=${carId}`)
   }
 
   // 页面加载时获取数据

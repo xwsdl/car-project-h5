@@ -141,27 +141,27 @@
   const itemRef = ref(null)
   const priceOptions = computed(() => [
     { text: t('carFilter.unlimited'), value: 0 },
-    { text: t('carFilter.price0_100'), value: 1 },
-    { text: t('carFilter.price100_200'), value: 2 },
-    { text: t('carFilter.price200_300'), value: 3 },
-    { text: t('carFilter.price300_400'), value: 4 },
-    { text: t('carFilter.price400_500'), value: 5 },
-    { text: t('carFilter.price500_up'), value: 6 }
+    { text: t('carFilter.price0_10'), value: 1 },
+    { text: t('carFilter.price10_20'), value: 2 },
+    { text: t('carFilter.price20_30'), value: 3 },
+    { text: t('carFilter.price30_40'), value: 4 },
+    { text: t('carFilter.price40_50'), value: 5 },
+    { text: t('carFilter.price50_up'), value: 6 }
   ])
   // 价格刻度点，999代表不限
-  const priceMarks = [0, 100, 200, 300, 400, 500, 999]
+  const priceMarks = [0, 10, 20, 30, 40, 50, 999]
   const customPriceIndex = ref([0, priceMarks.length - 1])
   const minPrice = ref('')
   const maxPrice = ref('')
 
   const priceRanges = [
     [0, 999], // 不限
-    [0, 100], // 0-100万
-    [100, 200], // 100-200万
-    [200, 300], // 200-300万
-    [300, 400], // 300-400万
-    [400, 500], // 400-500万
-    [500, 999] // 500万以上
+    [0, 10], // 0-10万
+    [10, 20], // 10-20万
+    [20, 30], // 20-30万
+    [30, 40], // 30-40万
+    [40, 50], // 40-50万
+    [50, 999] // 50万以上
   ]
 
   function onSortChange(val) {
@@ -201,7 +201,7 @@
   // 优先级2：滑块
   watch(customPriceIndex, val => {
     // 只有输入框为空时才响应滑块
-    if (minPrice.value === '' && maxPrice.value === '') {
+    if (val) {
       const [minIdx, maxIdx] = val
       const min = priceMarks[minIdx]
       const max = priceMarks[maxIdx]

@@ -29,7 +29,8 @@ export const closeConversation = (data) => {
  * @param {Object} data
  */
 export const fetchConversationDetail = (data) => {
-  return get(`/api/chat/conversations/{conversationId}/messages`, data)
+  const { conversationId } = data
+  return get(`/api/chat/conversations/${conversationId}/messages`, data)
 }
 
 /**
@@ -71,7 +72,7 @@ export const online = (data) => {
  * @param {Object} data
  */
 export const getUnreadCount = (data) => {
-  return get(`/api/chat/unread/count`, data)
+  return get(`/api/chat/unread/count`, data, { openLoading: false })
 }
 
 

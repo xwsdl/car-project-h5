@@ -1,8 +1,8 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-20 09:34:18
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-08-07 16:05:14
+ * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
+ * @LastEditTime: 2025-08-09 15:46:36
  * @FilePath: \car-project-h5\src\views\Message\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -21,10 +21,11 @@
         <div class="content">
           <div class="header">
             <span class="name">{{ msg.name }}</span>
-            <span class="time">{{ msg.time }}</span>
+            <span class="time">{{ msg.lastMessageTimeStr }}</span>
           </div>
-          <div class="summary">{{ msg.summary }}</div>
+          <div class="summary">{{ msg.lastMessage }}</div>
         </div>
+         <van-badge :content="msg.unreadCount" max="99" :show-zero="false" :offset="[0, -20]" />
       </div>
     </div>
   </div>
@@ -32,38 +33,50 @@
 
 <script setup>
   import { fetchConversationList } from '@/api'
-  import { ref } from 'vue'
+  import { ref, computed, onMounted, onUnmounted } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useAuthStore } from '@/stores/auth'
+  import { useWebSocketStore } from '@/stores/websocket'
+  const wsStore = useWebSocketStore()
+  const authStore = useAuthStore()
+
+  const role = computed(() => {
+    return authStore.user.roleName
+  })
+
+  // 角色头像映射
+  const roleViewAvatarMap = {
+    consumer: 'customerServiceAvatar',
+    admin: 'customerAvatar',
+    customer_service: 'customerAvatar'
+  }
+  // 角色名称映射
+  const roleViewNameMap = {
+    consumer: 'customerServiceName',
+    admin: 'customerName',
+    customer_service: 'customerName'
+  }
+
+  // 接受消息者角色id字段映射
+  const receiverRoleIdMap = {
+    consumer: 'customerServiceId',
+    admin: 'consumerId',
+    customer_service: 'consumerId'
+  }
 
   const defaultAvatar = 'https://img.yzcdn.cn/vant/cat.jpeg'
 
-  const customerMessages = ref([
-    {
-      id: 'a',
-      name: 'A客户',
-      summary: 'A客户的最新消息内容',
-      time: '10:30',
-      avatar: defaultAvatar
-    },
-    {
-      id: 'b',
-      name: 'B客户',
-      summary: 'B客户的最新消息内容',
-      time: '09:15',
-      avatar: defaultAvatar
-    },
-    {
-      id: 'c',
-      name: 'C客户',
-      summary: 'C客户的最新消息内容',
-      time: '昨天',
-      avatar: defaultAvatar
-    }
-  ])
+  const customerMessages = ref([])
 
   const getConversationList = async () => {
-    const res = await fetchConversationList()
-    console.log(res)
+    const list = await fetchConversationList()
+    customerMessages.value =
+      list.map(item => ({
+        ...item,
+        name: item[roleViewNameMap[role.value]],
+        avatar: item[roleViewAvatarMap[role.value]],
+        receiverId: item[receiverRoleIdMap[role.value]] //接收者id
+      })) || []
   }
 
   getConversationList()
@@ -74,13 +87,38 @@
   }
 
   const onMessageClick = msg => {
-    // 这里可跳转到聊天详情页，暂用弹窗演示
-    if (window.$toast) {
-      window.$toast(`点击了${msg.name}`)
-    } else {
-      alert(`点击了${msg.name}`)
-    }
+    router.push({
+      path: '/customerService',
+      query: {
+        carId: msg.carId, //汽车id
+        conversationId: msg.id, //会话id
+        receiverId: msg.receiverId //接收者id
+      }
+    })
   }
+
+  onMounted(() => {
+    // 订阅websocket响应回来的消息(更新对话列表)
+    const unsubscribe = wsStore.onMessage(message => {
+      if (message.type === 'SEND_MESSAGE_RECEIVED') {
+        const { conversationId, content, sendTime, isRead } = message.data
+        customerMessages.value.forEach(item => {
+          if (item.conversationId === conversationId) {
+            item.lastMessage = content
+            item.lastMessageTimeStr = sendTime
+            item.unreadCount = isRead ? item.unreadCount : item.unreadCount + 1
+          }
+        })
+      }
+    })
+
+    // 组件卸载时取消订阅
+    onUnmounted(() => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    })
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -92,6 +130,7 @@
       display: flex;
       flex-direction: column;
       gap: 0;
+      padding-bottom: 45px;
     }
 
     .wechat-message-item {

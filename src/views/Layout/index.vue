@@ -21,57 +21,57 @@
 </template>
 
 <script setup>
-import Tabbar from '@/components/Tabbar/index.vue'
-import CacheManager from '@/components/CacheManager/index.vue'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import router from '@/router'
+  import Tabbar from '@/components/Tabbar/index.vue'
+  import CacheManager from '@/components/CacheManager/index.vue'
+  import { computed } from 'vue'
+  import { useRoute } from 'vue-router'
+  import router from '@/router'
 
-// 定义组件名称
-defineOptions({
-  name: 'LayoutIndex'
-})
-
-const route = useRoute()
-
-// 需要缓存的页面组件名称列表 (注意是组件的 name，需与路由 name 保持一致)
-const cachedViews = computed(() => getCachedViews(router.options.routes))
-
-// 判断是否为开发环境
-const isDev = computed(() => {
-  return import.meta.env.DEV
-})
-
-// 根据路由路径判断是否显示Tabbar
-const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile']
-const isShowTabbar = computed(() => {
-  return tabbarRoutePath.includes(route.path)
-})
-
-/**
- * 递归遍历路由表，收集所有 keepAlive 为 true 的页面组件 name
- * 要求页面组件必须设置 name，且与路由 name 保持一致
- */
-function getCachedViews(routes) {
-  let cached = []
-  routes.forEach(route => {
-    if (route.meta && route.meta.keepAlive && route.name) {
-      // 这里直接用 route.name，要求页面组件 name 与路由 name 完全一致
-      cached.push(route.name)
-    }
-    if (route.children) {
-      cached = cached.concat(getCachedViews(route.children))
-    }
+  // 定义组件名称
+  defineOptions({
+    name: 'LayoutIndex'
   })
-  return cached
-}
+
+  const route = useRoute()
+
+  // 需要缓存的页面组件名称列表 (注意是组件的 name，需与路由 name 保持一致)
+  const cachedViews = computed(() => getCachedViews(router.options.routes))
+
+  // 判断是否为开发环境
+  const isDev = computed(() => {
+    return import.meta.env.DEV
+  })
+
+  // 根据路由路径判断是否显示Tabbar
+  const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile']
+  const isShowTabbar = computed(() => {
+    return tabbarRoutePath.includes(route.path)
+  })
+
+  /**
+   * 递归遍历路由表，收集所有 keepAlive 为 true 的页面组件 name
+   * 要求页面组件必须设置 name，且与路由 name 保持一致
+   */
+  function getCachedViews(routes) {
+    let cached = []
+    routes.forEach(route => {
+      if (route.meta && route.meta.keepAlive && route.name) {
+        // 这里直接用 route.name，要求页面组件 name 与路由 name 完全一致
+        cached.push(route.name)
+      }
+      if (route.children) {
+        cached = cached.concat(getCachedViews(route.children))
+      }
+    })
+    return cached
+  }
 </script>
 
 <style lang="scss" scoped>
-.layout {
-  height: 100%;
-  width: 100%;
-  background-color: #fff;
-  padding: 8px 8px 0;
-}
+  .layout {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    padding: 8px 8px 0;
+  }
 </style>

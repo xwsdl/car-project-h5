@@ -21,21 +21,17 @@
 
 <script setup>
   import { showFailToast } from 'vant'
-  import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
 
-  const router = useRouter()
   const { t } = useI18n()
 
-  const emit = defineEmits(['buy'])
+  const emit = defineEmits(['buy', 'sendMessage'])
 
   const sendMessage = () => {
-    console.log('发送消息')
-    router.push('/customerService')
+    emit('sendMessage')
   }
 
   const buyNow = () => {
-    console.log('立即购买')
     showFailToast(t('detail.functionDeveloping'))
     emit('buy')
   }

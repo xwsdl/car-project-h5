@@ -30,9 +30,9 @@ service.interceptors.request.use(
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type']
     }
-
+    console.log('请求参数config.openLoading：', config.openLoading)
     // 可在此处添加 token 等
-    if (requestCount === 1) {
+    if (requestCount === 1 && config.openLoading !== false) {
       showLoadingToast({
         message: t('request.loading'),
         forbidClick: true,

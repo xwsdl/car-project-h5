@@ -430,5 +430,14 @@
     "clearCache": "清除缓存",
     "refreshSuccess": "数据刷新成功",
     "cacheCleared": "缓存已清除"
+  },
+  "customerService": {
+    "sending": "发送中",
+    "sent": "已发送",
+    "send_failed_click_retry": "发送失败，点击重试",
+    "online": "在线",
+    "offline": "下线",
+    "customer_service": "客服",
+    "input_message": "输入消息..."
   }
 }

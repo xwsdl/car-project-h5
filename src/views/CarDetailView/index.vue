@@ -54,7 +54,7 @@
       <CarRecommend v-if="recommendedCars.length" :cars="recommendedCars" />
     </div>
 
-    <ActionBar @buy="handleBuy" />
+    <ActionBar @buy="handleBuy" @sendMessage="handleSendMessage" />
   </div>
 </template>
 
@@ -72,12 +72,13 @@
   import DetailInfo from './components/DetailInfo.vue'
   import CarRecommend from './components/CarRecommend.vue'
   import ActionBar from './components/ActionBar.vue'
-  import { useRoute } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
   import { useAuthStore } from '@/stores/auth'
   import { showFailToast, showToast } from 'vant'
   const authStore = useAuthStore()
   const { t: $t } = useI18n()
   const route = useRoute()
+  const router = useRouter()
   const pageInit = () => {
     // 将页面滚动条滚动到顶部
     window.scrollTo(0, 0)
@@ -170,6 +171,15 @@
     }
     createOrder(params).then(() => {
       showToast('已加入订单进程成功')
+    })
+  }
+
+  const handleSendMessage = () => {
+    router.push({
+      path: '/customerService',
+      query: {
+        carId: route.query.id
+      }
     })
   }
 </script>

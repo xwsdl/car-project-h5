@@ -50,7 +50,33 @@ export default class WebSocketService {
 
       // 收到消息
       this.ws.onmessage = (event) => {
-        this._emit('message', event.data)
+        let parsedMessage
+
+        try {
+          // 尝试解析 JSON 格式的消息
+          parsedMessage = JSON.parse(event.data)
+        } catch (error) {
+          // 如果解析失败，可能是普通字符串消息
+          console.warn('WebSocket 消息解析失败，使用原始数据:', event.data)
+          parsedMessage = {
+            type: 'RAW_MESSAGE',
+            content: event.data,
+            timestamp: Date.now()
+          }
+        }
+
+        // 确保消息有基本的时间戳
+        if (!parsedMessage.timestamp) {
+          parsedMessage.timestamp = Date.now()
+        }
+
+        // 过滤心跳响应消息（pong）
+        if (parsedMessage.type === 'pong') {
+          console.log('收到心跳响应')
+          return
+        }
+
+        this._emit('message', parsedMessage)
       }
 
       // 连接关闭

@@ -446,5 +446,14 @@
     "clearCache": "Очистить кэш",
     "refreshSuccess": "Данные успешно обновлены",
     "cacheCleared": "Кэш очищен"
+  },
+  "customerService": {
+    "sending": "Отправка",
+    "sent": "Отправлено",
+    "send_failed_click_retry": "Отправка не удалась. Нажмите, чтобы повторить попытку",
+    "online": "Онлайн",
+    "offline": "Офлайн",
+    "customer_service": "Служба поддержки",
+    "input_message": "Введите сообщение..."
   }
 }

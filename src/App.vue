@@ -14,7 +14,7 @@
   import { onMounted, watch } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { useWebSocketStore } from '@/stores/websocket'
-
+  import { online } from '@/api'
   const authStore = useAuthStore()
   const wsStore = useWebSocketStore()
 
@@ -32,10 +32,14 @@
   // 监听登录状态变化
   watch(
     () => authStore.isAuthenticated,
-    isAuthenticated => {
+    async isAuthenticated => {
       if (isAuthenticated && authStore.token) {
-        console.log('用户登录状态变化，建立 WebSocket 连接')
         wsStore.initWebSocket(wsUrl + authStore.token)
+
+        // 判断当前登录账户是否为客服(调用客服上线接口)
+        if (authStore.user.roleName === 'customer_service') {
+          online()
+        }
       } else {
         console.log('用户未登录，断开 WebSocket 连接')
         wsStore.closeWebSocket()

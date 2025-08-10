@@ -65,17 +65,21 @@
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
-
+  import { offline } from '@/api'
   const router = useRouter()
   const authStore = useAuthStore()
   const { t } = useI18n()
 
-  const logout = () => {
+  const logout = async () => {
     showLoadingToast({
       message: t('profile.header.loggingOut'),
       forbidClick: true,
       duration: 0
     })
+    // 判断当前登录账户是否为客服(调用客服上线接口)
+    if (authStore.user.roleName === 'customer_service') {
+      await offline()
+    }
 
     authStore.logout()
     setTimeout(() => {

@@ -27,6 +27,8 @@
   import { useRouter } from 'vue-router'
   import { getUnreadCount } from '@/api'
   import { useWebSocketStore } from '@/stores/websocket'
+  import { useAuthStore } from '@/stores/auth'
+  const authStore = useAuthStore()
   const wsStore = useWebSocketStore()
   // 定义组件名称
   defineOptions({
@@ -52,7 +54,10 @@
     }
 
     active.value = pathMap[currentPath] || 'home'
-    unreadCount.value = await getUnreadCount()
+    
+    if (authStore.token) {
+      unreadCount.value = await getUnreadCount()
+    }
 
     // 订阅websocket响应回来的消息(更新对话列表)
     const unsubscribe = wsStore.onMessage(async message => {

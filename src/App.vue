@@ -14,9 +14,26 @@
   import { onMounted, watch } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { useWebSocketStore } from '@/stores/websocket'
-  import { online } from '@/api'
+  import { online, checkToken } from '@/api'
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
   const authStore = useAuthStore()
   const wsStore = useWebSocketStore()
+
+  const checkTokenValidity = async token => {
+    if (!token) return false
+    checkToken()
+      .then(res => {})
+      .catch(err => {
+        authStore.logout()
+        setTimeout(() => {
+          router.push('/login')
+        }, 1000)
+      })
+  }
+  console.log('authStore.token.value', authStore.token)
+  // 检测用户Token 是否有效
+  checkTokenValidity(authStore.token)
 
   // WebSocket 连接地址
   const wsUrl = 'ws://8.211.38.230:8084/ws/chat?token='

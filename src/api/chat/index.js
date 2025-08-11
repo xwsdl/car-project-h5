@@ -76,4 +76,13 @@ export const getUnreadCount = (data) => {
 }
 
 
+/**
+ * @description 获取未读消息数量
+ * @param {Object} data
+ */
+export const checkToken = (data) => {
+  return post(`/users/checkToken`, data, { openLoading: false })
+}
+
+
 

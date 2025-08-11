@@ -76,7 +76,7 @@
       forbidClick: true,
       duration: 0
     })
-    // 判断当前登录账户是否为客服(调用客服上线接口)
+    // 判断当前登录账户是否为客服(调用客服下线接口)
     if (authStore.user.roleName === 'customer_service') {
       await offline()
     }

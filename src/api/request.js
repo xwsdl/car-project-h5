@@ -121,7 +121,7 @@ export function createRequest(options) {
   return new Promise((resolve, reject) => {
     service(options)
       .then((response) => {
-        resolve(response.data || response)
+        resolve(response.data)
       })
       .catch((error) => {
         reject(error)

@@ -58,35 +58,49 @@
   // 获取聊天记录
   const getConversationHistory = async (isConcat = false) => {
     const params = {
-      conversationId: route.query.conversationId,
+      conversationId: conversationId.value,
       page: 1,
       size: 20
     }
-    const data = await fetchConversationDetail(params)
+    let data = await fetchConversationDetail(params)
+    data = data.reverse()
     if (!isConcat) {
-      messages.value = data.map(item => {
-        return {
-          ...item,
-          sender: getSenderValue(item.senderId), //self:自己;received:回应发送者
-          status: 'success' // 历史消息默认为成功状态
-        }
-      })
+      messages.value = data
+        .map(item => {
+          return {
+            ...item,
+            sender: getSenderValue(item.senderId), //self:自己;received:回应发送者
+            status: 'success' // 历史消息默认为成功状态
+          }
+        })
+        .reverse()
     }
   }
 
   // 标记信息为已读
   const markAsRead = async () => {
     const params = {
-      conversationId: route.query.conversationId
+      conversationId: conversationId.value
     }
-    const data = await readConversation(params)
+    await readConversation(params)
   }
+
+  // 接受消息者角色id字段映射
+  const receiverRoleIdMap = {
+    consumer: 'customerServiceId',
+    admin: 'consumerId',
+    customer_service: 'consumerId'
+  }
+  // 当前用户角色
+  const role = computed(() => {
+    return authStore.user.roleName
+  })
 
   // 发送消息
   const sendMessageHttp = async value => {
     const params = {
-      conversationId: route.query.conversationId, //会话id
-      receiverId: route.query.receiverId, //接收者id
+      conversationId: conversationId.value, //会话id
+      receiverId: receiverId.value, //接收者id
       content: value, //内容
       messageType: 0 //消息类型：0-文本消息 1-图片消息
     }
@@ -94,21 +108,44 @@
     await sendConversation(params)
   }
 
-  const isFirstConversation = ref(false)
+  // 当前会话信息
   const conversationInfo = ref(null)
-  const currentConversationId = ref(route.query.conversationId || '')
-  // 对话接收者id
-  const receiverId = computed(() => {
-    return route.query.receiverId || conversationInfo.value?.customerServiceId || ''
-  })
-  // 判断是首次对话还是继续对话
-  if (route.query.carId && route.query.conversationId) {
-    isFirstConversation.value = false
-    getConversationHistory()
-    markAsRead()
-  } else {
-    isFirstConversation.value = true
+  // 初始化会话
+  const initConversation = async conversationId => {
+    console.log('initConversation', conversationId)
+    // 创建对话
+    // 如果不存在则创建会话
+    if (!conversationId) {
+      conversationInfo.value = await createConversation({
+        carId: +route.query.carId || '',
+        initialMessage: ''
+      })
+    }
+    await getConversationHistory()
+    await markAsRead()
   }
+
+  // 对话接收者id
+  // 根据当前用户角色动态获取
+  const receiverId = computed(() => {
+    if (conversationInfo.value) {
+      return route.query.receiverId || conversationInfo.value[receiverRoleIdMap[role.value]]
+    }
+    return route.query.receiverId
+  })
+
+  // 会话id
+  const conversationId = computed(() => {
+    if (conversationInfo.value) {
+      return route.query.conversationId || conversationInfo.value.id
+    }
+    return route.query.conversationId
+  })
+
+  console.log('conversationId', conversationId.value)
+
+  // 初始化会话
+  initConversation(conversationId.value)
 
   // 发送消息
   const sendMessage = async value => {
@@ -132,63 +169,18 @@
     scrollToBottom()
 
     try {
-      // 第一次对话
-      if (isFirstConversation.value && !conversationInfo.value) {
-        // 创建对话
-        conversationInfo.value = await createConversation({
-          carId: +route.query.carId,
-          initialMessage: value
-        })
-
-        currentConversationId.value = conversationInfo.value.id
-
-        // 创建对话成功，更新消息状态为成功
-        updateMessageStatus(messageId, 'success')
-      } else if (isFirstConversation.value && conversationInfo.value) {
-        const { id: conversationId, customerServiceId } = conversationInfo.value
-        const message = {
-          conversationId: conversationId, //会话id
-          receiverId: customerServiceId, //接收者id
-          content: value, //内容
-          messageType: 0 //消息类型：0-文本消息 1-图片消息
-        }
-        // 1.如果分配到了客服
-        if (customerServiceId) {
-          const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: message })
-          if (!success) {
-            updateMessageStatus(messageId, 'failed')
-          }
-        } else {
-          // 2.没有分配客服
-          sendMessageHttp(message)
-          updateMessageStatus(messageId, 'success')
-        }
-
-        // WebSocket 发送成功状态会在收到服务器响应时更新
-      } else if (!isFirstConversation.value && !route.query.receiverId) {
-        // 不是第一次对话，且没有分配客服的情况
-        const message = {
-          conversationId: route.query.conversationId, //会话id
-          receiverId: route.query.receiverId, //接收者id
-          content: value, //内容
-          messageType: 0 //消息类型：0-文本消息 1-图片消息
-        }
-        sendMessageHttp(message)
-        updateMessageStatus(messageId, 'success')
-      } else {
-        const message = {
-          conversationId: route.query.conversationId,
-          receiverId: route.query.receiverId,
-          content: value,
-          messageType: 0
-        }
-
-        const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: message })
-        if (!success) {
-          updateMessageStatus(messageId, 'failed')
-        }
-        // WebSocket 发送成功状态会在收到服务器响应时更新
+      const message = {
+        conversationId: conversationId.value,
+        receiverId: receiverId.value, //接受者id
+        content: value,
+        messageType: 0
       }
+
+      const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: message })
+      if (!success) {
+        updateMessageStatus(messageId, 'failed')
+      }
+      // WebSocket 发送成功状态会在收到服务器响应时更新
     } catch (error) {
       updateMessageStatus(messageId, 'failed')
     }
@@ -221,30 +213,16 @@
 
     // 重新发送消息
     try {
-      if (isFirstConversation.value && conversationInfo.value) {
-        const messageData = {
-          conversationId: conversationInfo.value.conversationId,
-          receiverId: conversationInfo.value.customerServiceId,
-          content: message.content,
-          messageType: 0
-        }
+      const params = {
+        conversationId: conversationId.value, //会话id
+        receiverId: receiverId.value, //接收者id
+        content: message.content, //内容
+        messageType: 0 //消息类型：0-文本消息 1-图片消息
+      }
 
-        const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: messageData })
-        if (!success) {
-          updateMessageStatus(message.id, 'failed')
-        }
-      } else if (!isFirstConversation.value) {
-        const messageData = {
-          conversationId: route.query.conversationId,
-          receiverId: route.query.receiverId,
-          content: message.content,
-          messageType: 0
-        }
-
-        const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: messageData })
-        if (!success) {
-          updateMessageStatus(message.id, 'failed')
-        }
+      const success = wsStore.sendMessage({ type: 'SEND_MESSAGE', data: params })
+      if (!success) {
+        updateMessageStatus(message.id, 'failed')
       }
     } catch (error) {
       updateMessageStatus(message.id, 'failed')
@@ -264,15 +242,20 @@
   // 关闭会话提醒
   const closeChat = () => {
     const beforeClose = action =>
-      new Promise(async resolve => {
+      new Promise(resolve => {
         if (action === 'confirm') {
-          await closeConversation({
-            conversationId: currentConversationId.value
+          closeConversation({
+            conversationId: conversationId.value
           })
-        }
-        resolve(true)
-        if (action === 'confirm') {
-          router.back()
+            .then(() => {
+              resolve(true)
+              router.back()
+            })
+            .catch(() => {
+              resolve(false)
+            })
+        } else {
+          resolve(true)
         }
       })
 

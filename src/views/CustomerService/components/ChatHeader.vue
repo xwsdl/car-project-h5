@@ -8,8 +8,10 @@
       <div class="agent-details">
         <h3>{{ receiverName }}</h3>
         <p>
-          <span class="status-dot"></span>
-          {{ $t('customerService.online') }}
+          <span
+            :class="{ 'status-dot': true, online: onlineStatus, offline: !onlineStatus }"
+          ></span>
+          {{ onlineStatus ? t('customerService.online') : t('customerService.offline') }}
         </p>
       </div>
     </div>
@@ -35,6 +37,10 @@
       return `${t('customerService.customer_service')}-${receiverInfo.value.username}`
     }
     return receiverInfo.value?.username
+  })
+
+  const onlineStatus = computed(() => {
+    return receiverInfo.value?.onlineStatus === 1
   })
 
   const getReceiverInfo = async () => {
@@ -72,7 +78,7 @@
   .back-btn {
     margin-right: 15px;
     font-size: 18px;
-    color: var(--primary);
+    color: #1989fa;
     cursor: pointer;
   }
 
@@ -110,7 +116,7 @@
 
   .agent-details p {
     font-size: 12px;
-    color: var(--success);
+    color: #969799;
     display: flex;
     align-items: center;
   }
@@ -119,7 +125,14 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--success);
     margin-right: 5px;
+  }
+
+  .status-dot.online {
+    background-color: #07c160;
+  }
+
+  .status-dot.offline {
+    background-color: #ff4757;
   }
 </style>

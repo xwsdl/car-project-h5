@@ -26,13 +26,15 @@
     receiverId: [String, Number]
   })
 
-  const receiverInfo = ref(null)
+  const receiverInfo = ref({
+    username: t('customerService.customer_service')
+  })
   const receiverName = computed(() => {
     // 1.接受者为客服
     if (receiverInfo.value?.roleName === 'customer_service') {
       return `${t('customerService.customer_service')}-${receiverInfo.value.username}`
     }
-    return `${receiverInfo.value?.username}` || t('customerService.customer_service')
+    return receiverInfo.value?.username
   })
   const getReceiverInfo = async () => {
     if (!props.receiverId) return

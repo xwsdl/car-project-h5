@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, watch } from 'vue'
   import { getUserInfo } from '@/api'
   import { useI18n } from 'vue-i18n'
 
@@ -36,12 +36,21 @@
     }
     return receiverInfo.value?.username
   })
+
   const getReceiverInfo = async () => {
     if (!props.receiverId) return
     receiverInfo.value = await getUserInfo(props.receiverId)
   }
 
-  getReceiverInfo()
+  watch(
+    () => props.receiverId,
+    () => {
+      getReceiverInfo()
+    },
+    {
+      immediate: true
+    }
+  )
 
   const emit = defineEmits(['close-chat'])
 

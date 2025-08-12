@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, defineProps, defineEmits } from 'vue'
+  import { ref, onMounted, nextTick, watch } from 'vue'
   import WelcomeCard from './WelcomeCard.vue'
   import { formatTime } from '@/utils/index.js'
 
@@ -69,8 +69,25 @@
     })
   }
 
+  // 监听消息变化（排除历史记录加载）
+  watch(
+    () => props.messages,
+    (newVal, oldVal) => {
+      // 只有新消息添加到末尾时才滚动
+      if (
+        newVal.length > oldVal.length &&
+        newVal[newVal.length - 1] !== oldVal[oldVal.length - 1]
+      ) {
+        emit('scrollToBottom')
+      }
+    },
+    { deep: true }
+  )
+
   onMounted(() => {
-    emit('scrollToBottom')
+    nextTick(() => {
+      emit('scrollToBottom')
+    })
   })
 </script>
 

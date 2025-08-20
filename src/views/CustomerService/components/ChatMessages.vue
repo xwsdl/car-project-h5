@@ -1,48 +1,50 @@
 <template>
   <div class="chat-messages" ref="messagesContainer">
-    <!-- 自动欢迎消息 -->
-    <div class="message received" v-if="showWelcome">
-      <div class="message-bubble">你好！我是汽车销售客服，有什么可以帮您的吗？</div>
-      <div class="message-time">{{ formatTime(new Date()) }}</div>
-    </div>
-
-    <!-- 消息列表 -->
-    <div
-      class="message"
-      :class="msg.sender"
-      v-for="(msg, index) in messages"
-      :key="msg.id || index"
+    <van-list
+      v-model:loading="loading"
+      :finished="finished"
+      :finished-text="$t('common.noMore')"
+      direction="up"
+      :offset="50"
+      :immediate-check="false"
+      @load="handleLoad"
     >
-      <div class="message-bubble">{{ msg.content }}</div>
-      <div class="message-footer">
-        <div class="message-time">{{ msg.sendTime }}</div>
-        <div v-if="msg.sender === 'self'" class="message-status" :class="msg.status">
-          <span v-if="msg.status === 'sending'" class="status-sending">
-            <i class="loading-icon"></i>
-            {{ $t('customerService.sending') }}
-          </span>
-          <span v-else-if="msg.status === 'success'" class="status-success">
-            <i class="success-icon">✓</i>
-            {{ $t('customerService.sent') }}
-          </span>
-          <span
-            v-else-if="msg.status === 'failed'"
-            class="status-failed"
-            @click="resendMessage(msg)"
-          >
-            <i class="failed-icon">!</i>
-            {{ $t('customerService.send_failed_click_retry') }}
-          </span>
+      <!-- 消息列表 -->
+      <div
+        class="message"
+        :class="msg.sender"
+        v-for="(msg, index) in messages"
+        :key="msg.id || index"
+      >
+        <div class="message-bubble">{{ msg.content }}</div>
+        <div class="message-footer">
+          <div class="message-time">{{ msg.sendTime }}</div>
+          <div v-if="msg.sender === 'self'" class="message-status" :class="msg.status">
+            <span v-if="msg.status === 'sending'" class="status-sending">
+              <i class="loading-icon"></i>
+              {{ $t('customerService.sending') }}
+            </span>
+            <span v-else-if="msg.status === 'success'" class="status-success">
+              <i class="success-icon">✓</i>
+              {{ $t('customerService.sent') }}
+            </span>
+            <span
+              v-else-if="msg.status === 'failed'"
+              class="status-failed"
+              @click="resendMessage(msg)"
+            >
+              <i class="failed-icon">!</i>
+              {{ $t('customerService.send_failed_click_retry') }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </van-list>
   </div>
 </template>
 
 <script setup>
   import { ref, onMounted, nextTick, watch } from 'vue'
-  import WelcomeCard from './WelcomeCard.vue'
-  import { formatTime } from '@/utils/index.js'
 
   const props = defineProps({
     messages: Array,
@@ -50,26 +52,45 @@
     cars: Array
   })
 
-  const emit = defineEmits(['scrollToBottom', 'resendMessage'])
+  const emit = defineEmits(['scrollToBottom', 'resendMessage', 'loadPrev'])
 
   const messagesContainer = ref(null)
+  const loading = ref(false)
+  const finished = ref(false)
+  const isPrepending = ref(false)
+  const prevScrollHeight = ref(0)
+
+  // 上拉触发加载历史
+  const handleLoad = () => {
+    if (finished.value) return
+    const container = messagesContainer.value
+    if (container) {
+      prevScrollHeight.value = container.scrollHeight
+    }
+    isPrepending.value = true
+    emit('loadPrev')
+  }
+
+  // 暴露给父组件：主动触发加载、结束加载与重置
+  const triggerLoad = () => {
+    handleLoad()
+  }
+  const finishLoad = hasMore => {
+    loading.value = false
+    finished.value = !hasMore
+  }
+  const resetLoadState = () => {
+    loading.value = false
+    finished.value = false
+  }
+  defineExpose({ triggerLoad, finishLoad, resetLoadState })
 
   // 重发消息
   const resendMessage = message => {
     emit('resendMessage', message)
   }
-  // 处理车型选择
-  const handleCarSelected = car => {
-    // 在实际应用中，这里可以发送一条关于该车型的消息
 
-    emit('message', {
-      text: `我对${car.name}感兴趣，能详细介绍一下吗？`,
-      sender: 'self',
-      time: new Date()
-    })
-  }
-
-  // 监听消息变化（排除历史记录加载）
+  // 监听消息变化（排除历史记录加载），新消息到底部时自动滚动
   watch(
     () => props.messages,
     (newVal, oldVal) => {
@@ -82,6 +103,24 @@
       }
     },
     { deep: true }
+  )
+
+  // 历史记录加载完成后，保持可视位置不跳动
+  watch(
+    () => props.messages && props.messages.length,
+    async (newLen, oldLen) => {
+      if (!isPrepending.value) return
+      if (typeof newLen === 'number' && typeof oldLen === 'number' && newLen > oldLen) {
+        await nextTick()
+        const container = messagesContainer.value
+        if (container) {
+          const newHeight = container.scrollHeight
+          const delta = newHeight - prevScrollHeight.value
+          container.scrollTop = delta
+        }
+      }
+      isPrepending.value = false
+    }
   )
 
   onMounted(() => {

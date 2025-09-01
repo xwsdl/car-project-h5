@@ -3,11 +3,13 @@
     <ChatHeader @close-chat="closeChat" :receiverId="receiverId" />
 
     <ChatMessages
+      ref="chatMessagesRef"
       :messages="messages"
       :showWelcome="showWelcome"
       :cars="cars"
       @scrollToBottom="scrollToBottom"
       @resendMessage="handleResendMessage"
+      @loadPrev="loadPrevHistory"
     />
 
     <ChatInput v-model="newMessage" @send="sendMessage" />
@@ -23,7 +25,6 @@
     createConversation,
     fetchConversationDetail,
     readConversation,
-    sendConversation,
     closeConversation
   } from '@/api'
   import { useI18n } from 'vue-i18n'
@@ -32,6 +33,7 @@
   import { useWebSocketStore } from '@/stores/websocket'
   import { formatTime } from '@/utils/index.js'
   import { showConfirmDialog } from 'vant'
+  defineOptions({ name: 'CustomerServiceView' })
   const wsStore = useWebSocketStore()
   const authStore = useAuthStore()
   const route = useRoute()
@@ -42,6 +44,10 @@
   const showWelcome = ref(false)
   const newMessage = ref('')
   const messages = ref([])
+  const chatMessagesRef = ref(null)
+  const currentPage = ref(1)
+  const pageSize = ref(20)
+  const hasMore = ref(true)
   const cars = ref([
     { emoji: '🚙', name: t('customerService.suvSeries') },
     { emoji: '🏎️', name: t('customerService.sportsCarSeries') },
@@ -55,25 +61,52 @@
     return senderId == authStore.user.id ? 'self' : 'received'
   }
 
-  // 获取聊天记录
-  const getConversationHistory = async (isConcat = false) => {
+  // 统一转换历史记录为展示结构（按时间升序）
+  const transformHistory = list => {
+    return list.map(item => ({
+      ...item,
+      sender: getSenderValue(item.senderId),
+      status: 'success'
+    }))
+  }
+
+  // 获取聊天记录（首次加载/刷新）
+  const getConversationHistory = async () => {
     const params = {
       conversationId: conversationId.value,
       page: 1,
-      size: 20
+      size: pageSize.value
     }
-    let data = await fetchConversationDetail(params)
-    data = data.reverse()
-    if (!isConcat) {
-      messages.value = data
-        .map(item => {
-          return {
-            ...item,
-            sender: getSenderValue(item.senderId), //self:自己;received:回应发送者
-            status: 'success' // 历史消息默认为成功状态
-          }
-        })
-        .reverse()
+    const data = await fetchConversationDetail(params)
+    messages.value = transformHistory(data)
+    currentPage.value = 1
+    hasMore.value = Array.isArray(data) && data.length === pageSize.value
+  }
+
+  // 上拉加载上一页历史（向列表顶部追加）
+  const loadPrevHistory = async () => {
+    if (!hasMore.value) {
+      chatMessagesRef.value && chatMessagesRef.value.finishLoad(false)
+      return
+    }
+    const nextPage = currentPage.value + 1
+    const params = {
+      conversationId: conversationId.value,
+      page: nextPage,
+      size: pageSize.value
+    }
+    try {
+      const data = await fetchConversationDetail(params)
+      const transformed = transformHistory(data)
+      if (!Array.isArray(transformed) || transformed.length === 0) {
+        hasMore.value = false
+      } else {
+        messages.value = [...transformed, ...messages.value]
+        currentPage.value = nextPage
+        hasMore.value = transformed.length === pageSize.value
+      }
+    } finally {
+      chatMessagesRef.value && chatMessagesRef.value.finishLoad(hasMore.value)
     }
   }
 
@@ -96,17 +129,7 @@
     return authStore.user.roleName
   })
 
-  // 发送消息
-  const sendMessageHttp = async value => {
-    const params = {
-      conversationId: conversationId.value, //会话id
-      receiverId: receiverId.value, //接收者id
-      content: value, //内容
-      messageType: 0 //消息类型：0-文本消息 1-图片消息
-    }
-
-    await sendConversation(params)
-  }
+  // 发送消息（WebSocket 实时发送，HTTP 备用已移除未使用实现）
 
   // 当前会话信息
   const conversationInfo = ref(null)
@@ -122,6 +145,9 @@
       })
     }
     await getConversationHistory()
+    nextTick(() => {
+      chatMessagesRef.value && chatMessagesRef.value.resetLoadState()
+    })
     await markAsRead()
   }
 
@@ -181,7 +207,7 @@
         updateMessageStatus(messageId, 'failed')
       }
       // WebSocket 发送成功状态会在收到服务器响应时更新
-    } catch (error) {
+    } catch {
       updateMessageStatus(messageId, 'failed')
     }
   }
@@ -224,7 +250,7 @@
       if (!success) {
         updateMessageStatus(message.id, 'failed')
       }
-    } catch (error) {
+    } catch {
       updateMessageStatus(message.id, 'failed')
     }
   }

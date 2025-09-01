@@ -10,6 +10,7 @@
 import router from './index'
 import { useAuthStore } from '@/stores/auth'
 import i18n from '@/i18n'
+import { showToast } from 'vant'
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
@@ -21,8 +22,20 @@ router.beforeEach(async (to, from, next) => {
   // 检查路由是否需要登录
   if (to.meta.requiresAuth) {
     if (authStore.isAuthenticated) {
-      // 用户已登录，允许访问
-      next()
+      // 用户已登录，检查权限
+      if (to.meta.permission) {
+        if (authStore.hasPermission(to.meta.permission)) {
+          // 有权限，允许访问
+          next()
+        } else {
+          // 无权限，显示提示并返回
+          showToast('无权限访问')
+          next(false)
+        }
+      } else {
+        // 不需要特殊权限，允许访问
+        next()
+      }
     } else {
       // 用户未登录，重定向到登录页
       // 记录目标路径，登录后可以重定向回来

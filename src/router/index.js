@@ -112,7 +112,7 @@ const router = createRouter({
           meta: {
             title: 'route.customerService',
             requiresAuth: true, // 不需要登录
-            keepAlive: false, // 不需要缓存
+            keepAlive: false, // 需要缓存
           },
         },
         {
@@ -143,6 +143,29 @@ const router = createRouter({
             title: '测试页面',
             requiresAuth: false, // 不需要登录
             keepAlive: true // 不需要缓存
+          },
+        },
+        // 权限管理路由
+        {
+          path: '/roleManagement',
+          name: 'roleManagement',
+          component: () => import('@/views/ProfileView/components/RoleManagement/index.vue'),
+          meta: {
+            title: 'route.roleManagement',
+            requiresAuth: true,
+            permission: 'role_management',
+            keepAlive: false,
+          },
+        },
+        {
+          path: '/userManagement',
+          name: 'userManagement',
+          component: () => import('@/views/ProfileView/components/UserManagement/index.vue'),
+          meta: {
+            title: 'route.userManagement',
+            requiresAuth: true,
+            permission: 'user_management',
+            keepAlive: false,
           },
         },
       ],

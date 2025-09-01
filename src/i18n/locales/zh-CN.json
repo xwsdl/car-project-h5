@@ -191,7 +191,9 @@
       "relatedData": "相关资料",
       "myOrders": "我的订单",
       "favorite": "我的收藏",
-      "history": "浏览历史"
+      "history": "浏览历史",
+      "roleManagement": "角色管理",
+      "userManagement": "用户管理"
     },
     "orders": {
       "title": "我的订单",
@@ -407,14 +409,99 @@
     "orderDetail": "订单详情",
     "message": "消息",
     "profile": "个人中心",
-    "carDetail": "车辆详情",
-    "carList": "车辆列表",
+    "carDetail": "汽车详情",
+    "carList": "汽车列表",
     "shoppingCart": "购物车",
     "customerService": "客服",
-    "brand": "选择品牌",
-    "filterPage": "高级筛选",
+    "brand": "品牌",
+    "filterPage": "筛选",
     "login": "登录",
-    "test": "测试页面"
+    "roleManagement": "角色管理",
+    "userManagement": "用户管理"
+  },
+  "roleManagement": {
+    "title": "角色管理",
+    "addRole": "新增角色",
+    "editRole": "编辑角色",
+    "roleName": "角色名称",
+    "roleNamePlaceholder": "请输入角色名称",
+    "roleNameRequired": "请输入角色名称",
+    "roleDescription": "角色描述",
+    "roleDescriptionPlaceholder": "请输入角色描述",
+    "roleType": "角色类型",
+    "permissions": "权限配置",
+    "roleTypes": {
+      "normal": "普通用户",
+      "customerService": "客服",
+      "admin": "管理员",
+      "superAdmin": "超级管理员"
+    },
+    "permissions": {
+      "basicAccess": "基础访问",
+      "customerService": "客服功能",
+      "roleManagement": "角色管理",
+      "userManagement": "用户管理",
+      "orderManagement": "订单管理",
+      "systemConfig": "系统配置"
+    }
+  },
+  "userManagement": {
+    "title": "用户管理",
+    "searchPlaceholder": "搜索用户名或邮箱",
+    "actions": "操作",
+    "userDetail": "用户详情",
+    "editUser": "编辑用户",
+    "basicInfo": "基本信息",
+    "username": "用户名",
+    "usernamePlaceholder": "请输入用户名",
+    "usernameRequired": "请输入用户名",
+    "email": "邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "emailRequired": "请输入邮箱",
+    "emailInvalid": "邮箱格式不正确",
+    "phone": "手机号",
+    "phonePlaceholder": "请输入手机号",
+    "phoneInvalid": "手机号格式不正确",
+    "status": {
+      "active": "正常",
+      "inactive": "停用",
+      "suspended": "暂停",
+      "deleted": "已删除"
+    },
+    "role": "角色",
+    "createTime": "创建时间",
+    "lastLoginTime": "最后登录时间",
+    "permissions": "权限列表",
+    "operationHistory": "操作历史",
+    "passwordSettings": "密码设置",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "请输入新密码",
+    "confirmPassword": "确认密码",
+    "confirmPasswordPlaceholder": "请再次输入新密码",
+    "passwordMinLength": "密码长度至少6位",
+    "passwordNotMatch": "两次输入的密码不一致",
+    "operations": {
+      "login": "用户登录",
+      "updateProfile": "更新个人信息",
+      "resetPassword": "重置密码"
+    },
+    "operationDescriptions": {
+      "login": "用户成功登录系统",
+      "updateProfile": "用户更新了个人信息",
+      "resetPassword": "管理员重置了用户密码"
+    },
+    "actions": {
+      "view": "查看",
+      "edit": "编辑",
+      "resetPassword": "重置密码",
+      "suspend": "停用",
+      "activate": "启用",
+      "delete": "删除"
+    },
+    "confirmResetPassword": "确定要重置用户 {username} 的密码吗？",
+    "confirmSuspend": "确定要停用用户 {username} 吗？",
+    "confirmActivate": "确定要启用用户 {username} 吗？",
+    "confirmDelete": "确定要删除用户 {username} 吗？"
   },
   "test": {
     "title": "语言切换测试页面",

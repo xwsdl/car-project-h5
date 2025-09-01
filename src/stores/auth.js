@@ -26,14 +26,39 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref(getUserFromStorage())
   // 访问令牌
   const token = ref(localStorage.getItem('auth_token') || null)
+  // 用户权限列表 - 写死权限节点用于测试
+  const permissions = ref([
+    'role_management',
+    'user_management',
+    'basic_access',
+    'customer_service',
+    'order_management',
+    'system_config'
+  ])
 
   // 检查是否登录
   const isAuthenticated = computed(() => !!token.value && !!user.value)
+
+  // 检查是否有指定权限
+  const hasPermission = (permission) => {
+    return permissions.value.includes(permission)
+  }
+
+  // 检查是否有任意一个权限
+  const hasAnyPermission = (permissionList) => {
+    return permissionList.some(permission => permissions.value.includes(permission))
+  }
+
+  // 检查是否有所有权限
+  const hasAllPermissions = (permissionList) => {
+    return permissionList.every(permission => permissions.value.includes(permission))
+  }
 
   // 登录方法
   const login = (userData, authToken) => {
     user.value = userData
     token.value = authToken
+    // 注意：这里暂时不更新权限，因为权限是写死的
     // 持久化存储用户信息和令牌
     localStorage.setItem('auth_token', authToken)
     localStorage.setItem('auth_user', JSON.stringify(userData))
@@ -43,15 +68,25 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = () => {
     user.value = null
     token.value = null
+    permissions.value = []
     // 清除本地存储
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_user')
+    localStorage.removeItem('auth_permissions')
   }
 
   // 更新用户信息
   const updateUser = (userData) => {
     user.value = userData
     localStorage.setItem('auth_user', JSON.stringify(userData))
+  }
+
+  // 更新权限信息
+  const updatePermissions = (userPermissions) => {
+    // 注意：权限暂时是写死的，不更新
+    console.log('权限更新被忽略，当前权限是写死的:', userPermissions)
+    // permissions.value = userPermissions
+    // localStorage.setItem('auth_permissions', JSON.stringify(userPermissions))
   }
 
   // 清除用户信息（保持令牌）
@@ -63,10 +98,15 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     token,
+    permissions,
     isAuthenticated,
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
     login,
     logout,
     updateUser,
+    updatePermissions,
     clearUser,
   }
 })

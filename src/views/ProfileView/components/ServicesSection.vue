@@ -22,78 +22,111 @@
         <div class="service-label">{{ $t(`profile.services.${service.label}`) }}</div>
       </div>
     </div>
+
+    <!-- 权限管理服务 -->
+    <div class="services-grid">
+      <PermissionGuard permission="role_management">
+        <div class="service-item">
+          <div class="service-icon" @click="handleGoPage('roleManagement')">
+            <van-icon name="manager" />
+          </div>
+          <div class="service-label">{{ $t('profile.services.roleManagement') }}</div>
+        </div>
+      </PermissionGuard>
+
+      <PermissionGuard permission="user_management">
+        <div class="service-item">
+          <div class="service-icon" @click="handleGoPage('userManagement')">
+            <van-icon name="friends" />
+          </div>
+          <div class="service-label">{{ $t('profile.services.userManagement') }}</div>
+        </div>
+      </PermissionGuard>
+    </div>
   </SectionCard>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import SectionCard from '../common/SectionCard.vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+  import { ref } from 'vue'
+  import SectionCard from '../common/SectionCard.vue'
+  import PermissionGuard from '@/components/PermissionGuard/index.vue'
+  import { useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
-const router = useRouter()
+  const { t } = useI18n()
+  const router = useRouter()
 
-// 服务数据
-const services = ref([
-  { id: 1, icon: 'service', label: 'customerService' },
-  { id: 2, icon: 'description', label: 'myContract' },
-  { id: 3, icon: 'records', label: 'relatedData' },
-  { id: 4, icon: 'orders-o', label: 'myOrders' },
-  { id: 5, icon: 'star-o', label: 'favorite' },
-  { id: 6, icon: 'clock-o', label: 'history' },
-])
+  // 服务数据
+  const services = ref([
+    { id: 1, icon: 'service', label: 'customerService' },
+    { id: 2, icon: 'description', label: 'myContract' },
+    { id: 3, icon: 'records', label: 'relatedData' },
+    { id: 4, icon: 'orders-o', label: 'myOrders' },
+    { id: 5, icon: 'star-o', label: 'favorite' },
+    { id: 6, icon: 'clock-o', label: 'history' }
+  ])
 
-const handleGoPage = (icon) => {
-  console.log('handleGoPage', icon)
-  switch (icon) {
-    case 'service':
-      router.push('/customerService')
-      break
-    case 'chat':
-      break
-    case 'friends':
-      break
+  const handleGoPage = icon => {
+    console.log('handleGoPage', icon)
+    switch (icon) {
+      case 'service':
+        router.push('/customerService')
+        break
+      case 'roleManagement':
+        router.push('/roleManagement')
+        break
+      case 'userManagement':
+        router.push('/userManagement')
+        break
+      case 'chat':
+        break
+      case 'friends':
+        break
+    }
   }
-}
 </script>
 
 <style lang="scss" scoped>
-.services-section {
-  margin-top: 20px;
-}
+  .services-section {
+    margin-top: 20px;
+  }
 
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  text-align: center;
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 15px;
 
-  .service-item {
-    padding: 10px 0;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-      transform: translateY(-3px);
+    &:last-child {
+      margin-bottom: 0;
     }
 
-    .service-icon {
-      width: 40px;
-      height: 40px;
-      background: #f0f7ff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 8px;
-      color: #3498db;
-      font-size: 18px;
-    }
+    .service-item {
+      padding: 10px 0;
+      cursor: pointer;
+      transition: all 0.2s;
 
-    .service-label {
-      font-size: 13px;
+      &:hover {
+        transform: translateY(-3px);
+      }
+
+      .service-icon {
+        width: 40px;
+        height: 40px;
+        background: #f0f7ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        color: #3498db;
+        font-size: 18px;
+      }
+
+      .service-label {
+        font-size: 13px;
+      }
     }
   }
-}
 </style>

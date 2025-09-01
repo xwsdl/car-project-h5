@@ -167,7 +167,9 @@
       "history": "История просмотров",
       "coupon": "Купоны",
       "balance": "Баланс",
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "roleManagement": "Управление ролями",
+      "userManagement": "Управление пользователями"
     },
     "orders": {
       "title": "Мои заказы",
@@ -427,33 +429,94 @@
     "carList": "Список автомобилей",
     "shoppingCart": "Корзина",
     "customerService": "Служба поддержки",
-    "brand": "Выбрать бренд",
-    "filterPage": "Расширенный фильтр",
+    "brand": "Бренд",
+    "filterPage": "Фильтр",
     "login": "Вход",
-    "test": "Тестовая страница"
+    "roleManagement": "Управление ролями",
+    "userManagement": "Управление пользователями"
   },
-  "test": {
-    "title": "Тестовая страница переключения языка",
-    "description": "Для тестирования функции обновления данных при переключении языка",
-    "languageInfo": "Информация о языке",
-    "currentLanguage": "Текущий язык",
-    "lastRefresh": "Время последнего обновления",
-    "dataInfo": "Информация о данных",
-    "loading": "Загрузка...",
-    "error": "Ошибка загрузки",
+  "roleManagement": {
+    "title": "Управление ролями",
+    "addRole": "Добавить роль",
+    "editRole": "Редактировать роль",
+    "roleName": "Название роли",
+    "roleNamePlaceholder": "Пожалуйста, введите название роли",
+    "roleNameRequired": "Пожалуйста, введите название роли",
+    "roleDescription": "Описание роли",
+    "roleDescriptionPlaceholder": "Пожалуйста, введите описание роли",
+    "roleType": "Тип роли",
+    "permissions": "Настройки разрешений",
+    "roleTypes": {
+      "normal": "Обычный пользователь",
+      "customerService": "Служба поддержки",
+      "admin": "Администратор",
+      "superAdmin": "Супер администратор"
+    },
+    "permissions": {
+      "basicAccess": "Базовый доступ",
+      "customerService": "Функции поддержки",
+      "roleManagement": "Управление ролями",
+      "userManagement": "Управление пользователями",
+      "orderManagement": "Управление заказами",
+      "systemConfig": "Настройки системы"
+    }
+  },
+  "userManagement": {
+    "title": "Управление пользователями",
+    "searchPlaceholder": "Поиск по имени пользователя или email",
     "actions": "Действия",
-    "refreshData": "Обновить данные",
-    "clearCache": "Очистить кэш",
-    "refreshSuccess": "Данные успешно обновлены",
-    "cacheCleared": "Кэш очищен"
-  },
-  "customerService": {
-    "sending": "Отправка",
-    "sent": "Отправлено",
-    "send_failed_click_retry": "Отправка не удалась. Нажмите, чтобы повторить попытку",
-    "online": "Онлайн",
-    "offline": "Офлайн",
-    "customer_service": "Служба поддержки",
-    "input_message": "Введите сообщение..."
+    "userDetail": "Детали пользователя",
+    "editUser": "Редактировать пользователя",
+    "basicInfo": "Основная информация",
+    "username": "Имя пользователя",
+    "usernamePlaceholder": "Пожалуйста, введите имя пользователя",
+    "usernameRequired": "Пожалуйста, введите имя пользователя",
+    "email": "Электронная почта",
+    "emailPlaceholder": "Пожалуйста, введите email",
+    "emailRequired": "Пожалуйста, введите email",
+    "emailInvalid": "Неверный формат email",
+    "phone": "Номер телефона",
+    "phonePlaceholder": "Пожалуйста, введите номер телефона",
+    "phoneInvalid": "Неверный формат номера телефона",
+    "status": {
+      "active": "Активный",
+      "inactive": "Неактивный",
+      "suspended": "Приостановлен",
+      "deleted": "Удален"
+    },
+    "role": "Роль",
+    "createTime": "Время создания",
+    "lastLoginTime": "Последний вход",
+    "permissions": "Список разрешений",
+    "operationHistory": "История операций",
+    "passwordSettings": "Настройки пароля",
+    "newPassword": "Новый пароль",
+    "newPasswordPlaceholder": "Пожалуйста, введите новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "confirmPasswordPlaceholder": "Пожалуйста, введите пароль еще раз",
+    "passwordMinLength": "Пароль должен содержать минимум 6 символов",
+    "passwordNotMatch": "Пароли не совпадают",
+    "operations": {
+      "login": "Вход пользователя",
+      "updateProfile": "Обновление профиля",
+      "resetPassword": "Сброс пароля"
+    },
+    "operationDescriptions": {
+      "login": "Пользователь успешно вошел в систему",
+      "updateProfile": "Пользователь обновил личную информацию",
+      "resetPassword": "Администратор сбросил пароль пользователя"
+    },
+    "actions": {
+      "view": "Просмотр",
+      "edit": "Редактировать",
+      "resetPassword": "Сбросить пароль",
+      "suspend": "Приостановить",
+      "activate": "Активировать",
+      "delete": "Удалить"
+    },
+    "confirmResetPassword": "Вы уверены, что хотите сбросить пароль пользователя {username}?",
+    "confirmSuspend": "Вы уверены, что хотите приостановить пользователя {username}?",
+    "confirmActivate": "Вы уверены, что хотите активировать пользователя {username}?",
+    "confirmDelete": "Вы уверены, что хотите удалить пользователя {username}?"
   }
 }

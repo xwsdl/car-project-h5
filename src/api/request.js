@@ -157,4 +157,13 @@ export const put = (url, data = {}, config = {}) => {
   })
 }
 
+export const deleteRequest = (url, data = {}, config = {}) => {
+  return createRequest({
+    url,
+    method: 'delete',
+    data,
+    ...config,
+  })
+}
+
 export default service

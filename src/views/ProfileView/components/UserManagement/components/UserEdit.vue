@@ -38,19 +38,6 @@
           />
 
           <van-field
-            :label="$t('userManagement.status')"
-            readonly
-            is-link
-            @click="showStatusPicker = true"
-          >
-            <template #input>
-              <van-tag :type="getUserStatusColor(formData.status)" size="small">
-                {{ $t(`userManagement.status.${formData.status}`) }}
-              </van-tag>
-            </template>
-          </van-field>
-
-          <van-field
             :label="$t('userManagement.role')"
             readonly
             is-link
@@ -93,15 +80,6 @@
       </van-form>
     </div>
 
-    <!-- 状态选择器 -->
-    <van-popup v-model:show="showStatusPicker" position="bottom">
-      <van-picker
-        :columns="statusColumns"
-        @confirm="onStatusConfirm"
-        @cancel="showStatusPicker = false"
-      />
-    </van-popup>
-
     <!-- 角色选择器 -->
     <van-popup v-model:show="showRolePicker" position="bottom">
       <van-picker
@@ -131,24 +109,16 @@
 
   // 响应式数据
   const submitting = ref(false)
-  const showStatusPicker = ref(false)
   const showRolePicker = ref(false)
   const formData = ref({
     username: '',
     email: '',
     phone: '',
-    status: 'active',
+    status: '已激活', // 保留但不允许编辑
     role: 'normal',
     newPassword: '',
     confirmPassword: ''
   })
-
-  // 状态选项
-  const statusColumns = [
-    { text: t('userManagement.status.active'), value: 'active' },
-    { text: t('userManagement.status.inactive'), value: 'inactive' },
-    { text: t('userManagement.status.suspended'), value: 'suspended' }
-  ]
 
   // 角色选项
   const roleColumns = [
@@ -157,17 +127,6 @@
     { text: t('roleManagement.roleTypes.admin'), value: 'admin' },
     { text: t('roleManagement.roleTypes.superAdmin'), value: 'superAdmin' }
   ]
-
-  // 用户状态颜色映射
-  const getUserStatusColor = status => {
-    const colorMap = {
-      active: 'success',
-      inactive: 'default',
-      suspended: 'warning',
-      deleted: 'danger'
-    }
-    return colorMap[status] || 'default'
-  }
 
   // 密码验证
   const validatePassword = () => {
@@ -178,12 +137,6 @@
       return false
     }
     return true
-  }
-
-  // 状态确认
-  const onStatusConfirm = value => {
-    formData.value.status = value.value
-    showStatusPicker.value = false
   }
 
   // 角色确认
@@ -220,11 +173,12 @@
     () => props.user,
     newUser => {
       if (newUser) {
+        // 适配新的数据结构
         formData.value = {
           username: newUser.username || '',
           email: newUser.email || '',
           phone: newUser.phone || '',
-          status: newUser.status || 'active',
+          status: newUser.status || '已激活',
           role: newUser.role || 'normal',
           newPassword: '',
           confirmPassword: ''
@@ -258,5 +212,3 @@
     }
   }
 </style>
-
-

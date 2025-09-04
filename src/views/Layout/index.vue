@@ -16,7 +16,7 @@
     <Tabbar v-if="isShowTabbar" />
 
     <!-- 开发环境显示缓存管理组件 -->
-    <CacheManager v-if="isDev" />
+    <CacheManager v-if="isDev && false" />
   </div>
 </template>
 

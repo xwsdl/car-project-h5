@@ -18,7 +18,7 @@
         <van-cell :title="$t('userManagement.status')">
           <template #value>
             <van-tag :type="getUserStatusColor(user.status)" size="small">
-              {{ $t(`userManagement.status.${user.status}`) }}
+              {{ user.status }}
             </van-tag>
           </template>
         </van-cell>
@@ -68,13 +68,13 @@
 
   const emit = defineEmits(['close'])
 
-  // 用户状态颜色映射
+  // 用户状态颜色映射（适配中文状态值）
   const getUserStatusColor = status => {
     const colorMap = {
-      active: 'success',
-      inactive: 'default',
-      suspended: 'warning',
-      deleted: 'danger'
+      '已激活': 'success',
+      '未激活': 'default',
+      '暂停': 'warning',
+      '删除': 'danger'
     }
     return colorMap[status] || 'default'
   }
@@ -141,5 +141,7 @@
     color: #999;
   }
 </style>
+
+
 
 

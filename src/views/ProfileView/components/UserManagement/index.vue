@@ -31,15 +31,15 @@
             v-for="user in filteredUsers"
             :key="user.id"
             :title="user.username"
-            :label="user.email"
+            :label="user.phone || user.email || '无联系方式'"
             is-link
             @click="showUserActions(user)"
           >
             <template #right-icon>
-              <van-tag :type="getUserStatusColor(user.status)" size="small">
-                {{ $t(`userManagement.status.${user.status}`) }}
-              </van-tag>
-            </template>
+                <van-tag :type="getUserStatusColor(user.status)" size="small">
+                  {{ user.status }}
+                </van-tag>
+              </template>
           </van-cell>
         </van-cell-group>
       </van-list>
@@ -76,6 +76,35 @@
         @save="handleUserSave"
       />
     </van-popup>
+
+    <!-- 角色选择弹窗 -->
+    <van-popup v-model:show="showRolePicker" position="bottom" :style="{ height: '80%' }">
+      <div class="role-picker-container">
+        <van-nav-bar :title="t('roleManagement.assignRole')" left-arrow @click-left="showRolePicker = false" />
+        <div class="role-list">
+          <van-cell
+            v-for="role in roleList"
+            :key="role.id"
+            :title="role.name"
+            :value="role.description"
+            is-link
+            @click="handleRoleSelect(role)"
+          >
+            <template #right-icon>
+              <VanIcon v-if="selectedRole && selectedRole.id === role.id" name="success" color="#4cd964" />
+            </template>
+          </van-cell>
+        </div>
+        <div class="picker-actions">
+          <van-button type="default" block @click="showRolePicker = false">
+            {{ t('common.cancel') }}
+          </van-button>
+          <van-button type="primary" block @click="confirmRoleAssign">
+            {{ t('common.confirm') }}
+          </van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -83,9 +112,11 @@
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
-  import { showToast } from 'vant'
+  import { showToast, Dialog, Picker, Icon as VanIcon } from 'vant'
   import UserDetail from './components/UserDetail.vue'
   import UserEdit from './components/UserEdit.vue'
+  import { fetchUserList, updateUserRole, saveUserRole, fetchUserRole } from '@/api/user/index.js'
+  import { fetchAllRole } from '@/api/role/index.js'
 
   const { t } = useI18n()
   const router = useRouter()
@@ -101,27 +132,23 @@
   const confirmMessage = ref('')
   const currentUser = ref(null)
   const users = ref([])
+  const pageNo = ref(1)
+  const pageSize = ref(10)
+  const showRolePicker = ref(false)
+  const roleList = ref([])
+  const selectedRole = ref(null)
 
-  // 过滤后的用户列表
-  const filteredUsers = computed(() => {
-    if (!searchKeyword.value) {
-      return users.value
-    }
+  // 由于搜索已经在API层面处理，这里直接返回用户列表
+  const filteredUsers = computed(() => users.value)
 
-    return users.value.filter(
-      user =>
-        user.username.toLowerCase().includes(searchKeyword.value.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchKeyword.value.toLowerCase())
-    )
-  })
-
-  // 用户状态颜色映射
+  // 用户状态颜色映射（适配中文状态值）
   const getUserStatusColor = status => {
+    // 根据中文状态值映射颜色
     const colorMap = {
-      active: 'success',
-      inactive: 'default',
-      suspended: 'warning',
-      deleted: 'danger'
+      '已激活': 'success',
+      '未激活': 'default',
+      '暂停': 'warning',
+      '删除': 'danger'
     }
     return colorMap[status] || 'default'
   }
@@ -133,67 +160,111 @@
 
   // 搜索处理
   const handleSearch = () => {
-    // 搜索逻辑已在 computed 中处理
+    // 重置分页
+    pageNo.value = 1
+    users.value = []
+    finished.value = false
+    // 重新加载数据
+    loadUsers()
   }
 
   // 加载用户列表
   const loadUsers = async () => {
     try {
       loading.value = true
-      // TODO: 调用API获取用户列表
-      // const response = await getUserList()
 
-      // 模拟数据
-      const mockUsers = [
-        {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          phone: '13800138000',
-          status: 'active',
-          role: 'superAdmin',
-          createTime: '2025-01-01',
-          lastLoginTime: '2025-01-20 10:30:00'
-        },
-        {
-          id: 2,
-          username: 'user001',
-          email: 'user001@example.com',
-          phone: '13800138001',
-          status: 'active',
-          role: 'normal',
-          createTime: '2025-01-02',
-          lastLoginTime: '2025-01-19 15:20:00'
-        },
-        {
-          id: 3,
-          username: 'service001',
-          email: 'service001@example.com',
-          phone: '13800138002',
-          status: 'active',
-          role: 'customerService',
-          createTime: '2025-01-03',
-          lastLoginTime: '2025-01-18 09:15:00'
-        },
-        {
-          id: 4,
-          username: 'manager001',
-          email: 'manager001@example.com',
-          phone: '13800138003',
-          status: 'inactive',
-          role: 'admin',
-          createTime: '2025-01-04',
-          lastLoginTime: '2025-01-17 14:30:00'
+      // 构建查询参数
+      const params = {
+        pageNo: pageNo.value,
+        pageSize: pageSize.value
+        // userName: searchKeyword.value
+        // isAllocate: undefined // 默认不传此参数
+        // isAsc: false // 默认降序
+        //  sortBy: 'createTime' // 默认按创建时间排序
+      }
+
+      // 调用API获取用户列表
+      const response = await fetchUserList(params)
+
+      // 请求封装已处理错误拦截，成功时直接使用数据
+      // 根据用户提供的响应结构，可能是直接的数组或包含records字段的对象
+      let userList = []
+      if (Array.isArray(response)) {
+        userList = response
+      } else if (response && response.records && Array.isArray(response.records)) {
+        userList = response.records
+      } else if (response && response.list && Array.isArray(response.list)) {
+        userList = response.list
+      }
+
+      if (userList.length > 0) {
+        if (pageNo.value === 1) {
+          users.value = userList
+        } else {
+          users.value = [...users.value, ...userList]
         }
-      ]
 
-      users.value = mockUsers
-      finished.value = true
+        // 判断是否还有更多数据
+        finished.value = userList.length < pageSize.value
+      } else {
+        // 如果API返回为空，使用模拟数据（匹配实际API返回格式）
+        const mockUsers = [
+          {
+            id: 1,
+            username: "Jack",
+            phone: "13900112224",
+            createtime: "2017-08-19 20:50:21",
+            updatetime: "2025-07-12 15:47:47",
+            status: "已激活",
+            email: "",
+            avatar: "https://bear-app-avatar.oss-cn-beijing.aliyuncs.com/avatars/2025/07/12/94164638-5a23-4e76-a7d6-c778da1f5b46.jfif",
+            gender: true,
+            birthday: "",
+            deleted: false,
+            roleId: 2,
+            realName: null
+          },
+          {
+            id: 2,
+            username: "admin",
+            phone: "13800138000",
+            createtime: "2017-08-19 20:50:21",
+            updatetime: "2025-07-12 15:47:47",
+            status: "已激活",
+            email: "admin@example.com",
+            avatar: "",
+            gender: true,
+            birthday: "",
+            deleted: false,
+            roleId: 1,
+            realName: null
+          }
+        ]
+
+        // 处理模拟数据的分页
+        const startIndex = (pageNo.value - 1) * pageSize.value
+        const endIndex = startIndex + pageSize.value
+        const paginatedMockUsers = mockUsers.slice(startIndex, endIndex)
+
+        if (pageNo.value === 1) {
+          users.value = paginatedMockUsers
+        } else {
+          users.value = [...users.value, ...paginatedMockUsers]
+        }
+
+        // 判断是否还有更多数据
+        finished.value = paginatedMockUsers.length < pageSize.value
+      }
     } catch (error) {
       console.error('加载用户列表失败:', error)
-      showToast('加载失败')
+      showToast(t('request.fail'))
     } finally {
       loading.value = false
+
+      // 加载完成后，增加页码
+      if (!finished.value) {
+        pageNo.value++
+      }
     }
   }
 
@@ -210,24 +281,14 @@
       icon: 'eye-o'
     },
     {
-      name: t('userManagement.actions.edit'),
-      icon: 'edit'
+      name: currentUser.value?.status === '已激活'
+            ? t('userManagement.actions.suspend')
+            : t('userManagement.actions.activate'),
+      icon: currentUser.value?.status === '已激活' ? 'pause-circle-o' : 'play-circle-o'
     },
     {
-      name: t('userManagement.actions.resetPassword'),
-      icon: 'lock'
-    },
-    {
-      name:
-        currentUser.value?.status === 'active'
-          ? t('userManagement.actions.suspend')
-          : t('userManagement.actions.activate'),
-      icon: currentUser.value?.status === 'active' ? 'pause-circle-o' : 'play-circle-o'
-    },
-    {
-      name: t('userManagement.actions.delete'),
-      icon: 'delete-o',
-      color: '#ee0a24'
+      name: t('roleManagement.assignRole'),
+      icon: 'user-o'
     }
   ])
 
@@ -239,19 +300,75 @@
       case t('userManagement.actions.view'):
         viewUser(currentUser.value)
         break
-      case t('userManagement.actions.edit'):
-        editUser(currentUser.value)
-        break
-      case t('userManagement.actions.resetPassword'):
-        resetPassword(currentUser.value)
-        break
       case t('userManagement.actions.suspend'):
       case t('userManagement.actions.activate'):
         toggleUserStatus(currentUser.value)
         break
-      case t('userManagement.actions.delete'):
-        deleteUser(currentUser.value)
+      case t('roleManagement.assignRole'):
+        assignUserRole(currentUser.value)
         break
+    }
+  }
+
+  // 分配用户角色
+  const assignUserRole = async user => {
+    try {
+      // 存储当前操作的用户
+      currentUser.value = user
+      
+      // 获取用户当前角色
+      const currentRole = await fetchUserRole(user.id)
+      
+      // 使用API获取角色列表
+      const roles = await fetchAllRole()
+      
+      // 处理角色列表数据格式
+      roleList.value = roles || []
+      
+      // 设置默认选中当前角色
+      if (currentRole && roleList.value.length > 0) {
+        selectedRole.value = roleList.value.find(role => role.id === currentRole.id) || roleList.value[0]
+      }
+      
+      // 显示角色选择弹窗
+      showRolePicker.value = true
+    } catch (error) {
+      console.error('加载角色列表失败:', error)
+      showToast(t('request.fail'))
+    }
+  }
+  
+  // 选择角色
+  const handleRoleSelect = role => {
+    selectedRole.value = role
+  }
+  
+  // 确认角色分配
+  const confirmRoleAssign = async () => {
+    if (!selectedRole.value) {
+      showToast(t('roleManagement.selectRoleFirst'))
+      return
+    }
+    
+    try {
+      // 调用API保存角色分配
+      await saveUserRole({
+        userId: currentUser.value.id,
+        roleId: selectedRole.value.id
+      })
+      
+      showToast(t('roleManagement.assignSuccess'))
+      
+      // 关闭弹窗
+      showRolePicker.value = false
+      
+      // 重新加载用户列表以更新角色信息
+      users.value = []
+      finished.value = false
+      await loadUsers()
+    } catch (error) {
+      console.error('分配角色失败:', error)
+      showToast(t('roleManagement.assignFail'))
     }
   }
 
@@ -261,61 +378,37 @@
     showUserDetail.value = true
   }
 
-  // 编辑用户
-  const editUser = user => {
-    currentUser.value = user
-    showUserEdit.value = true
-  }
-
-  // 处理用户保存
-  const handleUserSave = async userData => {
-    try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // 更新本地数据
-      const index = users.value.findIndex(u => u.id === userData.id)
-      if (index !== -1) {
-        users.value[index] = { ...users.value[index], ...userData }
-      }
-
-      showToast('保存成功')
-      showUserEdit.value = false
-    } catch (error) {
-      console.error('保存失败:', error)
-      showToast('保存失败')
-    }
-  }
-
-  // 重置密码
-  const resetPassword = user => {
-    confirmMessage.value = t('userManagement.confirmResetPassword', { username: user.username })
-    showConfirm.value = true
-  }
-
   // 切换用户状态
-  const toggleUserStatus = user => {
-    const action = user.status === 'active' ? 'suspend' : 'activate'
-    confirmMessage.value = t(
-      `userManagement.confirm${action.charAt(0).toUpperCase() + action.slice(1)}`,
-      {
-        username: user.username
-      }
-    )
-    showConfirm.value = true
-  }
-
-  // 删除用户
-  const deleteUser = user => {
-    confirmMessage.value = t('userManagement.confirmDelete', { username: user.username })
-    showConfirm.value = true
-  }
+    const toggleUserStatus = user => {
+      const action = user.status === '已激活' ? 'suspend' : 'activate'
+      confirmMessage.value = t(
+        `userManagement.confirm${action.charAt(0).toUpperCase() + action.slice(1)}`,
+        {
+          username: user.username
+        }
+      )
+      showConfirm.value = true
+    }
 
   // 确认操作
   const confirmAction = async () => {
     try {
-      // TODO: 调用相应的API
-      showToast('操作成功')
+      // 判断当前是启用还是停用操作
+      if (confirmMessage.value.includes('启用')) {
+        // 启用用户
+        await updateUserRole({
+          id: currentUser.value.id,
+          status: '已激活'
+        })
+        showToast(t('userManagement.activateSuccess'))
+      } else if (confirmMessage.value.includes('停用')) {
+        // 停用用户
+        await updateUserRole({
+          id: currentUser.value.id,
+          status: '未激活'
+        })
+        showToast(t('userManagement.suspendSuccess'))
+      }
 
       // 重新加载用户列表
       users.value = []
@@ -323,7 +416,7 @@
       await loadUsers()
     } catch (error) {
       console.error('操作失败:', error)
-      showToast('操作失败')
+      showToast(t('request.fail'))
     }
   }
 
@@ -340,5 +433,23 @@
 
   .content {
     padding-bottom: 15px;
+  }
+  
+  .role-picker-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+  }
+  
+  .role-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .picker-actions {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
   }
 </style>

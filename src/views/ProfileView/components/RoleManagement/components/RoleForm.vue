@@ -32,14 +32,12 @@
             rows="3"
           />
 
-          <van-field
-            :label="$t('roleManagement.roleType')"
-            readonly
-            is-link
-            @click="showTypePicker = true"
-          >
+          <van-field :label="$t('roleManagement.status')">
             <template #input>
-              <span>{{ getRoleTypeText(formData.type) }}</span>
+              <van-radio-group v-model="formData.status" direction="horizontal">
+                <van-radio :name="1">{{ t('roleManagement.statusOption.active') }}</van-radio>
+                <van-radio :name="0">{{ t('roleManagement.statusOption.inactive') }}</van-radio>
+              </van-radio-group>
             </template>
           </van-field>
         </van-cell-group>
@@ -71,15 +69,6 @@
         </div>
       </van-form>
     </div>
-
-    <!-- 角色类型选择器 -->
-    <van-popup v-model:show="showTypePicker" position="bottom">
-      <van-picker
-        :columns="roleTypeColumns"
-        @confirm="onTypeConfirm"
-        @cancel="showTypePicker = false"
-      />
-    </van-popup>
   </div>
 </template>
 
@@ -100,24 +89,17 @@
 
   // 响应式数据
   const submitting = ref(false)
-  const showTypePicker = ref(false)
   const formData = ref({
     name: '',
     description: '',
-    type: 'normal',
+    roleCode: '',
+    sort: 0,
+    status: '1',
     permissions: []
   })
 
   // 是否为编辑模式
   const isEdit = computed(() => !!props.role)
-
-  // 角色类型选项
-  const roleTypeColumns = [
-    { text: t('roleManagement.roleTypes.normal'), value: 'normal' },
-    { text: t('roleManagement.roleTypes.customerService'), value: 'customerService' },
-    { text: t('roleManagement.roleTypes.admin'), value: 'admin' },
-    { text: t('roleManagement.roleTypes.superAdmin'), value: 'superAdmin' }
-  ]
 
   // 可用权限列表
   const availablePermissions = [
@@ -129,12 +111,6 @@
     { label: t('roleManagement.permissions.systemConfig'), value: 'system_config' }
   ]
 
-  // 获取角色类型文本
-  const getRoleTypeText = type => {
-    const typeItem = roleTypeColumns.find(item => item.value === type)
-    return typeItem ? typeItem.text : ''
-  }
-
   // 切换权限
   const togglePermission = permission => {
     const index = formData.value.permissions.indexOf(permission)
@@ -145,20 +121,16 @@
     }
   }
 
-  // 角色类型确认
-  const onTypeConfirm = value => {
-    formData.value.type = value.value
-    showTypePicker.value = false
-  }
-
   // 表单提交
   const onSubmit = async () => {
     try {
       submitting.value = true
 
+      // 确保status被转换为数字类型后提交
       const submitData = {
         ...formData.value,
-        id: props.role?.id
+        id: props.role?.id,
+        status: +formData.value.status // 转换为数字类型
       }
 
       emit('submit', submitData)
@@ -175,9 +147,12 @@
     newRole => {
       if (newRole) {
         formData.value = {
-          name: newRole.name || '',
+          id: newRole.id,
+          name: newRole.roleName || '',
           description: newRole.description || '',
-          type: newRole.type || 'normal',
+          roleCode: newRole.roleCode || '',
+          sort: newRole.sort || 0,
+          status: +newRole.status,
           permissions: [...(newRole.permissions || [])]
         }
       } else {
@@ -185,12 +160,14 @@
         formData.value = {
           name: '',
           description: '',
-          type: 'normal',
+          roleCode: '',
+          sort: 0,
+          status: 1,
           permissions: []
         }
       }
     },
-    { immediate: true }
+    { immediate: true, deep: true }
   )
 </script>
 
@@ -217,5 +194,3 @@
     }
   }
 </style>
-
-

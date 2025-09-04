@@ -25,19 +25,28 @@
           <van-cell
             v-for="role in roles"
             :key="role.id"
-            :title="role.name"
+            :title="role.roleName"
             :label="role.description"
             is-link
-            @click="editRole(role)"
+            @click="handleRoleClick(role)"
           >
             <template #right-icon>
-              <van-tag :type="getRoleTypeColor(role.type)" size="small">
-                {{ $t(`roleManagement.roleTypes.${role.type}`) }}
-              </van-tag>
+              <div class="role-tags">
+                <van-tag :type="getRoleStatusColor(role.status)" size="small">
+                  {{ getRoleStatusText(role.status) }}
+                </van-tag>
+              </div>
             </template>
           </van-cell>
         </van-cell-group>
       </van-list>
+
+      <!-- 操作菜单 -->
+      <van-action-sheet
+        v-model:show="showActionSheet"
+        :actions="actionOptions"
+        @select="handleActionSelect"
+      />
     </div>
 
     <!-- 角色表单弹窗 -->
@@ -51,8 +60,15 @@
   import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
-  import { showToast } from 'vant'
+  import { showToast, showDialog } from 'vant'
   import RoleForm from './components/RoleForm.vue'
+  import {
+    fetchAllRole,
+    addRole,
+    updateRole,
+    deleteRole,
+    saveRolePermission
+  } from '@/api/role/index.js'
 
   const { t } = useI18n()
   const router = useRouter()
@@ -61,18 +77,26 @@
   const loading = ref(false)
   const finished = ref(false)
   const showRoleForm = ref(false)
+  const showActionSheet = ref(false)
   const currentRole = ref(null)
+  const selectedRole = ref(null)
   const roles = ref([])
+  const actionOptions = [
+    { name: t('roleManagement.editRole'), key: 'edit' },
+    { name: t('roleManagement.deleteRole'), key: 'delete' },
+    { name: t('common.cancel'), key: 'cancel', color: '#999' }
+  ]
 
-  // 角色类型颜色映射
-  const getRoleTypeColor = type => {
-    const colorMap = {
-      normal: 'default',
-      customerService: 'primary',
-      admin: 'warning',
-      superAdmin: 'danger'
-    }
-    return colorMap[type] || 'default'
+  // 角色状态颜色映射
+  const getRoleStatusColor = status => {
+    return status === 1 ? 'success' : 'default'
+  }
+
+  // 角色状态文本映射
+  const getRoleStatusText = status => {
+    return status === 1
+      ? t('roleManagement.statusOption.active')
+      : t('roleManagement.statusOption.inactive')
   }
 
   // 返回上一页
@@ -84,48 +108,45 @@
   const loadRoles = async () => {
     try {
       loading.value = true
-      // TODO: 调用API获取角色列表
-      // const response = await getRoleList()
 
-      // 模拟数据
-      const mockRoles = [
-        {
-          id: 1,
-          name: '普通用户',
-          description: '基础功能访问权限',
-          type: 'normal',
-          permissions: ['basic_access']
-        },
-        {
-          id: 2,
-          name: '客服',
-          description: '客服相关功能权限',
-          type: 'customerService',
-          permissions: ['basic_access', 'customer_service']
-        },
-        {
-          id: 3,
-          name: '管理员',
-          description: '系统管理权限',
-          type: 'admin',
-          permissions: ['basic_access', 'role_management', 'user_management']
-        },
-        {
-          id: 4,
-          name: '超级管理员',
-          description: '所有权限',
-          type: 'superAdmin',
-          permissions: ['*']
-        }
-      ]
-
-      roles.value = mockRoles
-      finished.value = true
+      // 调用API获取角色列表
+      const response = await fetchAllRole()
+      // 请求封装已处理错误拦截，成功时直接使用数据
+      if (response && response.length >= 0) {
+        roles.value = response
+        finished.value = true
+      } else {
+        throw new Error('获取角色列表失败')
+      }
     } catch (error) {
       console.error('加载角色列表失败:', error)
-      showToast('加载失败')
+      showToast(error.message || '加载失败')
     } finally {
       loading.value = false
+    }
+  }
+
+  // 角色点击处理
+  const handleRoleClick = role => {
+    selectedRole.value = { ...role }
+    showActionSheet.value = true
+  }
+
+  // 操作菜单选择处理
+  const handleActionSelect = action => {
+    showActionSheet.value = false
+
+    switch (action.key) {
+      case 'edit':
+        editRole(selectedRole.value)
+        break
+      case 'delete':
+        handleDeleteRole(selectedRole.value)
+        break
+      case 'cancel':
+      default:
+        // 取消操作
+        break
     }
   }
 
@@ -135,13 +156,74 @@
     showRoleForm.value = true
   }
 
+  // 处理角色删除
+  const handleDeleteRole = role => {
+    showDialog({
+      title: t('common.confirm'),
+      message: t('roleManagement.confirmDeleteRole', { roleName: role.roleName }),
+      showCancelButton: true,
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel')
+    }).then(async () => {
+      try {
+        await deleteRole(role.id)
+        showToast(t('roleManagement.deleteSuccess'))
+
+        // 重新加载角色列表
+        await loadRoles()
+      } catch (error) {
+        console.error('删除角色失败:', error)
+        showToast(error.message || '操作失败')
+      }
+    })
+  }
+
   // 处理角色提交
   const handleRoleSubmit = async roleData => {
     try {
-      // TODO: 调用API保存角色
-      // const response = await saveRole(roleData)
+      if (roleData.id) {
+        // 编辑角色
+        const updateData = {
+          id: roleData.id,
+          roleName: roleData.name,
+          roleCode: roleData.roleCode,
+          description: roleData.description || '',
+          sort: roleData.sort || 0,
+          status: roleData.status !== undefined ? parseInt(roleData.status, 10) : 1
+        }
 
-      showToast('保存成功')
+        await updateRole(updateData)
+
+        // 保存角色权限
+        if (roleData.permissions && roleData.permissions.length > 0) {
+          await saveRolePermission({
+            roleId: roleData.id,
+            permissionIds: roleData.permissions
+          })
+        }
+      } else {
+        // 新增角色
+        const addData = {
+          roleName: roleData.name,
+          roleCode: roleData.roleCode,
+          description: roleData.description || '',
+          sort: roleData.sort || 0,
+          status: roleData.status !== undefined ? parseInt(roleData.status, 10) : 1
+        }
+
+        const newRole = await addRole(addData)
+
+        // 保存角色权限
+        if (roleData.permissions && roleData.permissions.length > 0) {
+          await saveRolePermission({
+            roleId: newRole.id,
+            permissionIds: roleData.permissions
+          })
+        }
+      }
+
+      // 请求封装已处理错误拦截，成功时直接执行后续操作
+      showToast(t('roleManagement.saveSuccess'))
       showRoleForm.value = false
       currentRole.value = null
 
@@ -151,7 +233,7 @@
       await loadRoles()
     } catch (error) {
       console.error('保存角色失败:', error)
-      showToast('保存失败')
+      showToast(error.message || '保存失败')
     }
   }
 
@@ -172,5 +254,23 @@
 
   .add-btn {
     margin-bottom: 15px;
+  }
+
+  .role-tags {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  /* 角色描述文本超出显示省略号 */
+  .van-cell {
+    .van-cell__label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
   }
 </style>

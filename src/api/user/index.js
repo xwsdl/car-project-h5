@@ -24,3 +24,31 @@ export const saveUserRole = (data) => {
 export const fetchUserRole = (userId) => {
   return get(`/sys-user-role/by-user/${userId}`)
 }
+
+/**
+ * @description 查询用户列表（支持分页和搜索）
+ * @param {Object} params 查询参数
+ * @param {number} params.pageNo 页码
+ * @param {number} params.pageSize 每页条数
+ * @param {string} params.userName 用户名搜索
+ * @param {string} params.email 邮箱搜索
+ * @param {string} params.phone 手机号搜索
+ * @param {number} params.isAllocate 是否分配客服
+ * @param {string} params.sortBy 排序字段
+ * @param {boolean} params.isAsc 是否升序
+ */
+export const fetchUserList = (params = {}) => {
+  return post(`/users/getAllUser`, params, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
+ * @description 用户信息修改
+ * @param {Object} data
+ */
+export const updateUserRole = (data) => {
+  return post(`/users/updateUser`, data)
+}

@@ -198,7 +198,7 @@
         if (roleData.permissions && roleData.permissions.length > 0) {
           await saveRolePermission({
             roleId: roleData.id,
-            permissionIds: roleData.permissions
+            permIds: roleData.permissions  // 改为permIds数组格式
           })
         }
       } else {
@@ -217,7 +217,7 @@
         if (roleData.permissions && roleData.permissions.length > 0) {
           await saveRolePermission({
             roleId: newRole.id,
-            permissionIds: roleData.permissions
+            permIds: roleData.permissions  // 改为permIds数组格式
           })
         }
       }

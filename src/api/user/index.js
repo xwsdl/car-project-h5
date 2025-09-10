@@ -38,11 +38,8 @@ export const fetchUserRole = (userId) => {
  * @param {boolean} params.isAsc 是否升序
  */
 export const fetchUserList = (params = {}) => {
-  return post(`/users/getAllUser`, params, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+  // 移除不必要的multipart/form-data设置，因为传递的是普通对象
+  return post(`/users/getAllUser`, params)
 }
 
 /**

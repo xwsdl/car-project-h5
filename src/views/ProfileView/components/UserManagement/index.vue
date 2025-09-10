@@ -183,18 +183,17 @@
         //  sortBy: 'createTime' // 默认按创建时间排序
       }
 
-      // 调用API获取用户列表
-      const response = await fetchUserList(params)
+      // 调用API获取用户列表 - request.js已经返回response.data
+      const result = await fetchUserList(params)
 
-      // 请求封装已处理错误拦截，成功时直接使用数据
-      // 根据用户提供的响应结构，可能是直接的数组或包含records字段的对象
+      // 根据API返回结构处理数据
       let userList = []
-      if (Array.isArray(response)) {
-        userList = response
-      } else if (response && response.records && Array.isArray(response.records)) {
-        userList = response.records
-      } else if (response && response.list && Array.isArray(response.list)) {
-        userList = response.list
+      if (Array.isArray(result)) {
+        userList = result
+      } else if (result && result.records && Array.isArray(result.records)) {
+        userList = result.records
+      } else if (result && result.list && Array.isArray(result.list)) {
+        userList = result.list
       }
 
       if (userList.length > 0) {
@@ -353,8 +352,8 @@
     try {
       // 调用API保存角色分配
       await saveUserRole({
-        userId: currentUser.value.id,
-        roleId: selectedRole.value.id
+        roleIds: [selectedRole.value.id],  // 改为数组格式
+        userId: currentUser.value.id
       })
       
       showToast(t('roleManagement.assignSuccess'))

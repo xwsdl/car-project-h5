@@ -43,6 +43,18 @@
         </div>
       </PermissionGuard>
     </div>
+
+    <!-- 系统配置服务 -->
+    <div class="services-grid">
+      <PermissionGuard permission="system_config">
+        <div class="service-item">
+          <div class="service-icon" @click="handleGoPage('permissionManagement')">
+            <van-icon name="setting" />
+          </div>
+          <div class="service-label">{{ $t('permissionManagement.title') }}</div>
+        </div>
+      </PermissionGuard>
+    </div>
   </SectionCard>
 </template>
 
@@ -77,6 +89,9 @@
         break
       case 'userManagement':
         router.push('/userManagement')
+        break
+      case 'permissionManagement':
+        router.push('/permissionManagement')
         break
       case 'chat':
         break

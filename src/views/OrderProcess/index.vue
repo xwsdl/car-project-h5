@@ -1,8 +1,8 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-07-08 20:07:26
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-20 18:37:25
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-09-10 16:42:35
  * @FilePath: \car-project-h5\src\views\OrderProcess\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -49,7 +49,7 @@
   }
 
   const handleCancelOrder = order => {
-    cancelOrderStatus(order.id).then(res => {
+    cancelOrderStatus(order.id).then(() => {
       showToast('取消成功')
       pageInit()
     })
@@ -63,6 +63,8 @@
 
     .order-content {
       padding-bottom: 50px;
+      height: 100%;
+      box-sizing: border-box;
     }
   }
 </style>

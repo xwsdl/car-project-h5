@@ -1,18 +1,20 @@
 <!--
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-07-12 18:42:27
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-09-10 16:53:35
  * @FilePath: \car-project-h5\src\components\Tabbar\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <van-tabbar v-model="active" @change="onChange">
     <van-tabbar-item name="home" icon="wap-home">{{ $t('common.home') }}</van-tabbar-item>
-    <van-tabbar-item name="orderProcess" icon="orders-o">
+    <van-tabbar-item name="orderProcess" icon="orders-o" v-if="showRoleTabbar('consumer')">
       {{ $t('common.orderProcess') }}
     </van-tabbar-item>
-
+    <van-tabbar-item name="pendingOrders" icon="orders-o" v-if="showRoleTabbar('customer_service')">
+      {{ $t('common.pending_orders') }}
+    </van-tabbar-item>
     <van-tabbar-item name="message" icon="chat-o">
       <van-badge :content="unreadCount" max="99" :show-zero="false" :offset="[0, -25]">
         {{ $t('common.message') }}
@@ -54,7 +56,7 @@
     }
 
     active.value = pathMap[currentPath] || 'home'
-    
+
     if (authStore.token) {
       unreadCount.value = await getUnreadCount()
     }
@@ -73,6 +75,10 @@
       }
     })
   })
+
+  const showRoleTabbar = roleName => {
+    return authStore?.user?.roleName === roleName || false
+  }
 
   const onChange = name => {
     router.push(`/${name}`)

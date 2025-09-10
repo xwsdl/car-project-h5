@@ -21,7 +21,7 @@ export const addPermission = (data) => {
  * @description 根据角色ID查询权限
  * @param {string} roleId
  */
-export const fetchUserOrder = (roleId) => {
+export const getPermissionsByRoleId = (roleId) => {
   return get(`/sys-permission/by-role/${roleId}`)
 }
 
@@ -35,17 +35,17 @@ export const fetchAllPermission = () => {
 
 /**
  * @description 修改权限
- * @param {Object} id
+ * @param {Object} data
  */
-export const updateOrderStatus = (data) => {
+export const updatePermission = (data) => {
   return put(`/sys-permission/updatePermission`, data)
 }
 
 /**
  * @description 删除权限
- * @param {Object} nodeId
+ * @param {string} id
  */
-export const fetchAttachmentsNode = (id) => {
+export const deletePermission = (id) => {
   return deleteRequest(`/sys-permission/${id}`)
 }
 

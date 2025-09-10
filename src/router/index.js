@@ -41,6 +41,17 @@ const router = createRouter({
           },
         },
         {
+          path: '/pendingOrders',
+          name: 'pendingOrders',
+          component: () => import('@/views/OrderProcess/pendingOrders.vue'),
+          props: true,
+          meta: {
+            title: 'route.pending_orders',
+            requiresAuth: true,
+            keepAlive: false,
+          },
+        },
+        {
           path: '/message',
           name: 'message',
           component: () => import('@/views/Message/index.vue'),
@@ -165,6 +176,18 @@ const router = createRouter({
             title: 'route.userManagement',
             requiresAuth: true,
             permission: 'user_management',
+            keepAlive: false,
+          },
+        },
+        // 权限管理路由
+        {
+          path: '/permissionManagement',
+          name: 'permissionManagement',
+          component: () => import('@/views/ProfileView/components/PermissionManagement/index.vue'),
+          meta: {
+            title: 'route.permissionManagement',
+            requiresAuth: true,
+            permission: 'system_config',
             keepAlive: false,
           },
         },

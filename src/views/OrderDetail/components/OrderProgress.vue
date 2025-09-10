@@ -50,12 +50,23 @@
           <!-- 节点操作区域 -->
           <div
             class="step-node__action"
-            v-if="item.isCompleteSign === 2 && item.attachments.length && canUpload(item)"
+            v-if="
+              item.isCompleteSign === 2 &&
+              item.attachments.length &&
+              showRoleTabbar('customer_service')
+            "
           >
             <van-button type="primary" size="small" @click="handleNodeAction(3, item.id)">
               通过
             </van-button>
-            <!-- <van-button type="default" size="small" @click="handleNodeAction(1,item.id)">不通过</van-button> -->
+            <van-button
+              style="margin-left: 5px"
+              type="default"
+              size="small"
+              @click="handleNodeAction(1, item.id)"
+            >
+              不通过
+            </van-button>
           </div>
         </div>
       </van-step>
@@ -153,7 +164,11 @@
   const canUpload = item => {
     // TODO: 根据实际业务判断当前用户是否有上传权限
     // 例如 return item.form && item.form.uploader === userRole
-    return true
+    console.log('canUpload:', item.canaction === authStore.user.roleName)
+    return item.canaction === authStore.user.roleName
+  }
+  const showRoleTabbar = roleName => {
+    return authStore?.user?.roleName === roleName || false
   }
   const onAttachmentUploaded = result => {
     console.log('上传成功:', result)

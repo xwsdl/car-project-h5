@@ -31,12 +31,13 @@
     "assignRole": "分配角色",
     "assignSuccess": "角色分配成功",
     "assignFail": "角色分配失败",
-      "saveFail": "保存失败",
+    "saveFail": "保存失败",
     "saving": "保存中...",
     "selectDate": "选择日期",
     "year": "年",
     "month": "月",
-    "day": "日"
+    "day": "日",
+    "pending_orders": "待处理订单"
   },
   "login": {
     "welcome": "欢迎回来",
@@ -135,7 +136,7 @@
     "vehicleType": "车辆类型",
     "msrp": "新车指导价",
     "energyType": "能源类型",
-      "insuranceExpiry": "交强险到期",
+    "insuranceExpiry": "交强险到期",
     "carCondition": "车况描述",
     "carSource": "车源情况",
     "carSourceNumber": "车源编号",
@@ -432,7 +433,9 @@
     "filterPage": "筛选",
     "login": "登录",
     "roleManagement": "角色管理",
-    "userManagement": "用户管理"
+    "userManagement": "用户管理",
+    "permissionManagement": "权限管理",
+    "pending_orders": "待处理订单"
   },
   "roleManagement": {
     "title": "角色管理",
@@ -479,6 +482,41 @@
     "assignSuccess": "角色分配成功",
     "assignFail": "角色分配失败",
     "selectRoleFirst": "请先选择角色"
+  },
+  "permissionManagement": {
+    "title": "权限管理",
+    "addPermission": "添加权限",
+    "permissionName": "权限名称",
+    "permissionKey": "权限标识",
+    "permissionCode": "权限编码",
+    "permissionDescription": "权限描述",
+    "apiPath": "接口路径",
+    "httpMethod": "HTTP方法",
+    "sortNumber": "排序号",
+    "parentPermission": "上级权限",
+    "permissionType": "权限类型",
+    "permissionNamePlaceholder": "请输入权限名称",
+    "permissionCodePlaceholder": "请输入权限编码",
+    "permissionDescriptionPlaceholder": "请输入权限描述",
+    "editPermission": "编辑权限",
+    "deletePermission": "删除权限",
+    "confirmDeletePermission": "确定要删除权限 '{permissionName}' 吗？",
+    "deleteSuccess": "权限删除成功",
+    "saveSuccess": "保存成功",
+    "status": "状态",
+    "statusOption": {
+      "active": "启用",
+      "inactive": "禁用"
+    },
+    "confirmActivatePermission": "确定要启用权限 '{permissionName}' 吗？",
+    "confirmDeactivatePermission": "确定要禁用权限 '{permissionName}' 吗？",
+    "activateSuccess": "权限启用成功",
+    "deactivateSuccess": "权限禁用成功",
+    "changeStatus": "修改状态",
+    "disablePermission": "禁用权限",
+    "enablePermission": "启用权限",
+    "noPermission": "暂无权限",
+    "loading": "加载中..."
   },
   "userManagement": {
     "title": "用户管理",

@@ -23,7 +23,8 @@
     "selectDate": "Выберите дату",
     "year": "год",
     "month": "месяц",
-    "day": "день"
+    "day": "день",
+    "pending_orders": "В обработке"
   },
   "login": {
     "welcome": "Сардэчна запрашаем",
@@ -433,7 +434,8 @@
     "filterPage": "Фильтр",
     "login": "Вход",
     "roleManagement": "Управление ролями",
-    "userManagement": "Управление пользователями"
+    "userManagement": "Управление пользователями",
+    "pending_orders": "В обработке"
   },
   "roleManagement": {
     "title": "Управление ролями",

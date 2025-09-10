@@ -99,3 +99,14 @@ export const fetchAttachmentsNode = (nodeId) => {
 `)
 }
 
+/**
+ * @description 客服查询所有未处理完成的订单
+ * @param {Object} params
+ * @param {number} params.pageNum 页码
+ * @param {number} params.pageSize 每页条数
+ * @param {string} params.keyword
+ */
+export const fetchUncompleted = (params) => {
+  return get(`/orders/cs/uncompleted`, params)
+}
+

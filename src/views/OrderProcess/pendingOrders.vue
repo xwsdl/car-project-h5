@@ -1,11 +1,11 @@
 <!-- 用于客服 -->
 <template>
   <div class="order-process">
-    <van-nav-bar :title="$t('orderProcess.title')" left-arrow @click-left="goBack" />
+    <van-nav-bar :title="$t('common.pending_orders')" left-arrow @click-left="goBack" />
     <van-list
       v-model:loading="loading"
       :finished="finished"
-      :finished-text="$t('orderProcess.empty')"
+      :finished-text="$t('common.noMore')"
       @load="onLoad"
     >
       <div class="order-content">
@@ -91,7 +91,6 @@
 
     .order-content {
       padding: 16px;
-      padding-bottom: 50px;
       height: 100%;
       box-sizing: border-box;
     }

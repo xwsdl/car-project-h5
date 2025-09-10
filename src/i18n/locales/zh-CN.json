@@ -435,6 +435,7 @@
     "roleManagement": "角色管理",
     "userManagement": "用户管理",
     "permissionManagement": "权限管理",
+    "menuManagement": "菜单管理",
     "pending_orders": "待处理订单"
   },
   "roleManagement": {
@@ -482,6 +483,39 @@
     "assignSuccess": "角色分配成功",
     "assignFail": "角色分配失败",
     "selectRoleFirst": "请先选择角色"
+  },
+  "menuManagement": {
+    "title": "菜单管理",
+    "addMenu": "添加菜单",
+    "editMenu": "编辑菜单",
+    "menuName": "菜单名称",
+    "menuNamePlaceholder": "请输入菜单名称",
+    "menuNameRequired": "请输入菜单名称",
+    "parentMenu": "上级菜单",
+    "path": "路由路径",
+    "pathPlaceholder": "请输入路由路径",
+    "pathRequired": "请输入路由路径",
+    "component": "组件名称",
+    "componentPlaceholder": "请输入组件名称",
+    "icon": "图标",
+    "iconPlaceholder": "请输入图标名称",
+    "type": "菜单类型",
+    "typeOptions": {
+      "directory": "目录",
+      "menu": "菜单",
+      "button": "按钮"
+    },
+    "sort": "排序",
+    "sortPlaceholder": "请输入排序号",
+    "visible": "可见性",
+    "visibleOptions": {
+      "visible": "显示",
+      "hidden": "隐藏"
+    },
+    "perms": "权限标识",
+    "permsPlaceholder": "请输入权限标识",
+    "saveSuccess": "保存成功",
+    "deleteSuccess": "删除成功"
   },
   "permissionManagement": {
     "title": "权限管理",

@@ -180,12 +180,24 @@ const router = createRouter({
           },
         },
         // 权限管理路由
-        {
+        {          
           path: '/permissionManagement',
           name: 'permissionManagement',
           component: () => import('@/views/ProfileView/components/PermissionManagement/index.vue'),
           meta: {
             title: 'route.permissionManagement',
+            requiresAuth: true,
+            permission: 'system_config',
+            keepAlive: false,
+          },
+        },
+        // 菜单管理路由
+        {          
+          path: '/menuManagement',
+          name: 'menuManagement',
+          component: () => import('@/views/ProfileView/components/MenuManagement/index.vue'),
+          meta: {
+            title: 'route.menuManagement',
             requiresAuth: true,
             permission: 'system_config',
             keepAlive: false,

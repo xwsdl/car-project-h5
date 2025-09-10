@@ -53,8 +53,68 @@
     <van-popup v-model:show="showRoleForm" position="bottom" :style="{ height: '60%' }">
       <RoleForm :role="currentRole" @submit="handleRoleSubmit" @cancel="showRoleForm = false" />
     </van-popup>
+
+    <!-- 权限分配弹窗 -->
+    <van-popup v-model:show="showPermissionModal" position="bottom" :style="{ height: '70%' }">
+      <div class="permission-modal">
+        <van-nav-bar
+          :title="`为角色分配权限: ${selectedRole?.roleName || ''}`"
+          left-arrow
+          @click-left="showPermissionModal = false"
+        />
+
+        <div class="permission-tree-content">
+          <van-tree-select
+            v-model="selectedPermissions"
+            :items="permissionTree"
+            :main-active-index="activeIndex"
+            @click-nav="activeIndex = $event"
+            @change="handlePermissionSelect"
+            class="permission-tree"
+          />
+        </div>
+
+        <div class="modal-actions">
+          <van-button type="default" block @click="showPermissionModal = false">
+            {{ t('common.cancel') }}
+          </van-button>
+          <van-button type="primary" block @click="saveRolePermissions">
+            {{ t('common.confirm') }}
+          </van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  /* 权限分配弹窗样式 */
+  .permission-modal {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .permission-tree-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+  }
+
+  .permission-tree {
+    height: 100%;
+  }
+
+  .modal-actions {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .modal-actions .van-button {
+    flex: 1;
+  }
+</style>
 
 <script setup>
   import { ref, onMounted } from 'vue'
@@ -67,8 +127,10 @@
     addRole,
     updateRole,
     deleteRole,
-    saveRolePermission
+    saveRolePermission,
+    fetchRoleById
   } from '@/api/role/index.js'
+  import { fetchAllPermission, getPermissionsByRoleId } from '@/api/permission/index.js'
 
   const { t } = useI18n()
   const router = useRouter()
@@ -78,11 +140,17 @@
   const finished = ref(false)
   const showRoleForm = ref(false)
   const showActionSheet = ref(false)
+  const showPermissionModal = ref(false)
   const currentRole = ref(null)
   const selectedRole = ref(null)
   const roles = ref([])
+  const permissions = ref([])
+  const selectedPermissions = ref([])
+  const permissionTree = ref([])
+  const activeIndex = ref(0)
   const actionOptions = [
     { name: t('roleManagement.editRole'), key: 'edit' },
+    { name: '分配权限', key: 'assignPermission' },
     { name: t('roleManagement.deleteRole'), key: 'delete' },
     { name: t('common.cancel'), key: 'cancel', color: '#999' }
   ]
@@ -143,6 +211,9 @@
       case 'delete':
         handleDeleteRole(selectedRole.value)
         break
+      case 'assignPermission':
+        assignPermissionToRole(selectedRole.value)
+        break
       case 'cancel':
       default:
         // 取消操作
@@ -154,6 +225,93 @@
   const editRole = role => {
     currentRole.value = { ...role }
     showRoleForm.value = true
+  }
+
+  // 分配权限给角色
+  const assignPermissionToRole = async role => {
+    try {
+      // 获取角色详情，包括已有权限
+      const roleDetail = await getPermissionsByRoleId(role.id)
+      selectedRole.value = { ...roleDetail }
+
+      // 加载所有权限
+      await loadPermissions()
+
+      // 初始化已选中的权限
+      selectedPermissions.value = [...(roleDetail.permissions || [])]
+
+      // 显示权限分配弹窗
+      showPermissionModal.value = true
+    } catch (error) {
+      console.error('加载角色详情或权限列表失败:', error)
+      showToast(error.message || '操作失败')
+    }
+  }
+
+  // 加载权限列表
+  const loadPermissions = async () => {
+    try {
+      const response = await fetchAllPermission()
+      if (response && Array.isArray(response)) {
+        permissions.value = response
+        buildPermissionTree()
+      }
+    } catch (error) {
+      console.error('加载权限列表失败:', error)
+      showToast(error.message || '加载失败')
+    }
+  }
+
+  // 构建权限树结构
+  const buildPermissionTree = () => {
+    // 构建树结构
+    const tree = []
+    const map = new Map()
+
+    // 将所有权限放入map中
+    permissions.value.forEach(permission => {
+      map.set(permission.id, { ...permission, children: [] })
+    })
+
+    // 构建父子关系
+    permissions.value.forEach(permission => {
+      const parentId = permission.parentId || 0
+      if (parentId === 0) {
+        // 顶级权限
+        tree.push(map.get(permission.id))
+      } else if (map.has(parentId)) {
+        // 子权限
+        map.get(parentId).children.push(map.get(permission.id))
+      }
+    })
+
+    permissionTree.value = tree
+  }
+
+  // 处理权限选择
+  const handlePermissionSelect = values => {
+    // 这里需要将选中的权限ID数组进行处理，确保是正确的格式
+    // 假设values是权限ID的数组
+    selectedPermissions.value = values
+  }
+
+  // 保存角色权限
+  const saveRolePermissions = async () => {
+    try {
+      await saveRolePermission({
+        roleId: selectedRole.value.id,
+        permIds: selectedPermissions.value // 使用permIds数组格式
+      })
+
+      showToast('权限分配成功')
+      showPermissionModal.value = false
+
+      // 重新加载角色列表
+      await loadRoles()
+    } catch (error) {
+      console.error('保存角色权限失败:', error)
+      showToast(error.message || '操作失败')
+    }
   }
 
   // 处理角色删除
@@ -198,7 +356,7 @@
         if (roleData.permissions && roleData.permissions.length > 0) {
           await saveRolePermission({
             roleId: roleData.id,
-            permIds: roleData.permissions  // 改为permIds数组格式
+            permIds: roleData.permissions // 改为permIds数组格式
           })
         }
       } else {
@@ -217,7 +375,7 @@
         if (roleData.permissions && roleData.permissions.length > 0) {
           await saveRolePermission({
             roleId: newRole.id,
-            permIds: roleData.permissions  // 改为permIds数组格式
+            permIds: roleData.permissions // 改为permIds数组格式
           })
         }
       }

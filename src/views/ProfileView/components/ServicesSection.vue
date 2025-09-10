@@ -53,6 +53,12 @@
           </div>
           <div class="service-label">{{ $t('permissionManagement.title') }}</div>
         </div>
+        <div class="service-item">
+          <div class="service-icon" @click="handleGoPage('menuManagement')">
+            <van-icon name="menu" />
+          </div>
+          <div class="service-label">{{ $t('menuManagement.title') }}</div>
+        </div>
       </PermissionGuard>
     </div>
   </SectionCard>
@@ -92,6 +98,9 @@
         break
       case 'permissionManagement':
         router.push('/permissionManagement')
+        break
+      case 'menuManagement':
+        router.push('/menuManagement')
         break
       case 'chat':
         break

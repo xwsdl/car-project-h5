@@ -22,6 +22,7 @@
           :main-active-index="activeIndex"
           @click-nav="handleClickNav"
           @change="handleMenuSelect"
+          @click-item="handleMenuItemClick"
           class="menu-tree"
         />
       </div>
@@ -139,6 +140,45 @@
   // 处理菜单选择
   const handleMenuSelect = values => {
     selectedMenuIds.value = values
+  }
+
+  // 处理菜单项点击
+  const handleMenuItemClick = (params) => {
+    // 获取点击的菜单项ID
+    const menuId = params.id
+    
+    // 查找对应的菜单对象
+    const menu = findMenuById(menuId)
+    if (menu) {
+      // 打开编辑菜单的表单
+      editMenu(menu)
+    }
+  }
+
+  // 根据ID查找菜单对象
+  const findMenuById = (id) => {
+    // 递归查找菜单
+    const findMenu = (menuList) => {
+      for (const menu of menuList) {
+        if (menu.id === id) {
+          return menu
+        }
+        if (menu.children && menu.children.length > 0) {
+          const found = findMenu(menu.children)
+          if (found) {
+            return found
+          }
+        }
+      }
+      return null
+    }
+    return findMenu(menus.value)
+  }
+
+  // 编辑菜单
+  const editMenu = (menu) => {
+    currentMenu.value = { ...menu }
+    showMenuForm.value = true
   }
 
   // 处理添加菜单

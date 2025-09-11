@@ -8,8 +8,16 @@
 -->
 <template>
   <div class="permission-form">
-    <van-nav-bar :title="permission ? $t('permissionManagement.editPermission') : $t('permissionManagement.addPermission')" left-arrow @click-left="handleCancel" />
-    
+    <van-nav-bar
+      :title="
+        permission
+          ? $t('permissionManagement.editPermission')
+          : $t('permissionManagement.addPermission')
+      "
+      left-arrow
+      @click-left="handleCancel"
+    />
+
     <div class="form-content">
       <!-- 权限名称 -->
       <van-field
@@ -51,11 +59,10 @@
       />
 
       <!-- 上级权限选择 -->
-      <van-cell
-        :title="$t('permissionManagement.parentPermission')"
-        is-link
-        @click="showParentPermissionPicker = true"
-        :value="selectedParentPermission?.name || '无（顶级权限）'"
+      <van-field
+        :label="$t('permissionManagement.parentPermission')"
+        :placeholder="$t('permissionManagement.noParentPermission')"
+        readonly
       />
 
       <!-- 排序号 -->
@@ -78,9 +85,17 @@
     </div>
 
     <!-- 上级权限选择器 -->
-    <van-popup v-model:show="showParentPermissionPicker" position="bottom" :style="{ height: '50%' }">
+    <van-popup
+      v-model:show="showParentPermissionPicker"
+      position="bottom"
+      :style="{ height: '50%' }"
+    >
       <div class="parent-permission-picker">
-        <van-nav-bar :title="$t('permissionManagement.parentPermission')" left-arrow @click-left="showParentPermissionPicker = false" />
+        <van-nav-bar
+          :title="$t('permissionManagement.parentPermission')"
+          left-arrow
+          @click-left="showParentPermissionPicker = false"
+        />
         <van-tree-select
           v-model="selectedParentId"
           :items="permissionTree"
@@ -186,19 +201,19 @@
   // 构建权限树结构
   const buildPermissionTree = () => {
     // 过滤掉当前编辑的权限（防止自己作为上级权限）
-    const filteredPermissions = props.permission 
+    const filteredPermissions = props.permission
       ? permissionList.value.filter(p => p.id !== props.permission.id)
       : permissionList.value
-    
+
     // 构建树结构
     const tree = []
     const map = new Map()
-    
+
     // 将所有权限放入map中
     filteredPermissions.forEach(permission => {
       map.set(permission.id, { ...permission, children: [] })
     })
-    
+
     // 构建树结构
     filteredPermissions.forEach(permission => {
       if (permission.parentId && map.has(permission.parentId)) {
@@ -207,7 +222,7 @@
         tree.push(map.get(permission.id))
       }
     })
-    
+
     // 转换为TreeSelect所需的格式
     permissionTree.value = tree.map(item => ({
       text: item.name,
@@ -225,9 +240,10 @@
   }
 
   // 节点点击事件
-  const handleClickItem = (data) => {
+  const handleClickItem = data => {
     selectedParentId.value = data.id
     showParentPermissionPicker.value = false
+    showToast(t('permissionManagement.parentPermissionSelected'))
   }
 
   // 取消操作
@@ -242,27 +258,36 @@
       showToast(t('permissionManagement.permissionNamePlaceholder'))
       return
     }
-    
+
     if (!formData.value.permissionKey.trim()) {
       showToast(t('permissionManagement.permissionKey') + '不能为空')
       return
     }
-    
+
     // 提交数据 - 隐式添加status字段并设为启用(1)，即使它不在表单中显示
     const submitData = {
       ...formData.value,
-      parentId: selectedParentId.value === 0 ? null : selectedParentId.value,
+      parentId: selectedParentId.value === 0 ? 0 : selectedParentId.value,
       status: 1 // 始终提交为启用状态
     }
-    
+
+    // 确保新增权限时默认是顶层权限
+    if (!props.permission && submitData.parentId === null) {
+      submitData.parentId = 0
+    }
+
     emit('submit', submitData)
   }
 
   // 监听props.permission变化，重新初始化表单
-  watch(() => props.permission, () => {
-    initFormData()
-    loadPermissionList()
-  }, { immediate: true })
+  watch(
+    () => props.permission,
+    () => {
+      initFormData()
+      loadPermissionList()
+    },
+    { immediate: true }
+  )
 
   // 组件挂载时加载权限列表
   onMounted(() => {
@@ -277,7 +302,7 @@
       padding-bottom: 100px; /* 添加足够的底部内边距，确保内容不被底部按钮覆盖 */
       background-color: #fff;
     }
-    
+
     .form-actions {
       padding: 15px;
       background-color: #fff;
@@ -290,18 +315,18 @@
       display: flex;
       gap: 10px;
     }
-    
+
     .form-actions .van-button {
       flex: 1;
       margin-bottom: 0;
     }
-    
+
     .parent-permission-picker {
       height: 100%;
       display: flex;
       flex-direction: column;
     }
-    
+
     .permission-tree-select {
       flex: 1;
       overflow-y: auto;

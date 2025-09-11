@@ -57,30 +57,60 @@
     <!-- 权限分配弹窗 -->
     <van-popup v-model:show="showPermissionModal" position="bottom" :style="{ height: '70%' }">
       <div class="permission-modal">
-        <van-nav-bar
-          :title="`为角色分配权限: ${selectedRole?.roleName || ''}`"
-          left-arrow
-          @click-left="showPermissionModal = false"
-        />
-
-        <div class="permission-tree-content">
-          <van-tree-select
-            v-model="selectedPermissions"
-            :items="permissionTree"
-            :main-active-index="activeIndex"
-            @click-nav="activeIndex = $event"
-            @change="handlePermissionSelect"
-            class="permission-tree"
+        <!-- 固定的标题头部 -->
+        <div class="permission-modal-header">
+          <van-nav-bar
+            :title="`为角色分配权限: ${currentAssigningRole?.roleName || ''}`"
+            left-arrow
+            @click-left="showPermissionModal = false"
           />
+
+          <!-- 全选按钮 -->
+          <van-cell clickable @click="toggleSelectAll">
+            <template #title>
+              <div class="select-all-wrapper">
+                <van-checkbox v-model="isAllSelected">
+                  {{ t('common.selectAll') }}
+                </van-checkbox>
+              </div>
+            </template>
+          </van-cell>
         </div>
 
-        <div class="modal-actions">
-          <van-button type="default" block @click="showPermissionModal = false">
-            {{ t('common.cancel') }}
-          </van-button>
-          <van-button type="primary" block @click="saveRolePermissions">
-            {{ t('common.confirm') }}
-          </van-button>
+        <!-- 可滚动的权限列表 -->
+        <div class="permission-list-scrollable">
+          <van-checkbox-group v-model="selectedPermissions">
+            <van-cell-group inset>
+              <van-cell
+                v-for="(permission, index) in permissions"
+                :key="permission.id"
+                :title="permission.permissionName"
+                :label="permission.permissionKey"
+                clickable
+                @click="togglePermission(index)"
+              >
+                <template #right-icon>
+                  <van-checkbox
+                    :name="permission.id"
+                    :ref="el => (checkboxRefs[index] = el)"
+                    @click.stop
+                  />
+                </template>
+              </van-cell>
+            </van-cell-group>
+          </van-checkbox-group>
+        </div>
+
+        <!-- 固定的底部按钮 -->
+        <div class="permission-modal-footer">
+          <div class="modal-actions">
+            <van-button type="default" block @click="showPermissionModal = false">
+              {{ t('common.cancel') }}
+            </van-button>
+            <van-button type="primary" block @click="saveRolePermissions">
+              {{ t('common.confirm') }}
+            </van-button>
+          </div>
         </div>
       </div>
     </van-popup>
@@ -117,7 +147,7 @@
 </style>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { showToast, showDialog } from 'vant'
@@ -141,16 +171,17 @@
   const showRoleForm = ref(false)
   const showActionSheet = ref(false)
   const showPermissionModal = ref(false)
-  const currentRole = ref(null)
-  const selectedRole = ref(null)
+  const currentRole = ref(null) // 用于编辑的角色信息
+  const selectedRole = ref(null) // 用于操作菜单的角色信息
+  const currentAssigningRole = ref(null) // 用于权限分配的角色信息
   const roles = ref([])
   const permissions = ref([])
   const selectedPermissions = ref([])
-  const permissionTree = ref([])
-  const activeIndex = ref(0)
+  const checkboxRefs = ref([])
+  const isAllSelected = ref(false)
   const actionOptions = [
     { name: t('roleManagement.editRole'), key: 'edit' },
-    { name: '分配权限', key: 'assignPermission' },
+    { name: t('roleManagement.assignPermission'), key: 'assignPermission' },
     { name: t('roleManagement.deleteRole'), key: 'delete' },
     { name: t('common.cancel'), key: 'cancel', color: '#999' }
   ]
@@ -198,6 +229,7 @@
   const handleRoleClick = role => {
     selectedRole.value = { ...role }
     showActionSheet.value = true
+    console.log('点击角色:', selectedRole.value)
   }
 
   // 操作菜单选择处理
@@ -230,15 +262,33 @@
   // 分配权限给角色
   const assignPermissionToRole = async role => {
     try {
-      // 获取角色详情，包括已有权限
+      console.log('分配权限给角色:', role)
+
+      // 保存当前正在分配权限的角色信息
+      currentAssigningRole.value = { ...role }
+
+      // 获取角色已有权限
       const roleDetail = await getPermissionsByRoleId(role.id)
-      selectedRole.value = { ...roleDetail }
+      console.log('角色已有权限:', roleDetail)
 
       // 加载所有权限
       await loadPermissions()
 
       // 初始化已选中的权限
-      selectedPermissions.value = [...(roleDetail.permissions || [])]
+      // 确保selectedPermissions是数字数组格式
+      if (roleDetail && Array.isArray(roleDetail)) {
+        // 如果是对象数组，提取id
+        if (roleDetail.length > 0 && typeof roleDetail[0] === 'object') {
+          selectedPermissions.value = roleDetail.map(perm => perm.id)
+        }
+      } else {
+        selectedPermissions.value = []
+      }
+
+      console.log('初始化选中的权限:', selectedPermissions.value)
+
+      // 更新全选状态
+      updateSelectAllStatus()
 
       // 显示权限分配弹窗
       showPermissionModal.value = true
@@ -254,7 +304,6 @@
       const response = await fetchAllPermission()
       if (response && Array.isArray(response)) {
         permissions.value = response
-        buildPermissionTree()
       }
     } catch (error) {
       console.error('加载权限列表失败:', error)
@@ -262,48 +311,64 @@
     }
   }
 
-  // 构建权限树结构
-  const buildPermissionTree = () => {
-    // 构建树结构
-    const tree = []
-    const map = new Map()
+  // 切换权限选中状态
+  const togglePermission = index => {
+    const permission = permissions.value[index]
+    const checkbox = checkboxRefs.value[index]
 
-    // 将所有权限放入map中
-    permissions.value.forEach(permission => {
-      map.set(permission.id, { ...permission, children: [] })
-    })
-
-    // 构建父子关系
-    permissions.value.forEach(permission => {
-      const parentId = permission.parentId || 0
-      if (parentId === 0) {
-        // 顶级权限
-        tree.push(map.get(permission.id))
-      } else if (map.has(parentId)) {
-        // 子权限
-        map.get(parentId).children.push(map.get(permission.id))
-      }
-    })
-
-    permissionTree.value = tree
+    if (checkbox) {
+      checkbox.toggle()
+    }
   }
 
-  // 处理权限选择
-  const handlePermissionSelect = values => {
-    // 这里需要将选中的权限ID数组进行处理，确保是正确的格式
-    // 假设values是权限ID的数组
-    selectedPermissions.value = values
+  // 全选/取消全选
+  const toggleSelectAll = () => {
+    if (isAllSelected.value) {
+      // 取消全选
+      selectedPermissions.value = []
+      isAllSelected.value = false
+    } else {
+      // 全选
+      selectedPermissions.value = permissions.value.map(perm => perm.id)
+      isAllSelected.value = true
+    }
   }
+
+  // 更新全选状态
+  const updateSelectAllStatus = () => {
+    if (permissions.value.length === 0) {
+      isAllSelected.value = false
+    } else {
+      isAllSelected.value = selectedPermissions.value.length === permissions.value.length
+    }
+  }
+
+  // 监听selectedPermissions变化，更新全选状态
+  watch(selectedPermissions, () => {
+    updateSelectAllStatus()
+  })
 
   // 保存角色权限
   const saveRolePermissions = async () => {
     try {
-      await saveRolePermission({
-        roleId: selectedRole.value.id,
-        permIds: selectedPermissions.value // 使用permIds数组格式
-      })
+      console.log('保存角色权限前的currentAssigningRole:', currentAssigningRole.value)
 
-      showToast('权限分配成功')
+      if (!currentAssigningRole.value || !currentAssigningRole.value.id) {
+        console.error('角色ID不存在', currentAssigningRole.value)
+        showToast('角色信息错误，请重新选择角色')
+        return
+      }
+
+      const requestData = {
+        roleId: currentAssigningRole.value.id,
+        permIds: selectedPermissions.value // 使用permIds数组格式
+      }
+
+      console.log('请求参数:', requestData)
+
+      await saveRolePermission(requestData)
+
+      showToast(t('roleManagement.assignSuccess'))
       showPermissionModal.value = false
 
       // 重新加载角色列表
@@ -430,5 +495,43 @@
       max-width: 100%;
       box-sizing: border-box;
     }
+  }
+
+  /* 权限分配弹窗样式 */
+  .permission-modal {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .permission-modal-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .select-all-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .permission-list-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+
+  .permission-modal-footer {
+    background-color: #fff;
+    border-top: 1px solid #f0f0f0;
+    padding: 10px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .modal-actions .van-button {
+    flex: 1;
   }
 </style>

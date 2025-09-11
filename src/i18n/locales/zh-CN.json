@@ -23,21 +23,14 @@
     "assignSuccess": "角色分配成功",
     "assignFail": "角色分配失败",
     "selectRoleFirst": "请先选择角色",
-    "selectRoleFirst": "请先选择角色",
-    "selectRoleFirst": "请先选择角色",
-    "assignRole": "分配角色",
-    "assignSuccess": "角色分配成功",
-    "assignFail": "角色分配失败",
-    "assignRole": "分配角色",
-    "assignSuccess": "角色分配成功",
-    "assignFail": "角色分配失败",
     "saveFail": "保存失败",
     "saving": "保存中...",
     "selectDate": "选择日期",
     "year": "年",
     "month": "月",
     "day": "日",
-    "pending_orders": "待处理订单"
+    "pending_orders": "待处理订单",
+    "selectAll": "全选"
   },
   "login": {
     "welcome": "欢迎回来",
@@ -441,13 +434,15 @@
   "roleManagement": {
     "title": "角色管理",
     "addRole": "添加角色",
+    "editRole": "编辑角色",
     "roleName": "角色名称",
     "roleNamePlaceholder": "请输入角色名称",
     "roleNameRequired": "请输入角色名称",
     "roleDescription": "角色描述",
     "roleDescriptionPlaceholder": "请输入角色描述",
     "roleType": "角色类型",
-    "permissions": "权限配置",
+    "permissionsLabel": "权限配置",
+    "assignPermission": "分配权限",
     "roleTypes": {
       "normal": "普通用户",
       "customerService": "客服",
@@ -550,12 +545,13 @@
     "disablePermission": "禁用权限",
     "enablePermission": "启用权限",
     "noPermission": "暂无权限",
-    "loading": "加载中..."
+    "loading": "加载中...",
+    "parentPermissionSelected": "上级权限选择成功",
+    "noParentPermission": "顶级"
   },
   "userManagement": {
     "title": "用户管理",
     "searchPlaceholder": "搜索用户名或邮箱",
-    "actions": "操作",
     "userDetail": "用户详情",
     "editUser": "编辑用户",
     "basicInfo": "基本信息",

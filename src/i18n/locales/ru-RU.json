@@ -24,7 +24,8 @@
     "year": "год",
     "month": "месяц",
     "day": "день",
-    "pending_orders": "В обработке"
+    "pending_orders": "В обработке",
+    "selectAll": "Выбрать все"
   },
   "login": {
     "welcome": "Сардэчна запрашаем",
@@ -447,7 +448,7 @@
     "roleDescription": "Описание роли",
     "roleDescriptionPlaceholder": "Пожалуйста, введите описание роли",
     "roleType": "Тип роли",
-    "permissions": "Настройки разрешений",
+    "permissionsLabel": "Настройки разрешений",
     "roleTypes": {
       "normal": "Обычный пользователь",
       "customerService": "Служба поддержки",
@@ -466,7 +467,6 @@
   "userManagement": {
     "title": "Управление пользователями",
     "searchPlaceholder": "Поиск по имени пользователя или email",
-    "actions": "Действия",
     "userDetail": "Детали пользователя",
     "editUser": "Редактировать пользователя",
     "basicInfo": "Основная информация",
@@ -520,5 +520,42 @@
     "confirmSuspend": "Вы уверены, что хотите приостановить пользователя {username}?",
     "confirmActivate": "Вы уверены, что хотите активировать пользователя {username}?",
     "confirmDelete": "Вы уверены, что хотите удалить пользователя {username}?"
+  },
+  "permissionManagement": {
+    "title": "Управление разрешениями",
+    "addPermission": "Добавить разрешение",
+    "permissionName": "Название разрешения",
+    "permissionKey": "Идентификатор разрешения",
+    "permissionCode": "Код разрешения",
+    "permissionDescription": "Описание разрешения",
+    "apiPath": "Путь API",
+    "httpMethod": "Метод HTTP",
+    "sortNumber": "Номер сортировки",
+    "parentPermission": "Родительское разрешение",
+    "permissionType": "Тип разрешения",
+    "permissionNamePlaceholder": "Пожалуйста, введите название разрешения",
+    "permissionCodePlaceholder": "Пожалуйста, введите код разрешения",
+    "permissionDescriptionPlaceholder": "Пожалуйста, введите описание разрешения",
+    "editPermission": "Редактировать разрешение",
+    "deletePermission": "Удалить разрешение",
+    "confirmDeletePermission": "Вы уверены, что хотите удалить разрешение '{permissionName}'?",
+    "deleteSuccess": "Разрешение успешно удалено",
+    "saveSuccess": "Сохранено успешно",
+    "status": "Статус",
+    "statusOption": {
+      "active": "Активно",
+      "inactive": "Неактивно"
+    },
+    "confirmActivatePermission": "Вы уверены, что хотите активировать разрешение '{permissionName}'?",
+    "confirmDeactivatePermission": "Вы уверены, что хотите деактивировать разрешение '{permissionName}'?",
+    "activateSuccess": "Разрешение успешно активировано",
+    "deactivateSuccess": "Разрешение успешно деактивировано",
+    "changeStatus": "Изменить статус",
+    "disablePermission": "Отключить разрешение",
+    "enablePermission": "Включить разрешение",
+    "noPermission": "Нет разрешений",
+    "loading": "Загрузка...",
+    "parentPermissionSelected": "Родительское разрешение успешно выбрано",
+    "noParentPermission": "Нет (верхний уровень разрешения)"
   }
 }

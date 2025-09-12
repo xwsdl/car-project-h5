@@ -11,20 +11,133 @@
     <van-nav-bar :title="$t('menuManagement.title')" left-arrow @click-left="goBack" />
 
     <div class="content">
-      <van-button type="primary" block class="add-btn" @click="handleAddMenu">
-        {{ $t('menuManagement.addMenu') }}
-      </van-button>
+      <!-- 顶部操作栏 -->
+      <div class="top-actions">
+        <van-button type="primary" @click="handleAddRootMenu">
+          {{ $t('menuManagement.addDirectory') }}
+        </van-button>
+      </div>
 
+      <!-- 菜单树展示区域 -->
       <div class="menu-tree-container">
-        <van-tree-select
-          v-model="selectedMenuIds"
-          :items="menuTree"
-          :main-active-index="activeIndex"
-          @click-nav="handleClickNav"
-          @change="handleMenuSelect"
-          @click-item="handleMenuItemClick"
-          class="menu-tree"
-        />
+        <van-loading v-if="loading" size="large" />
+        <div v-else-if="!menuTree.length" class="empty-state">
+          {{ $t('menuManagement.emptyMenu') }}
+        </div>
+        <div v-else class="tree-content">
+          <!-- 目录/菜单/按钮三级树形结构 -->
+          <div v-for="directory in menuTree" :key="directory.id" class="tree-node directory-node">
+            <div class="node-header">
+              <div class="node-info" @click="toggleExpand(directory)">
+                <div class="info-main">
+                  <template v-if="directory.children && directory.children.length > 0">
+                    <van-icon
+                      :name="directory.expanded ? 'arrow-down' : 'arrow-right'"
+                      class="expand-icon"
+                    />
+                  </template>
+                  <div v-else class="expand-icon-placeholder"></div>
+                  <van-icon :name="directory.icon || 'folder-o'" class="node-icon directory-icon" />
+                  <span class="node-name">{{ directory.menuName }}</span>
+                </div>
+                <div class="info-details">
+                  <span class="node-type">{{ getTypeText(directory.type) }}</span>
+                </div>
+              </div>
+              <div class="node-actions">
+                <van-button size="mini" @click.stop="handleAddSubMenu(directory.id, 2)">
+                  {{ $t('menuManagement.addMenu') }}
+                </van-button>
+                <van-button size="mini" type="primary" @click.stop="handleEditMenu(directory)">
+                  {{ $t('common.edit') }}
+                </van-button>
+                <van-button size="mini" type="danger" @click.stop="handleDeleteMenu(directory.id)">
+                  {{ $t('common.delete') }}
+                </van-button>
+              </div>
+            </div>
+
+            <!-- 二级菜单 -->
+            <div
+              v-if="directory.expanded && directory.children && directory.children.length > 0"
+              class="sub-nodes"
+            >
+              <div
+                v-for="menu in directory.children.filter(item => item.type === 2)"
+                :key="menu.id"
+                class="tree-node menu-node"
+              >
+                <div class="node-header">
+                  <div class="node-info" @click="toggleExpand(menu)">
+                    <div class="info-main">
+                      <template v-if="menu.children && menu.children.length > 0">
+                        <van-icon
+                          :name="menu.expanded ? 'arrow-down' : 'arrow-right'"
+                          class="expand-icon"
+                        />
+                      </template>
+                      <div v-else class="expand-icon-placeholder"></div>
+                      <van-icon :name="menu.icon || 'document-o'" class="node-icon menu-icon" />
+                      <span class="node-name">{{ menu.menuName }}</span>
+                    </div>
+                    <div class="info-details">
+                      <span class="node-type">{{ getTypeText(menu.type) }}</span>
+                    </div>
+                  </div>
+                  <div class="node-actions">
+                    <van-button size="mini" @click.stop="handleAddSubMenu(menu.id, 3)">
+                      {{ $t('menuManagement.addButton') }}
+                    </van-button>
+                    <van-button size="mini" type="primary" @click.stop="handleEditMenu(menu)">
+                      {{ $t('common.edit') }}
+                    </van-button>
+                    <van-button size="mini" type="danger" @click.stop="handleDeleteMenu(menu.id)">
+                      {{ $t('common.delete') }}
+                    </van-button>
+                  </div>
+                </div>
+
+                <!-- 三级按钮 -->
+                <div
+                  v-if="menu.expanded && menu.children && menu.children.length > 0"
+                  class="sub-nodes"
+                >
+                  <div
+                    v-for="button in menu.children.filter(item => item.type === 3)"
+                    :key="button.id"
+                    class="tree-node button-node"
+                  >
+                    <div class="node-header">
+                      <div class="node-info">
+                        <div class="info-main">
+                          <div class="expand-icon-placeholder"></div>
+                          <van-icon :name="button.icon || 'link'" class="node-icon button-icon" />
+                          <span class="node-name">{{ button.menuName }}</span>
+                        </div>
+                        <div class="info-details">
+                          <span class="node-type">{{ getTypeText(button.type) }}</span>
+                          <span v-if="button.perms" class="node-perms">{{ button.perms }}</span>
+                        </div>
+                      </div>
+                      <div class="node-actions">
+                        <van-button size="mini" type="primary" @click.stop="handleEditMenu(button)">
+                          {{ $t('common.edit') }}
+                        </van-button>
+                        <van-button
+                          size="mini"
+                          type="danger"
+                          @click.stop="handleDeleteMenu(button.id)"
+                        >
+                          {{ $t('common.delete') }}
+                        </van-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -33,6 +146,7 @@
       <MenuForm
         :menu="currentMenu"
         :parentMenus="parentMenus"
+        :currentType="currentType"
         @submit="handleMenuSubmit"
         @cancel="showMenuForm = false"
       />
@@ -42,7 +156,7 @@
 
 <script setup>
   import MenuForm from './components/MenuForm.vue'
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted, computed, reactive } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { showToast, showDialog } from 'vant'
@@ -55,34 +169,46 @@
   const loading = ref(false)
   const showMenuForm = ref(false)
   const currentMenu = ref(null)
-  const menuTree = ref([])
-  const selectedMenuIds = ref([])
-  const activeIndex = ref(0)
+  const currentType = ref(null) // 当前正在添加的菜单类型
   const menus = ref([])
+  const menuTree = ref([]) // 带展开状态的菜单树
 
-  // 计算属性：获取所有可用作上级菜单的菜单（排除按钮类型的菜单）
+  // 计算属性：获取所有可用作上级菜单的菜单
   const parentMenus = computed(() => {
-    // 递归获取所有非按钮类型的菜单
-    const getParentMenuOptions = (menuItems, parentId = 0) => {
+    // 递归获取所有菜单选项
+    const getParentMenuOptions = (menuItems, level = 0, parentName = '') => {
       const options = []
       menuItems.forEach(item => {
-        // 类型为1和2的菜单可以作为上级菜单（不包括按钮类型）
-        if (item.type === 1 || item.type === 2) {
+        // 构建层级显示的菜单名称
+        const displayName = level === 0 ? item.menuName : `${parentName} / ${item.menuName}`
+
+        // 类型为1和2的菜单可以作为上级菜单（目录和菜单）
+        // 只有在添加非顶级菜单时才显示这些选项
+        if (currentMenu.value || (currentType.value && currentType.value > 1)) {
           options.push({
             value: item.id,
-            label: parentId === 0 ? item.menuName : `└─ ${item.menuName}`
+            label: displayName,
+            type: item.type
           })
+        }
 
-          // 如果有子菜单，递归添加
-          if (item.children && item.children.length > 0) {
-            options.push(...getParentMenuOptions(item.children, item.id))
-          }
+        // 如果有子菜单，递归添加
+        if (item.children && item.children.length > 0) {
+          options.push(...getParentMenuOptions(item.children, level + 1, displayName))
         }
       })
       return options
     }
 
-    return getParentMenuOptions(menus.value)
+    // 添加顶级菜单选项
+    const options = [{ value: 0, label: t('menuManagement.topLevelMenu'), type: 0 }]
+
+    // 添加其他菜单选项
+    if (menus.value.length > 0) {
+      options.push(...getParentMenuOptions(menus.value))
+    }
+
+    return options
   })
 
   // 返回上一页
@@ -98,8 +224,8 @@
 
       if (response && Array.isArray(response)) {
         menus.value = response
-        // 格式化菜单树以适应van-tree-select组件
-        menuTree.value = formatMenuTree(response)
+        // 转换为带展开状态的菜单树
+        menuTree.value = convertToTreeWithState(response)
       } else {
         throw new Error('获取菜单树失败')
       }
@@ -111,54 +237,103 @@
     }
   }
 
-  // 格式化菜单树以适应van-tree-select组件
-  const formatMenuTree = menuList => {
+  // 转换为带展开状态的菜单树
+  const convertToTreeWithState = menuList => {
     return menuList.map(menu => {
-      const formattedMenu = {
-        text: menu.menuName,
-        id: menu.id,
-        icon: menu.icon,
-        type: menu.type,
-        sort: menu.sort,
-        visible: menu.visible
+      const treeNode = {
+        ...menu,
+        expanded: false // 默认收起
       }
 
       // 递归处理子菜单
       if (menu.children && menu.children.length > 0) {
-        formattedMenu.children = formatMenuTree(menu.children)
+        treeNode.children = convertToTreeWithState(menu.children)
       }
 
-      return formattedMenu
+      return treeNode
     })
   }
 
-  // 处理导航点击
-  const handleClickNav = index => {
-    activeIndex.value = index
+  // 切换展开状态
+  const toggleExpand = node => {
+    node.expanded = !node.expanded
   }
 
-  // 处理菜单选择
-  const handleMenuSelect = values => {
-    selectedMenuIds.value = values
-  }
-
-  // 处理菜单项点击
-  const handleMenuItemClick = (params) => {
-    // 获取点击的菜单项ID
-    const menuId = params.id
-    
-    // 查找对应的菜单对象
-    const menu = findMenuById(menuId)
-    if (menu) {
-      // 打开编辑菜单的表单
-      editMenu(menu)
+  // 获取类型文本
+  const getTypeText = type => {
+    switch (type) {
+      case 1:
+        return t('menuManagement.typeOptions.directory')
+      case 2:
+        return t('menuManagement.typeOptions.menu')
+      case 3:
+        return t('menuManagement.typeOptions.button')
+      default:
+        return ''
     }
   }
 
+  // 添加根目录
+  const handleAddRootMenu = () => {
+    currentMenu.value = null
+    currentType.value = 1 // 目录类型
+    showMenuForm.value = true
+  }
+
+  // 添加子菜单
+  const handleAddSubMenu = (parentId, type) => {
+    currentMenu.value = {
+      parentId,
+      type
+    }
+    currentType.value = type
+    showMenuForm.value = true
+  }
+
+  // 编辑菜单
+  const handleEditMenu = menu => {
+    currentMenu.value = { ...menu }
+    currentType.value = menu.type
+    showMenuForm.value = true
+  }
+
+  // 删除菜单确认
+  const handleDeleteMenu = menuId => {
+    // 查找要删除的菜单，检查是否有子菜单
+    const menuToDelete = findMenuById(menuId)
+    if (menuToDelete && menuToDelete.children && menuToDelete.children.length > 0) {
+      showToast(t('menuManagement.hasChildrenCannotDelete'))
+      return
+    }
+
+    showDialog({
+      title: t('common.deleteConfirm'),
+      message: t('menuManagement.deleteMenuConfirm'),
+      showCancelButton: true,
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      confirmButtonColor: '#f56c6c'
+    })
+      .then(async () => {
+        try {
+          await deleteMenu(menuId)
+          showToast(t('menuManagement.deleteSuccess'))
+          // 重新加载菜单树
+          await loadMenuTree()
+        } catch (error) {
+          console.error('删除菜单失败:', error)
+          showToast(error.message || '删除失败')
+        }
+      })
+      .catch(() => {
+        // 用户取消删除
+      })
+  }
+
   // 根据ID查找菜单对象
-  const findMenuById = (id) => {
+  const findMenuById = id => {
     // 递归查找菜单
-    const findMenu = (menuList) => {
+    const findMenu = menuList => {
       for (const menu of menuList) {
         if (menu.id === id) {
           return menu
@@ -175,35 +350,23 @@
     return findMenu(menus.value)
   }
 
-  // 编辑菜单
-  const editMenu = (menu) => {
-    currentMenu.value = { ...menu }
-    showMenuForm.value = true
-  }
-
-  // 处理添加菜单
-  const handleAddMenu = () => {
-    currentMenu.value = null
-    showMenuForm.value = true
-  }
-
   // 处理菜单提交
   const handleMenuSubmit = async menuData => {
     try {
-      // 判断是否是嵌套的menu结构（表单提交的新格式）
+      // 判断是否是嵌套的menu结构
       const submitData = menuData.menu ? menuData.menu : menuData
-      
+
       // 处理children字段，确保是空数组而不是undefined
       if (submitData.children === undefined) {
         submitData.children = []
       }
-      
+
       // 确保type字段是数字类型
       submitData.type = parseInt(submitData.type, 10) || 1
-      
+
       // 确保visible字段是数字类型
       submitData.visible = parseInt(submitData.visible, 10) || 1
-      
+
       // 确保sort字段是数字类型
       submitData.sort = parseInt(submitData.sort, 10) || 0
 
@@ -243,23 +406,144 @@
 
     .content {
       padding: 15px;
-      max-width: 480px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
-    .add-btn {
+    .top-actions {
       margin-bottom: 15px;
+      text-align: center;
     }
 
     .menu-tree-container {
       background: white;
       border-radius: 8px;
-      padding: 10px;
+      padding: 15px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-height: 400px;
     }
 
-    .menu-tree {
-      height: 400px;
+    .empty-state {
+      text-align: center;
+      color: #999;
+      padding: 40px 0;
+    }
+
+    .tree-content {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .tree-node {
+      margin-bottom: 8px;
+      border-radius: 4px;
+    }
+
+    .directory-node {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+    }
+
+    .menu-node {
+      background-color: #ffffff;
+      border: 1px solid #dee2e6;
+    }
+
+    .button-node {
+      background-color: #fafafa;
+      border: 1px solid #f0f0f0;
+    }
+
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    .node-info {
+      display: flex;
+      align-items: flex-start;
+      flex: 1;
+      cursor: pointer;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .info-main {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .info-details {
+      display: flex;
+      flex-direction: column;
+      margin-left: 40px;
+      font-size: 12px;
+    }
+
+    .expand-icon {
+      font-size: 12px;
+      margin-right: 8px;
+      width: 16px;
+      text-align: center;
+    }
+
+    .expand-icon-placeholder {
+      width: 16px;
+      margin-right: 8px;
+    }
+
+    .node-icon {
+      margin-right: 8px;
+      font-size: 14px;
+    }
+
+    .directory-icon {
+      color: #4e6ef2;
+    }
+
+    .menu-icon {
+      color: #36cfc9;
+    }
+
+    .button-icon {
+      color: #faad14;
+    }
+
+    .node-name {
+      flex: 1;
+      font-weight: 500;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .node-type {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .node-perms {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .node-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .sub-nodes {
+      margin-left: 24px;
+      margin-top: -8px;
     }
   }
 </style>

@@ -26,6 +26,8 @@
     "saveFail": "保存失败",
     "saving": "保存中...",
     "selectDate": "选择日期",
+    "edit": "编辑",
+    "delete": "删除",
     "year": "年",
     "month": "月",
     "day": "日",
@@ -482,7 +484,11 @@
   "menuManagement": {
     "title": "菜单管理",
     "addMenu": "添加菜单",
+    "addDirectory": "添加目录",
+    "addButton": "添加按钮",
     "editMenu": "编辑菜单",
+    "editDirectory": "编辑目录",
+    "deleteMenu": "删除菜单",
     "menuName": "菜单名称",
     "menuNamePlaceholder": "请输入菜单名称",
     "menuNameRequired": "请输入菜单名称",
@@ -510,7 +516,13 @@
     "perms": "权限标识",
     "permsPlaceholder": "请输入权限标识",
     "saveSuccess": "保存成功",
-    "deleteSuccess": "删除成功"
+    "deleteSuccess": "删除成功",
+    "deleteMenuConfirm": "确定要删除该菜单吗？",
+    "menuOperation": "菜单操作",
+    "selectOperation": "请选择操作",
+    "menuNotFound": "未找到菜单信息",
+    "emptyMenu": "暂无菜单数据",
+    "noParentMenu": "无上级菜单"
   },
   "permissionManagement": {
     "title": "权限管理",

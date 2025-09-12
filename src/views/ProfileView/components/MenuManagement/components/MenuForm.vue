@@ -9,10 +9,10 @@
 <template>
   <div class="menu-form">
     <van-nav-bar
-      :title="menu ? $t('menuManagement.editMenu') : $t('menuManagement.addMenu')"
-      left-arrow
-      @click-left="handleCancel"
-    />
+        :title="getTitle()"
+        left-arrow
+        @click-left="handleCancel"
+      />
 
     <div class="form-content">
       <van-form @submit="onSubmit">
@@ -27,11 +27,18 @@
 
           <!-- 上级菜单 -->
           <van-field
+            v-if="formData.type === 2 || formData.type === 3"
             :label="$t('menuManagement.parentMenu')"
             readonly
             :model-value="selectedParentMenu.label"
             is-link
             @click="openParentMenuPicker"
+          />
+          <van-field
+            v-else
+            :label="$t('menuManagement.parentMenu')"
+            :value="$t('menuManagement.noParentMenu')"
+            readonly
           />
 
           <!-- 路由路径 -->
@@ -39,14 +46,16 @@
             v-model="formData.path"
             :label="$t('menuManagement.path')"
             :placeholder="$t('menuManagement.pathPlaceholder')"
-            :rules="[{ required: true, message: $t('menuManagement.pathRequired') }]"
+            :rules="getRules('path')"
           />
 
           <!-- 组件名称 -->
           <van-field
+            v-if="formData.type === 1 || formData.type === 2"
             v-model="formData.component"
             :label="$t('menuManagement.component')"
             :placeholder="$t('menuManagement.componentPlaceholder')"
+            :rules="getRules('component')"
           />
 
           <!-- 图标 -->
@@ -91,6 +100,10 @@
             v-model="formData.perms"
             :label="$t('menuManagement.perms')"
             :placeholder="$t('menuManagement.permsPlaceholder')"
+            :rules="getRules('perms')"
+            :right-icon="copied ? 'success' : 'copy'
+"
+            @click-right-icon="copyPerms"
           />
         </van-cell-group>
 
@@ -179,6 +192,7 @@
   const { t } = useI18n()
 
   // 响应式数据
+  const copied = ref(false)
   const submitting = ref(false)
   const showParentMenuPicker = ref(false)
   const selectedGroupIndex = ref(0)
@@ -197,19 +211,82 @@
     children: []
   })
 
+  // 获取标题文本
+  const getTitle = () => {
+    const typeTexts = {
+      1: 'directory',
+      2: 'menu',
+      3: 'button'
+    }
+    const typeText = props.menu ? 
+      `edit${typeTexts[formData.value.type]?.charAt(0).toUpperCase() + typeTexts[formData.value.type]?.slice(1) || 'Menu'}` :
+      `add${typeTexts[formData.value.type]?.charAt(0).toUpperCase() + typeTexts[formData.value.type]?.slice(1) || 'Menu'}`
+    return t(`menuManagement.${typeText}`)
+  }
+
+  // 获取类型显示文本
+  const getTypeText = (type) => {
+    const typeMap = {
+      1: t('menuManagement.typeOptions.directory'),
+      2: t('menuManagement.typeOptions.menu'),
+      3: t('menuManagement.typeOptions.button')
+    }
+    return typeMap[type] || ''
+  }
+
+  // 获取字段验证规则
+  const getRules = (fieldName) => {
+    if (fieldName === 'path') {
+      if (formData.value.type === 3) {
+        return [{ required: true, message: t('menuManagement.pathRequired') }]
+      }
+      return [{ required: true, message: t('menuManagement.pathRequired') }]
+    } else if (fieldName === 'component') {
+      if (formData.value.type === 1 || formData.value.type === 2) {
+        return [{ required: true, message: t('menuManagement.componentRequired') }]
+      }
+      return []
+    } else if (fieldName === 'perms') {
+      if (formData.value.type === 2 || formData.value.type === 3) {
+        return [{ required: true, message: t('menuManagement.permsRequired') }]
+      }
+      return []
+    }
+    return []
+  }
+
+  // 复制权限标识
+  const copyPerms = async () => {
+    if (!formData.value.perms) {
+      showToast(t('menuManagement.noPermsToCopy'))
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(formData.value.perms)
+      copied.value = true
+      showToast(t('menuManagement.permsCopied'))
+      setTimeout(() => {
+        copied.value = false
+      }, 2000)
+    } catch (err) {
+      console.error('复制失败:', err)
+      showToast(t('common.error'))
+    }
+  }
+
   // 计算属性：将菜单数据按类型分组
   const menuGroups = computed(() => {
     if (!props.parentMenus || props.parentMenus.length === 0) {
-      return [{ name: '顶级菜单', menus: [{ id: 0, name: '无（顶级菜单）' }] }]
+      return [{ name: t('menuManagement.topLevelMenu'), menus: [{ id: 0, name: t('menuManagement.noParentMenu') }] }]
     }
 
     // 创建菜单组
     const groups = [
-      { name: '顶级菜单', menus: [{ id: 0, name: '无（顶级菜单）' }] },
-      { name: '系统管理', menus: [] },
-      { name: '车源管理', menus: [] },
-      { name: '订单管理', menus: [] },
-      { name: '聊天管理', menus: [] }
+      { name: t('menuManagement.topLevelMenu'), menus: [{ id: 0, name: t('menuManagement.noParentMenu') }] },
+      { name: t('menuManagement.systemManagement'), menus: [] },
+      { name: t('menuManagement.carSourceManagement'), menus: [] },
+      { name: t('menuManagement.orderManagement'), menus: [] },
+      { name: t('menuManagement.chatManagement'), menus: [] }
     ]
 
     // 将菜单分配到对应组
@@ -217,19 +294,20 @@
       // 从label中提取菜单名称（移除前缀符号）
       const menuName = menu.label.replace(/^└─\s*/, '')
       const menuId = menu.value
+      const menuItem = { id: menuId, name: menuName }
 
       // 根据菜单名称判断应该放入哪个组
-      if (menuName.includes('系统')) {
-        groups[1].menus.push({ id: menuId, name: menuName })
-      } else if (menuName.includes('车源')) {
-        groups[2].menus.push({ id: menuId, name: menuName })
-      } else if (menuName.includes('订单')) {
-        groups[3].menus.push({ id: menuId, name: menuName })
-      } else if (menuName.includes('聊天')) {
-        groups[4].menus.push({ id: menuId, name: menuName })
+      if (menuName.includes(t('menuManagement.system'))) {
+        groups[1].menus.push(menuItem)
+      } else if (menuName.includes(t('menuManagement.carSource'))) {
+        groups[2].menus.push(menuItem)
+      } else if (menuName.includes(t('menuManagement.order'))) {
+        groups[3].menus.push(menuItem)
+      } else if (menuName.includes(t('menuManagement.chat'))) {
+        groups[4].menus.push(menuItem)
       } else {
         // 其他菜单放入系统管理组
-        groups[1].menus.push({ id: menuId, name: menuName })
+        groups[1].menus.push(menuItem)
       }
     })
 

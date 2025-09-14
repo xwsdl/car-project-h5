@@ -17,12 +17,12 @@
     <div class="form-content">
       <van-form @submit="onSubmit">
         <van-cell-group inset>
-          <!-- 菜单名称 -->
+          <!-- 动态名称字段 -->
           <van-field
             v-model="formData.menuName"
-            :label="$t('menuManagement.menuName')"
-            :placeholder="$t('menuManagement.menuNamePlaceholder')"
-            :rules="[{ required: true, message: $t('menuManagement.menuNameRequired') }]"
+            :label="getNameLabel()"
+            :placeholder="getNamePlaceholder()"
+            :rules="[{ required: true, message: getNameRequiredMessage() }]"
           />
 
           <!-- 上级菜单 -->
@@ -31,8 +31,8 @@
             :label="$t('menuManagement.parentMenu')"
             readonly
             :model-value="selectedParentMenu.label"
-            is-link
-            @click="openParentMenuPicker"
+            :is-link="canChangeParentMenu"
+            @click="canChangeParentMenu && openParentMenuPicker"
           />
           <van-field
             v-else
@@ -43,6 +43,7 @@
 
           <!-- 路由路径 -->
           <van-field
+            v-if="formData.type === 2"
             v-model="formData.path"
             :label="$t('menuManagement.path')"
             :placeholder="$t('menuManagement.pathPlaceholder')"
@@ -51,7 +52,7 @@
 
           <!-- 组件名称 -->
           <van-field
-            v-if="formData.type === 1 || formData.type === 2"
+            v-if="formData.type === 2"
             v-model="formData.component"
             :label="$t('menuManagement.component')"
             :placeholder="$t('menuManagement.componentPlaceholder')"
@@ -60,21 +61,20 @@
 
           <!-- 图标 -->
           <van-field
+            v-if="formData.type === 2"
             v-model="formData.icon"
             :label="$t('menuManagement.icon')"
             :placeholder="$t('menuManagement.iconPlaceholder')"
           />
 
           <!-- 菜单类型 -->
-          <van-field :label="$t('menuManagement.type')">
-            <template #input>
-              <van-radio-group v-model="formData.type" direction="horizontal">
-                <van-radio :name="1">{{ $t('menuManagement.typeOptions.directory') }}</van-radio>
-                <van-radio :name="2">{{ $t('menuManagement.typeOptions.menu') }}</van-radio>
-                <van-radio :name="3">{{ $t('menuManagement.typeOptions.button') }}</van-radio>
-              </van-radio-group>
-            </template>
-          </van-field>
+    <van-field :label="$t('menuManagement.type')">
+      <template #input>
+        <div class="readonly-type-display">
+          <van-tag type="primary">{{ getTypeText(formData.type) }}</van-tag>
+        </div>
+      </template>
+    </van-field>
 
           <!-- 排序 -->
           <van-field
@@ -177,15 +177,24 @@
   import { showToast } from 'vant'
 
   const props = defineProps({
-    menu: {
-      type: Object,
-      default: null
-    },
-    parentMenus: {
-      type: Array,
-      default: () => []
-    }
-  })
+  menu: {
+    type: Object,
+    default: null
+  },
+  parentMenus: {
+    type: Array,
+    default: () => []
+  },
+  currentType: {
+    type: Number,
+    default: 1
+  },
+  // 是否可修改上级菜单
+  canChangeParentMenu: {
+    type: Boolean,
+    default: true
+  }
+})
 
   const emit = defineEmits(['submit', 'cancel'])
 
@@ -224,6 +233,36 @@
     return t(`menuManagement.${typeText}`)
   }
 
+  // 获取名称标签文本
+  const getNameLabel = () => {
+    const typeLabels = {
+      1: t('menuManagement.directoryName'),
+      2: t('menuManagement.menuName'),
+      3: t('menuManagement.buttonName')
+    }
+    return typeLabels[formData.value.type] || t('menuManagement.menuName')
+  }
+
+  // 获取名称占位符文本
+  const getNamePlaceholder = () => {
+    const typePlaceholders = {
+      1: t('menuManagement.directoryNamePlaceholder'),
+      2: t('menuManagement.menuNamePlaceholder'),
+      3: t('menuManagement.buttonNamePlaceholder')
+    }
+    return typePlaceholders[formData.value.type] || t('menuManagement.menuNamePlaceholder')
+  }
+
+  // 获取名称必填消息
+  const getNameRequiredMessage = () => {
+    const typeRequiredMessages = {
+      1: t('menuManagement.directoryNameRequired'),
+      2: t('menuManagement.menuNameRequired'),
+      3: t('menuManagement.buttonNameRequired')
+    }
+    return typeRequiredMessages[formData.value.type] || t('menuManagement.menuNameRequired')
+  }
+
   // 获取类型显示文本
   const getTypeText = (type) => {
     const typeMap = {
@@ -237,17 +276,17 @@
   // 获取字段验证规则
   const getRules = (fieldName) => {
     if (fieldName === 'path') {
-      if (formData.value.type === 3) {
+      if (formData.value.type === 2) {
         return [{ required: true, message: t('menuManagement.pathRequired') }]
       }
-      return [{ required: true, message: t('menuManagement.pathRequired') }]
+      return []
     } else if (fieldName === 'component') {
-      if (formData.value.type === 1 || formData.value.type === 2) {
+      if (formData.value.type === 2) {
         return [{ required: true, message: t('menuManagement.componentRequired') }]
       }
       return []
     } else if (fieldName === 'perms') {
-      if (formData.value.type === 2 || formData.value.type === 3) {
+      if (formData.value.type === 3) {
         return [{ required: true, message: t('menuManagement.permsRequired') }]
       }
       return []
@@ -388,15 +427,15 @@
         children: props.menu.children || []
       }
     } else {
-      // 新增模式，重置表单
+      // 新增模式，使用currentType作为菜单类型
       formData.value = {
         id: 0,
         menuName: '',
-        parentId: 0,
+        parentId: props.menu?.parentId || 0,
         path: '',
         component: '',
         icon: '',
-        type: 1,
+        type: props.currentType || 1,
         sort: 0,
         visible: 1,
         perms: '',
@@ -473,6 +512,13 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+  }
+
+  /* 只读菜单类型显示样式 */
+  .readonly-type-display {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
   }
 
   .form-content {

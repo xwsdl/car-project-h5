@@ -114,6 +114,108 @@
         </div>
       </div>
     </van-popup>
+
+    <!-- 菜单分配弹窗 -->
+    <van-popup v-model:show="showMenuModal" position="bottom" :style="{ height: '70%' }">
+      <div class="menu-modal">
+        <!-- 固定的标题头部 -->
+        <div class="menu-modal-header">
+          <van-nav-bar
+            :title="`${t('roleManagement.assignMenu')}: ${currentMenuAssigningRole?.roleName || ''}`"
+            left-arrow
+            @click-left="showMenuModal = false"
+          />
+
+          <!-- 全选按钮 -->
+          <van-cell clickable @click="toggleMenuSelectAll">
+            <template #title>
+              <div class="select-all-wrapper">
+                <van-checkbox v-model="isMenuAllSelected" @click="toggleMenuSelectAll">
+                  {{ t('common.selectAll') }}
+                </van-checkbox>
+              </div>
+            </template>
+          </van-cell>
+        </div>
+
+        <!-- 可滚动的菜单树 -->
+        <div class="menu-tree-scrollable">
+          <div class="menu-tree">
+            <div v-for="menu in menus" :key="menu.id" class="menu-item">
+              <div
+                class="menu-item-content"
+                :style="{ paddingLeft: '0px' }"
+                @click="toggleMenu(menu.id)"
+              >
+                <div class="menu-checkbox">
+                  <div :class="['checkbox-inner', { checked: isMenuSelected(menu.id) }]"></div>
+                </div>
+                <div class="menu-info">
+                  <div class="menu-name">{{ menu.menuName }}</div>
+                  <div v-if="menu.menuType === 2" class="menu-type">{{ t('roleManagement.buttonType') }}</div>
+                </div>
+              </div>
+              <!-- 递归渲染子菜单 -->
+              <div v-if="menu.children && menu.children.length > 0" class="menu-children">
+                <div v-for="subMenu in menu.children" :key="subMenu.id" class="menu-item">
+                  <div
+                    class="menu-item-content"
+                    :style="{ paddingLeft: '20px' }"
+                    @click="toggleMenu(subMenu.id)"
+                  >
+                    <div class="menu-checkbox">
+                      <div
+                        :class="['checkbox-inner', { checked: isMenuSelected(subMenu.id) }]"
+                      ></div>
+                    </div>
+                    <div class="menu-info">
+                      <div class="menu-name">{{ subMenu.menuName }}</div>
+                      <div v-if="subMenu.menuType === 2" class="menu-type">{{ t('roleManagement.buttonType') }}</div>
+                    </div>
+                  </div>
+                  <!-- 第三级菜单 -->
+                  <div v-if="subMenu.children && subMenu.children.length > 0" class="menu-children">
+                    <div
+                      v-for="thirdMenu in subMenu.children"
+                      :key="thirdMenu.id"
+                      class="menu-item"
+                    >
+                      <div
+                        class="menu-item-content"
+                        :style="{ paddingLeft: '40px' }"
+                        @click="toggleMenu(thirdMenu.id)"
+                      >
+                        <div class="menu-checkbox">
+                          <div
+                            :class="['checkbox-inner', { checked: isMenuSelected(thirdMenu.id) }]"
+                          ></div>
+                        </div>
+                        <div class="menu-info">
+                          <div class="menu-name">{{ thirdMenu.menuName }}</div>
+                          <div v-if="thirdMenu.menuType === 2" class="menu-type">{{ t('roleManagement.buttonType') }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 固定的底部按钮 -->
+        <div class="menu-modal-footer">
+          <div class="modal-actions">
+            <van-button type="default" block @click="showMenuModal = false">
+              {{ t('common.cancel') }}
+            </van-button>
+            <van-button type="primary" block @click="saveRoleMenus">
+              {{ t('common.confirm') }}
+            </van-button>
+          </div>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -147,7 +249,7 @@
 </style>
 
 <script setup>
-  import { ref, onMounted, watch } from 'vue'
+  import { ref, onMounted, watch, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { showToast, showDialog } from 'vant'
@@ -158,9 +260,12 @@
     updateRole,
     deleteRole,
     saveRolePermission,
-    fetchRoleById
+    saveRoleMenu,
+    fetchRoleById,
+    fetchRoleMenu
   } from '@/api/role/index.js'
   import { fetchAllPermission, getPermissionsByRoleId } from '@/api/permission/index.js'
+  import { fetchMenuTree } from '@/api/menu/index.js'
 
   const { t } = useI18n()
   const router = useRouter()
@@ -171,17 +276,23 @@
   const showRoleForm = ref(false)
   const showActionSheet = ref(false)
   const showPermissionModal = ref(false)
+  const showMenuModal = ref(false)
   const currentRole = ref(null) // 用于编辑的角色信息
   const selectedRole = ref(null) // 用于操作菜单的角色信息
   const currentAssigningRole = ref(null) // 用于权限分配的角色信息
+  const currentMenuAssigningRole = ref(null) // 用于菜单分配的角色信息
   const roles = ref([])
   const permissions = ref([])
   const selectedPermissions = ref([])
   const checkboxRefs = ref([])
   const isAllSelected = ref(false)
+  const menus = ref([])
+  const selectedMenus = ref([])
+  const isMenuAllSelected = ref(false)
   const actionOptions = [
     { name: t('roleManagement.editRole'), key: 'edit' },
     { name: t('roleManagement.assignPermission'), key: 'assignPermission' },
+    { name: t('roleManagement.assignMenu'), key: 'assignMenu' },
     { name: t('roleManagement.deleteRole'), key: 'delete' },
     { name: t('common.cancel'), key: 'cancel', color: '#999' }
   ]
@@ -245,6 +356,9 @@
         break
       case 'assignPermission':
         assignPermissionToRole(selectedRole.value)
+        break
+      case 'assignMenu':
+        assignMenuToRole(selectedRole.value)
         break
       case 'cancel':
       default:
@@ -318,6 +432,145 @@
 
     if (checkbox) {
       checkbox.toggle()
+    }
+  }
+
+  // 分配菜单给角色
+  const assignMenuToRole = async role => {
+    try {
+      console.log('分配菜单给角色:', role)
+
+      // 保存当前正在分配菜单的角色信息
+      currentMenuAssigningRole.value = { ...role }
+
+      // 获取角色已有菜单
+      const roleMenus = await fetchRoleMenu(role.id)
+      console.log('角色已有菜单:', roleMenus)
+
+      // 加载角色菜单管理列表数据
+      await loadMenus()
+
+      // 初始化已选中的菜单
+      if (roleMenus && Array.isArray(roleMenus)) {
+        selectedMenus.value = roleMenus
+      } else {
+        selectedMenus.value = []
+      }
+
+      console.log('初始化选中的菜单:', selectedMenus.value)
+
+      // 更新全选状态
+      updateMenuSelectAllStatus()
+
+      // 显示菜单分配弹窗
+      showMenuModal.value = true
+    } catch (error) {
+      console.error('加载角色详情或角色菜单管理列表失败:', error)
+      showToast(error.message || '操作失败')
+    }
+  }
+
+  // 加载角色菜单管理列表数据
+  const loadMenus = async () => {
+    try {
+      const response = await fetchMenuTree()
+      if (response && Array.isArray(response)) {
+        menus.value = response
+      }
+    } catch (error) {
+      console.error('加载角色菜单管理列表失败:', error)
+      showToast(error.message || '加载失败')
+    }
+  }
+
+  // 切换菜单选中状态
+  const toggleMenu = menuId => {
+    const index = selectedMenus.value.indexOf(menuId)
+    if (index > -1) {
+      selectedMenus.value.splice(index, 1)
+    } else {
+      selectedMenus.value.push(menuId)
+    }
+    updateMenuSelectAllStatus()
+  }
+
+  // 全选/取消全选菜单
+  const toggleMenuSelectAll = () => {
+    if (isMenuAllSelected.value) {
+      // 取消全选
+      selectedMenus.value = []
+    } else {
+      // 全选，遍历整个菜单树收集所有菜单ID
+      const collectAllMenuIds = menuTree => {
+        let ids = []
+        menuTree.forEach(menu => {
+          ids.push(menu.id)
+          if (menu.children && menu.children.length > 0) {
+            ids = ids.concat(collectAllMenuIds(menu.children))
+          }
+        })
+        return ids
+      }
+      selectedMenus.value = collectAllMenuIds(menus.value)
+    }
+    isMenuAllSelected.value = !isMenuAllSelected.value
+  }
+
+  // 更新菜单全选状态
+  const updateMenuSelectAllStatus = () => {
+    if (menus.value.length === 0) {
+      isMenuAllSelected.value = false
+      return
+    }
+
+    // 收集所有菜单ID
+    const collectAllMenuIds = menuTree => {
+      let ids = []
+      menuTree.forEach(menu => {
+        ids.push(menu.id)
+        if (menu.children && menu.children.length > 0) {
+          ids = ids.concat(collectAllMenuIds(menu.children))
+        }
+      })
+      return ids
+    }
+    const allMenuIds = collectAllMenuIds(menus.value)
+    isMenuAllSelected.value = selectedMenus.value.length === allMenuIds.length
+  }
+
+  // 检查菜单是否被选中
+  const isMenuSelected = menuId => {
+    return selectedMenus.value.includes(menuId)
+  }
+
+  // 保存角色菜单
+  const saveRoleMenus = async () => {
+    try {
+      console.log('保存角色菜单前的currentMenuAssigningRole:', currentMenuAssigningRole.value)
+
+      if (!currentMenuAssigningRole.value || !currentMenuAssigningRole.value.id) {
+        console.error('角色ID不存在', currentMenuAssigningRole.value)
+        showToast('角色信息错误，请重新选择角色')
+        return
+      }
+
+      const requestData = {
+        roleId: currentMenuAssigningRole.value.id,
+        menuIds: selectedMenus.value // 按照API要求的格式
+      }
+
+      console.log('请求参数:', requestData)
+
+      await saveRoleMenu(requestData)
+
+      showToast(t('roleManagement.assignMenuSuccess'))
+      showMenuModal.value = false
+
+      // 重新加载角色列表
+      await loadRoles()
+    } catch (error) {
+      console.error('保存角色菜单失败:', error)
+      showToast(error.message || '操作失败')
     }
   }
 
@@ -533,5 +786,90 @@
 
   .modal-actions .van-button {
     flex: 1;
+  }
+
+  /* 菜单分配弹窗样式 */
+  .menu-modal {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menu-modal-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .menu-tree-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+
+  .menu-tree {
+    padding: 0 10px;
+  }
+
+  .menu-item {
+    margin-bottom: 5px;
+  }
+
+  .menu-item-content {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+  }
+
+  .menu-item-content:hover {
+    background-color: #f5f5f5;
+  }
+
+  .menu-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .menu-checkbox .checkbox-inner {
+    width: 12px;
+    height: 12px;
+    background-color: transparent;
+    transition: all 0.3s;
+  }
+
+  .menu-checkbox .checkbox-inner.checked {
+    background-color: #1989fa;
+  }
+
+  .menu-info {
+    flex: 1;
+  }
+
+  .menu-name {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .menu-type {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+  }
+
+  .menu-children {
+    margin-left: 10px;
+  }
+
+  .menu-modal-footer {
+    background-color: #fff;
+    border-top: 1px solid #f0f0f0;
+    padding: 10px;
   }
 </style>

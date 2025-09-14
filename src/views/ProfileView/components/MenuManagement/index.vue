@@ -26,7 +26,12 @@
         </div>
         <div v-else class="tree-content">
           <!-- 目录/菜单/按钮三级树形结构 -->
-          <div v-for="directory in menuTree" :key="directory.id" class="tree-node directory-node">
+          <div
+            v-for="directory in menuTree"
+            :key="directory.id"
+            class="tree-node directory-node"
+            :class="{ expanded: directory.expanded }"
+          >
             <div class="node-header">
               <div class="node-info" @click="toggleExpand(directory)">
                 <div class="info-main">
@@ -66,6 +71,7 @@
                 v-for="menu in directory.children.filter(item => item.type === 2)"
                 :key="menu.id"
                 class="tree-node menu-node"
+                :class="{ expanded: menu.expanded }"
               >
                 <div class="node-header">
                   <div class="node-info" @click="toggleExpand(menu)">
@@ -147,6 +153,7 @@
         :menu="currentMenu"
         :parentMenus="parentMenus"
         :currentType="currentType"
+        :canChangeParentMenu="canChangeParentMenu"
         @submit="handleMenuSubmit"
         @cancel="showMenuForm = false"
       />
@@ -170,6 +177,7 @@
   const showMenuForm = ref(false)
   const currentMenu = ref(null)
   const currentType = ref(null) // 当前正在添加的菜单类型
+  const canChangeParentMenu = ref(true) // 是否可以更改上级菜单
   const menus = ref([])
   const menuTree = ref([]) // 带展开状态的菜单树
 
@@ -277,6 +285,7 @@
   const handleAddRootMenu = () => {
     currentMenu.value = null
     currentType.value = 1 // 目录类型
+    canChangeParentMenu.value = true // 根目录可以选择上级菜单（实际是顶级菜单）
     showMenuForm.value = true
   }
 
@@ -287,6 +296,7 @@
       type
     }
     currentType.value = type
+    canChangeParentMenu.value = false // 添加子菜单时上级菜单不可更改
     showMenuForm.value = true
   }
 
@@ -294,6 +304,7 @@
   const handleEditMenu = menu => {
     currentMenu.value = { ...menu }
     currentType.value = menu.type
+    canChangeParentMenu.value = false // 编辑菜单时上级菜单不可更改
     showMenuForm.value = true
   }
 
@@ -372,14 +383,10 @@
 
       if (submitData.id) {
         // 编辑菜单 - 统一使用嵌套格式
-        await updateMenu({
-          menu: submitData
-        })
+        await updateMenu(submitData)
       } else {
         // 新增菜单 - 统一使用嵌套格式
-        await addMenu({
-          menu: submitData
-        })
+        await addMenu(submitData)
       }
 
       showToast(t('menuManagement.saveSuccess'))
@@ -406,7 +413,7 @@
 
     .content {
       padding: 15px;
-      max-width: 600px;
+      max-width: 100%;
       margin: 0 auto;
     }
 
@@ -421,74 +428,121 @@
       padding: 15px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       min-height: 400px;
+      width: 100%;
     }
 
     .empty-state {
       text-align: center;
       color: #999;
-      padding: 40px 0;
+      padding: 60px 0;
+      font-size: 14px;
     }
 
     .tree-content {
-      max-height: 500px;
+      max-height: calc(100vh - 200px);
       overflow-y: auto;
+      padding: 5px;
+    }
+
+    // 自定义滚动条样式
+    .tree-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .tree-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .tree-content::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .tree-content::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
     }
 
     .tree-node {
       margin-bottom: 8px;
-      border-radius: 4px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
     }
 
     .directory-node {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
+      background-color: #ffffff;
+      border: 1px solid #e8e8e8;
+      margin-bottom: 10px;
     }
 
     .menu-node {
       background-color: #ffffff;
-      border: 1px solid #dee2e6;
+      border: 1px solid #e8e8e8;
+      margin-bottom: 8px;
     }
 
     .button-node {
-      background-color: #fafafa;
+      background-color: #f9f9f9;
       border: 1px solid #f0f0f0;
+      margin-bottom: 6px;
     }
 
+    // 鼠标悬停效果
+    .tree-node:hover {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    // 左右布局的节点头部
     .node-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 8px;
+      align-items: flex-start;
+      padding: 12px;
       font-size: 14px;
+      width: 100%;
     }
 
+    // 左侧内容区
     .node-info {
-      display: flex;
-      align-items: flex-start;
       flex: 1;
       cursor: pointer;
-      flex-direction: column;
       min-width: 0;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
     }
 
+    .node-info:hover {
+      opacity: 0.85;
+    }
+
+    // 主信息区域 - 包含图标和名称
     .info-main {
       display: flex;
       align-items: center;
       width: 100%;
+      margin-bottom: 4px;
     }
 
+    // 详情信息区域 - 只包含类型信息
     .info-details {
-      display: flex;
-      flex-direction: column;
       margin-left: 40px;
       font-size: 12px;
     }
 
+    // 优化展开/折叠图标样式
     .expand-icon {
-      font-size: 12px;
+      font-size: 14px;
       margin-right: 8px;
       width: 16px;
       text-align: center;
+      color: #666;
+      transition: transform 0.2s ease;
+    }
+
+    // 展开状态下的图标旋转效果
+    .tree-node.expanded .expand-icon {
+      transform: rotate(90deg);
     }
 
     .expand-icon-placeholder {
@@ -496,9 +550,10 @@
       margin-right: 8px;
     }
 
+    // 图标样式
     .node-icon {
       margin-right: 8px;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     .directory-icon {
@@ -513,37 +568,106 @@
       color: #faad14;
     }
 
+    // 菜单名称样式 - 单独占一行
     .node-name {
-      flex: 1;
       font-weight: 500;
       font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      line-height: 1.4;
+      word-wrap: break-word;
     }
 
+    // 菜单类型样式 - 单独占一行
     .node-type {
-      font-size: 11px;
+      font-size: 12px;
       color: #666;
-      margin-top: 2px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background-color: rgba(0, 0, 0, 0.05);
+      display: inline-block;
     }
 
     .node-perms {
       font-size: 11px;
       color: #999;
       margin-top: 2px;
+      font-family: monospace;
     }
 
+    // 右侧按钮组 - 垂直排列
     .node-actions {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
       flex-shrink: 0;
+      width: 80px;
     }
 
+    // 按钮样式
+    .node-actions .van-button {
+      font-size: 12px;
+      height: 26px;
+      width: 100%;
+      padding: 0;
+      border-radius: 4px;
+    }
+
+    // 优化子节点缩进
     .sub-nodes {
-      margin-left: 24px;
-      margin-top: -8px;
+      margin-left: 20px;
+      padding-left: 20px;
+      border-left: 2px dashed #e0e0e0;
+      margin-top: -4px;
+    }
+
+    // 三级按钮的节点样式
+    .button-node .node-header {
+      padding: 8px 12px;
+    }
+
+    // 响应式设计
+    @media (max-width: 768px) {
+      .node-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .node-actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+      
+      .node-actions .van-button {
+        width: auto;
+        min-width: 60px;
+      }
+      
+      .sub-nodes {
+        margin-left: 10px;
+        padding-left: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 10px 8px;
+      }
+      
+      .node-header {
+        padding: 8px;
+      }
+      
+      .node-actions {
+        flex-wrap: wrap;
+        gap: 3px;
+      }
+      
+      .node-actions .van-button {
+        font-size: 11px;
+        height: 24px;
+        min-width: 50px;
+      }
     }
   }
 </style>

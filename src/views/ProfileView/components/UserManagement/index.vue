@@ -31,12 +31,12 @@
             v-for="user in filteredUsers"
             :key="user.id"
             :title="user.username"
-            :label="user.phone || user.email || '无联系方式'"
+            :label="`${user.phone || user.email || '无联系方式'} | ${user.roleName || '无角色'}`"
             is-link
             @click="showUserActions(user)"
           >
             <template #right-icon>
-              <van-tag :type="getUserStatusColor(user.status)" size="small">
+              <van-tag :type="getUserStatusColor(user.statusCode)" size="small">
                 {{ user.status }}
               </van-tag>
             </template>
@@ -102,8 +102,13 @@
   import { useI18n } from 'vue-i18n'
   import { showToast, showDialog, Icon as VanIcon } from 'vant'
   import UserDetail from './components/UserDetail.vue'
-  import UserEdit from './components/UserEdit.vue'
-  import { fetchUserList, updateUserRole, saveUserRole, fetchUserRole } from '@/api/user/index.js'
+  import {
+    fetchUserList,
+    saveUserRole,
+    activateUser,
+    freezeUser,
+    fetchUserRole
+  } from '@/api/user/index.js'
   import { fetchAllRole } from '@/api/role/index.js'
 
   const { t } = useI18n()
@@ -123,17 +128,27 @@
   const roleList = ref([])
   const selectedRole = ref(null)
 
+  // 初始化角色列表
+  const initRoleList = async () => {
+    try {
+      const roles = await fetchAllRole()
+      roleList.value = roles || []
+    } catch (error) {
+      console.error('初始化角色列表失败:', error)
+    }
+  }
+
   // 由于搜索已经在API层面处理，这里直接返回用户列表
   const filteredUsers = computed(() => users.value)
 
   // 用户状态颜色映射（适配中文状态值）
   const getUserStatusColor = status => {
-    // 根据中文状态值映射颜色
+    // 用户状态颜色映射（根据statusCode）
     const colorMap = {
-      已激活: 'success',
-      未激活: 'default',
-      暂停: 'warning',
-      删除: 'danger'
+      1: 'success', // 正常状态
+      0: 'default', // 未激活
+      2: 'warning', // 暂停
+      3: 'danger' // 删除
     }
     return colorMap[status] || 'default'
   }
@@ -178,6 +193,7 @@
       }
 
       if (userList.length > 0) {
+        // 直接使用API返回的数据，已包含roleName字段
         if (pageNo.value === 1) {
           users.value = userList
         } else {
@@ -230,11 +246,8 @@
       icon: 'eye-o'
     },
     {
-      name:
-        currentUser.value?.status === '已激活'
-          ? t('userManagement.actions.suspend')
-          : t('userManagement.actions.activate'),
-      icon: currentUser.value?.status === '已激活' ? 'pause-circle-o' : 'play-circle-o'
+      name: currentUser.value?.statusCode === 1 ? '停用' : '启用',
+      icon: currentUser.value?.statusCode === 1 ? 'pause-circle-o' : 'play-circle-o'
     },
     {
       name: t('roleManagement.assignRole'),
@@ -310,8 +323,9 @@
 
       showToast(t('roleManagement.assignSuccess'))
 
-      // 关闭弹窗
+      // 关闭角色选择弹窗和操作弹窗
       showRolePicker.value = false
+      showActions.value = false
 
       // 重新加载用户列表以更新角色信息
       users.value = []
@@ -332,8 +346,7 @@
 
   // 切换用户状态
   const toggleUserStatus = async user => {
-    const action = user.status === '已激活' ? 'suspend' : 'activate'
-    const newStatus = action === 'suspend' ? '未激活' : '已激活'
+    const action = user.statusCode === 1 ? 'suspend' : 'activate'
     const successToast =
       action === 'suspend'
         ? t('userManagement.suspendSuccess')
@@ -353,12 +366,20 @@
       })
 
       // 用户确认后执行操作
-      await updateUserRole({
-        id: user.id,
-        status: newStatus
-      })
+      if (action === 'activate') {
+        await activateUser({
+          userId: user.id
+        })
+      } else {
+        await freezeUser({
+          userId: user.id
+        })
+      }
 
       showToast(successToast)
+
+      // 关闭操作弹窗
+      showActions.value = false
 
       // 重新加载用户列表
       users.value = []
@@ -375,7 +396,9 @@
   }
 
   onMounted(() => {
-    loadUsers()
+    initRoleList().then(() => {
+      loadUsers()
+    })
   })
 </script>
 

@@ -70,8 +70,7 @@ export const useWebSocketStore = defineStore('webSocket', () => {
       const normalizedMessage = {
         ...msg, // 保留原始消息的其他字段
         type: msg.type || 'UNKNOWN',
-        data: msg.data || null,
-
+        data: msg.data || null
       }
 
       lastMessage.value = normalizedMessage

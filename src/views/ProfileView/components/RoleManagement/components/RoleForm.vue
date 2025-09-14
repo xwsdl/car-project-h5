@@ -42,23 +42,6 @@
           </van-field>
         </van-cell-group>
 
-        <!-- 权限配置 -->
-        <van-cell-group inset :title="$t('roleManagement.permissions')">
-          <van-checkbox-group v-model="formData.permissions">
-            <van-cell
-              v-for="permission in availablePermissions"
-              :key="permission.value"
-              :title="permission.label"
-              clickable
-              @click="togglePermission(permission.value)"
-            >
-              <template #right-icon>
-                <van-checkbox :name="permission.value" />
-              </template>
-            </van-cell>
-          </van-checkbox-group>
-        </van-cell-group>
-
         <div class="form-actions">
           <van-button type="default" block @click="$emit('cancel')">
             {{ $t('common.cancel') }}
@@ -92,34 +75,11 @@
   const formData = ref({
     name: '',
     description: '',
-    roleCode: '',
-    sort: 0,
-    status: '1',
-    permissions: []
+    status: '1'
   })
 
   // 是否为编辑模式
   const isEdit = computed(() => !!props.role)
-
-  // 可用权限列表
-  const availablePermissions = [
-    { label: t('roleManagement.permissions.basicAccess'), value: 'basic_access' },
-    { label: t('roleManagement.permissions.customerService'), value: 'customer_service' },
-    { label: t('roleManagement.permissions.roleManagement'), value: 'role_management' },
-    { label: t('roleManagement.permissions.userManagement'), value: 'user_management' },
-    { label: t('roleManagement.permissions.orderManagement'), value: 'order_management' },
-    { label: t('roleManagement.permissions.systemConfig'), value: 'system_config' }
-  ]
-
-  // 切换权限
-  const togglePermission = permission => {
-    const index = formData.value.permissions.indexOf(permission)
-    if (index > -1) {
-      formData.value.permissions.splice(index, 1)
-    } else {
-      formData.value.permissions.push(permission)
-    }
-  }
 
   // 表单提交
   const onSubmit = async () => {
@@ -150,20 +110,14 @@
           id: newRole.id,
           name: newRole.roleName || '',
           description: newRole.description || '',
-          roleCode: newRole.roleCode || '',
-          sort: newRole.sort || 0,
-          status: +newRole.status,
-          permissions: [...(newRole.permissions || [])]
+          status: +newRole.status
         }
       } else {
         // 重置表单
         formData.value = {
           name: '',
           description: '',
-          roleCode: '',
-          sort: 0,
-          status: 1,
-          permissions: []
+          status: 1
         }
       }
     },

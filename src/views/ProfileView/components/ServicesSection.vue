@@ -55,7 +55,7 @@
         </div>
         <div class="service-item">
           <div class="service-icon" @click="handleGoPage('menuManagement')">
-            <van-icon name="menu" />
+            <van-icon name="tosend" />
           </div>
           <div class="service-label">{{ $t('menuManagement.title') }}</div>
         </div>

@@ -49,3 +49,29 @@ export const fetchUserList = (params = {}) => {
 export const updateUserRole = (data) => {
   return post(`/users/updateUser`, data)
 }
+
+/**
+ * @description 激活用户
+ * @param {Object} data
+ * @param {string} data.userId 用户ID
+ */
+export const activateUser = (data) => {
+  return post(`/users/activate`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
+ * @description 停用用户
+ * @param {Object} data
+ * @param {string} data.userId 用户ID
+ */
+export const freezeUser = (data) => {
+  return post(`/users/freeze`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

@@ -43,7 +43,7 @@
   })
 
   // 根据路由路径判断是否显示Tabbar
-  const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile']
+  const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile', '/pendingOrders']
   const isShowTabbar = computed(() => {
     return tabbarRoutePath.includes(route.path)
   })

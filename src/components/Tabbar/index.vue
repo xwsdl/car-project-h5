@@ -54,7 +54,8 @@
       home: 'home',
       orderProcess: 'orderProcess',
       message: 'message',
-      profile: 'profile'
+      profile: 'profile',
+      pendingOrders: 'pendingOrders'
     }
 
     active.value = pathMap[currentPath] || 'home'

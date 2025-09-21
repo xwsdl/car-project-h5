@@ -50,11 +50,8 @@
           <!-- 节点操作区域 -->
           <div
             class="step-node__action"
-            v-if="
-              item.isCompleteSign === 2 &&
-              item.attachments.length &&
-              showRoleTabbar('customer_service')
-            "
+            v-permission="'order_detail_operation'"
+            v-if="item.isCompleteSign === 2 && item.attachments.length"
           >
             <van-button type="primary" size="small" @click="handleNodeAction(3, item.id)">
               通过
@@ -167,9 +164,7 @@
     console.log('canUpload:', item.canaction === authStore.user.roleName)
     return item.canaction === authStore.user.roleName
   }
-  const showRoleTabbar = roleName => {
-    return authStore?.user?.roleName === roleName || false
-  }
+
   const onAttachmentUploaded = result => {
     console.log('上传成功:', result)
     // TODO: 上传成功后的处理逻辑，如刷新数据、提示等

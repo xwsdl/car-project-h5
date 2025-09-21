@@ -51,9 +51,12 @@
   import { ref } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { useAuthStore } from '@/stores/auth'
+  import { useI18n } from 'vue-i18n'
+  import { showToast } from 'vant'
   const authStore = useAuthStore()
   const router = useRouter()
   const route = useRoute()
+  const { t } = useI18n()
 
   const username = ref('')
   const password = ref('')
@@ -63,25 +66,60 @@
       username: values.username,
       password: values.password,
       rememberMe: checked.value
-    }).then(async res => {
-      const userInfo = await getUserInfo(res.userId)
-
-      // 保存用户信息和token
-      authStore.login(userInfo, res.token)
-      const menus = await fetchUserMenus()
-      console.log('menus', menus)
-      // 检查是否有重定向路径
-      const redirect = route.query.redirect
-
-      setTimeout(() => {
-        console.log('redirect', redirect)
-        if (redirect) {
-          router.push(redirect)
-        } else {
-          router.push('/home')
-        }
-      }, 800)
     })
+      .then(async res => {
+        try {
+          // 获取用户基本信息
+          const userInfo = await getUserInfo(res.userId)
+          authStore.login(userInfo, res.token, [], [])
+
+          // 获取用户菜单
+          const userMenusResponse = await fetchUserMenus()
+          const userMenus = userMenusResponse || []
+          console.log('userMenus', userMenus)
+
+          // 从菜单中提取权限列表
+          const extractPermissions = menus => {
+            const permissions = []
+            const extract = items => {
+              items.forEach(item => {
+                if (item.perms && item.perms.trim()) {
+                  permissions.push(item.perms.trim())
+                }
+                if (item.children && item.children.length > 0) {
+                  extract(item.children)
+                }
+              })
+            }
+            extract(menus)
+            return permissions
+          }
+
+          const userPermissions = extractPermissions(userMenus)
+
+          // 保存用户信息、token、菜单和权限
+          authStore.login(userInfo, res.token, userMenus, userPermissions)
+
+          // 检查是否有重定向路径
+          const redirect = route.query.redirect
+
+          setTimeout(() => {
+            console.log('redirect', redirect)
+            if (redirect) {
+              router.push(redirect)
+            } else {
+              router.push('/home')
+            }
+          }, 800)
+        } catch (error) {
+          console.error('登录后获取用户信息或菜单失败:', error)
+          showToast(t('request.fail'))
+        }
+      })
+      .catch(error => {
+        console.error('登录失败:', error)
+        showToast(t('login.loginFail'))
+      })
   }
 
   const handleGoHome = () => {

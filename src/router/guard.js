@@ -23,8 +23,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     if (authStore.isAuthenticated) {
       // 用户已登录，检查权限
-      if (to.meta.permission) {
+      if (to.meta.permission1) {
         if (authStore.hasPermission(to.meta.permission)) {
+          console.log('hasPermission:', authStore.hasPermission(to.meta.permission))
           // 有权限，允许访问
           next()
         } else {

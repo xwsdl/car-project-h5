@@ -438,7 +438,8 @@
     "login": "Вход",
     "roleManagement": "Управление ролями",
     "userManagement": "Управление пользователями",
-    "pending_orders": "В обработке"
+    "pending_orders": "В обработке",
+    "profileEdit": "Изменить информацию"
   },
   "roleManagement": {
     "title": "Управление ролями",

@@ -433,7 +433,8 @@
     "userManagement": "用户管理",
     "permissionManagement": "权限管理",
     "menuManagement": "菜单管理",
-    "pending_orders": "待处理订单"
+    "pending_orders": "待处理订单",
+    "profileEdit": "修改信息"
   },
   "roleManagement": {
     "title": "角色管理",

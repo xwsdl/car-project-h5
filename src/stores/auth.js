@@ -22,19 +22,36 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // 从本地存储恢复用户菜单
+  const getUserMenusFromStorage = () => {
+    try {
+      const menusData = localStorage.getItem('auth_menus')
+      return menusData ? JSON.parse(menusData) : []
+    } catch (error) {
+      console.error('解析用户菜单失败:', error)
+      return []
+    }
+  }
+
+  // 从本地存储恢复用户权限
+  const getUserPermissionsFromStorage = () => {
+    try {
+      const permissionsData = localStorage.getItem('auth_permissions')
+      return permissionsData ? JSON.parse(permissionsData) : []
+    } catch (error) {
+      console.error('解析用户权限失败:', error)
+      return []
+    }
+  }
+
   // 用户信息
   const user = ref(getUserFromStorage())
   // 访问令牌
   const token = ref(localStorage.getItem('auth_token') || null)
-  // 用户权限列表 - 写死权限节点用于测试
-  const permissions = ref([
-    'role_management',
-    'user_management',
-    'basic_access',
-    'customer_service',
-    'order_management',
-    'system_config'
-  ])
+  // 用户菜单列表
+  const menus = ref(getUserMenusFromStorage())
+  // 用户权限列表
+  const permissions = ref(getUserPermissionsFromStorage())
 
   // 检查是否登录
   const isAuthenticated = computed(() => !!token.value && !!user.value)
@@ -55,13 +72,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // 登录方法
-  const login = (userData, authToken) => {
+  const login = (userData, authToken, userMenus = [], userPermissions = []) => {
     user.value = userData
     token.value = authToken
-    // 注意：这里暂时不更新权限，因为权限是写死的
-    // 持久化存储用户信息和令牌
+    menus.value = userMenus
+    permissions.value = userPermissions || []
+    // 持久化存储用户信息、令牌、菜单和权限
     localStorage.setItem('auth_token', authToken)
     localStorage.setItem('auth_user', JSON.stringify(userData))
+    localStorage.setItem('auth_menus', JSON.stringify(userMenus))
+    localStorage.setItem('auth_permissions', JSON.stringify(permissions.value))
   }
 
   // 登出方法
@@ -83,10 +103,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 更新权限信息
   const updatePermissions = (userPermissions) => {
-    // 注意：权限暂时是写死的，不更新
-    console.log('权限更新被忽略，当前权限是写死的:', userPermissions)
-    // permissions.value = userPermissions
-    // localStorage.setItem('auth_permissions', JSON.stringify(userPermissions))
+    permissions.value = userPermissions || []
+    localStorage.setItem('auth_permissions', JSON.stringify(permissions.value))
+  }
+
+  // 更新用户菜单
+  const updateUserMenus = (userMenus) => {
+    menus.value = userMenus || []
+    localStorage.setItem('auth_menus', JSON.stringify(userMenus))
   }
 
   // 清除用户信息（保持令牌）
@@ -98,6 +122,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     token,
+    menus,
     permissions,
     isAuthenticated,
     hasPermission,
@@ -107,6 +132,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     updateUser,
     updatePermissions,
+    updateUserMenus,
     clearUser,
   }
 })

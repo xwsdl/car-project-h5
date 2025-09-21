@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,28 +16,28 @@ const router = createRouter({
           component: () => import('@/views/Home/index.vue'),
           meta: {
             title: 'route.home',
-            requiresAuth: false, // 不需要登录
-            keepAlive: true, // 需要缓存 ，注意：name的名称和组件名一致才生效
-          },
+            requiresAuth: false,
+            keepAlive: true
+          }
         },
         {
           path: '/car',
           name: 'carDetail',
           component: () => import('@/views/CarDetailView/index.vue'),
-          props: true, // 将路由参数传递给组件
+          props: true,
           beforeEnter: (to, from, next) => {
             if (!to.query.id) {
-              next(false) // 阻止导航
+              next(false)
             } else {
               console.log('to.params.id', to.query.id)
-              next() // 允许导航
+              next()
             }
           },
           meta: {
             title: 'route.carDetail',
-            requiresAuth: false, //
-            keepAlive: false, // 不需要缓存
-          },
+            requiresAuth: false,
+            keepAlive: false
+          }
         },
         {
           path: '/list/:category',
@@ -44,9 +45,9 @@ const router = createRouter({
           component: () => import('@/views/ClassificationList/index.vue'),
           meta: {
             title: 'route.carList',
-            requiresAuth: false, // 不需要登录
-            keepAlive: false, // 不需要缓存
-          },
+            requiresAuth: false,
+            keepAlive: false
+          }
         },
         {
           path: '/brand',
@@ -54,9 +55,9 @@ const router = createRouter({
           component: () => import('@/views/Brand/index.vue'),
           meta: {
             title: 'route.brand',
-            requiresAuth: false, // 不需要登录
-            keepAlive: true, // 不需要缓存
-          },
+            requiresAuth: false,
+            keepAlive: true
+          }
         },
         {
           path: '/filterPage',
@@ -64,19 +65,9 @@ const router = createRouter({
           component: () => import('@/views/FilterPage/index.vue'),
           meta: {
             title: 'route.filterPage',
-            requiresAuth: false, // 不需要登录
-            keepAlive: true // 不需要缓存
-          },
-        },
-        {
-          path: '/test',
-          name: 'Test',
-          component: () => import('@/views/Test/index.vue'),
-          meta: {
-            title: '测试页面',
-            requiresAuth: false, // 不需要登录
-            keepAlive: true // 不需要缓存
-          },
+            requiresAuth: false,
+            keepAlive: true
+          }
         },
         {
           path: '/orderProcess',
@@ -84,9 +75,10 @@ const router = createRouter({
           component: () => import('@/views/OrderProcess/index.vue'),
           meta: {
             title: 'route.orderProcess',
-            requiresAuth: true, // 需要登录
-            keepAlive: false, // 需要缓存
-          },
+            requiresAuth: true,
+            permission: 'route.orderProcess',
+            keepAlive: false
+          }
         },
         {
           path: '/orderDetail',
@@ -96,8 +88,9 @@ const router = createRouter({
           meta: {
             title: 'route.orderDetail',
             requiresAuth: true,
-            keepAlive: false,
-          },
+            permission: 'route.orderDetail',
+            keepAlive: false
+          }
         },
         {
           path: '/pendingOrders',
@@ -107,8 +100,9 @@ const router = createRouter({
           meta: {
             title: 'route.pending_orders',
             requiresAuth: true,
-            keepAlive: false,
-          },
+            permission: 'route.pending_orders',
+            keepAlive: false
+          }
         },
         {
           path: '/message',
@@ -116,9 +110,10 @@ const router = createRouter({
           component: () => import('@/views/Message/index.vue'),
           meta: {
             title: 'route.message',
-            requiresAuth: true, // 需要登录
-            keepAlive: false, // 需要缓存
-          },
+            requiresAuth: true,
+            permission: 'route.message',
+            keepAlive: false
+          }
         },
         {
           path: '/profile',
@@ -126,15 +121,21 @@ const router = createRouter({
           component: () => import('@/views/ProfileView/index.vue'),
           meta: {
             title: 'route.profile',
-            requiresAuth: true, // 需要登录
-            keepAlive: false, // 需要缓存
-          },
+            requiresAuth: true,
+            permission: 'route.profile',
+            keepAlive: false
+          }
         },
         {
           path: '/profileEdit',
           name: 'profileEdit',
           component: () => import('@/views/profileEdit/index.vue'),
-          meta: { title: '修改信息' }
+          meta: {
+            title: 'route.profileEdit',
+            permission: 'route.profileEdit',
+            requiresAuth: true,
+            keepAlive: false
+          }
         },
         {
           path: '/customerService',
@@ -142,11 +143,11 @@ const router = createRouter({
           component: () => import('@/views/CustomerService/index.vue'),
           meta: {
             title: 'route.customerService',
-            requiresAuth: true, // 不需要登录
-            keepAlive: false, // 需要缓存
-          },
+            requiresAuth: true,
+            permission: 'route.customerService',
+            keepAlive: false
+          }
         },
-        // 权限管理路由
         {
           path: '/roleManagement',
           name: 'roleManagement',
@@ -154,9 +155,9 @@ const router = createRouter({
           meta: {
             title: 'route.roleManagement',
             requiresAuth: true,
-            permission: 'role_management',
-            keepAlive: false,
-          },
+            permission: 'route.roleManagement',
+            keepAlive: false
+          }
         },
         {
           path: '/userManagement',
@@ -165,11 +166,10 @@ const router = createRouter({
           meta: {
             title: 'route.userManagement',
             requiresAuth: true,
-            permission: 'user_management',
-            keepAlive: false,
-          },
+            permission: 'route.userManagement',
+            keepAlive: false
+          }
         },
-        // 权限管理路由
         {
           path: '/permissionManagement',
           name: 'permissionManagement',
@@ -177,11 +177,10 @@ const router = createRouter({
           meta: {
             title: 'route.permissionManagement',
             requiresAuth: true,
-            permission: 'system_config',
-            keepAlive: false,
-          },
+            permission: 'route.permissionManagement',
+            keepAlive: false
+          }
         },
-        // 菜单管理路由
         {
           path: '/menuManagement',
           name: 'menuManagement',
@@ -189,11 +188,11 @@ const router = createRouter({
           meta: {
             title: 'route.menuManagement',
             requiresAuth: true,
-            permission: 'system_config',
-            keepAlive: false,
-          },
-        },
-      ],
+            permission: 'route.menuManagement',
+            keepAlive: false
+          }
+        }
+      ]
     },
     {
       path: '/login',
@@ -201,11 +200,11 @@ const router = createRouter({
       component: () => import('@/views/Login/index.vue'),
       meta: {
         title: 'route.login',
-        requiresAuth: false, // 不需要登录
-        keepAlive: false, // 不需要缓存
-      },
-    },
-  ],
+        requiresAuth: false,
+        keepAlive: false
+      }
+    }
+  ]
 })
 
 export default router

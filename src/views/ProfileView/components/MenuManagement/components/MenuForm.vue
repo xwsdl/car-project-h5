@@ -422,7 +422,7 @@
         icon: props.menu.icon || '',
         type: props.menu.type || 1,
         sort: props.menu.sort || 0,
-        visible: props.menu.visible !== undefined ? props.menu.visible : 1,
+        visible: props.menu.visible !== undefined ? Boolean(props.menu.visible) : true,
         perms: props.menu.perms || '',
         children: props.menu.children || []
       }
@@ -437,7 +437,7 @@
         icon: '',
         type: props.currentType || 1,
         sort: 0,
-        visible: 1,
+        visible: true,
         perms: '',
         children: []
       }

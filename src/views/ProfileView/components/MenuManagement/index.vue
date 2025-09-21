@@ -376,7 +376,7 @@
       submitData.type = parseInt(submitData.type, 10) || 1
 
       // 确保visible字段是数字类型
-      submitData.visible = parseInt(submitData.visible, 10) || 1
+      submitData.visible = typeof submitData.visible === 'boolean' ? (submitData.visible ? 1 : 0) : (parseInt(submitData.visible, 10) || 0)
 
       // 确保sort字段是数字类型
       submitData.sort = parseInt(submitData.sort, 10) || 0

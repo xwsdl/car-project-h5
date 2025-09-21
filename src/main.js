@@ -30,6 +30,10 @@ app.use(VueClipboard, {
   appendToBody: true
 })
 
+// 导入并注册权限指令
+import permissionDirective from '@/directives/permission'
+app.directive('permission', permissionDirective)
+
 app.use(Lazyload);
 
 app.mount('#app')

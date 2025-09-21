@@ -22,32 +22,12 @@
             </van-tag>
           </template>
         </van-cell>
-        <van-cell
-          :title="$t('userManagement.role')"
-          :value="$t(`roleManagement.roleTypes.${user.role}`)"
-        />
+        <van-cell :title="$t('userManagement.role')" :value="user.roleName || '-'" />
         <van-cell :title="$t('userManagement.createTime')" :value="formatDate(user.createTime)" />
         <van-cell
           :title="$t('userManagement.lastLoginTime')"
           :value="formatDate(user.lastLoginTime) || '-'"
         />
-      </van-cell-group>
-
-      <van-cell-group inset :title="$t('userManagement.permissions')">
-        <van-cell v-for="permission in userPermissions" :key="permission" :title="permission" />
-      </van-cell-group>
-
-      <van-cell-group inset :title="$t('userManagement.operationHistory')">
-        <van-cell
-          v-for="operation in userOperations"
-          :key="operation.id"
-          :title="operation.action"
-          :label="operation.description"
-        >
-          <template #value>
-            <span class="operation-time">{{ formatDate(operation.time) }}</span>
-          </template>
-        </van-cell>
       </van-cell-group>
     </div>
   </div>
@@ -71,10 +51,10 @@
   // 用户状态颜色映射（适配中文状态值）
   const getUserStatusColor = status => {
     const colorMap = {
-      '已激活': 'success',
-      '未激活': 'default',
-      '暂停': 'warning',
-      '删除': 'danger'
+      已激活: 'success',
+      未激活: 'default',
+      暂停: 'warning',
+      删除: 'danger'
     }
     return colorMap[status] || 'default'
   }
@@ -141,7 +121,3 @@
     color: #999;
   }
 </style>
-
-
-
-

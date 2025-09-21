@@ -9,18 +9,20 @@
 <template>
   <van-tabbar v-model="active" @change="onChange">
     <van-tabbar-item name="home" icon="wap-home">{{ $t('common.home') }}</van-tabbar-item>
-    <van-tabbar-item name="orderProcess" icon="orders-o" v-if="showRoleTabbar('consumer')">
+    <van-tabbar-item v-permission="'route.orderProcess'" name="orderProcess" icon="orders-o">
       {{ $t('common.orderProcess') }}
     </van-tabbar-item>
-    <van-tabbar-item name="pendingOrders" icon="orders-o" v-if="showRoleTabbar('customer_service')">
+    <van-tabbar-item v-permission="'route.pending_orders'" name="pendingOrders" icon="orders-o">
       {{ $t('common.pending_orders') }}
     </van-tabbar-item>
-    <van-tabbar-item name="message" icon="chat-o">
+    <van-tabbar-item v-permission="'route.message'" name="message" icon="chat-o">
       <van-badge :content="unreadCount" max="99" :show-zero="false" :offset="[0, -25]">
         {{ $t('common.message') }}
       </van-badge>
     </van-tabbar-item>
-    <van-tabbar-item name="profile" icon="user">{{ $t('common.personalCenter') }}</van-tabbar-item>
+    <van-tabbar-item v-permission="'route.profile'" name="profile" icon="user">
+      {{ $t('common.personalCenter') }}
+    </van-tabbar-item>
   </van-tabbar>
 </template>
 
@@ -75,10 +77,6 @@
       }
     })
   })
-
-  const showRoleTabbar = roleName => {
-    return authStore?.user?.roleName === roleName || false
-  }
 
   const onChange = name => {
     router.push(`/${name}`)

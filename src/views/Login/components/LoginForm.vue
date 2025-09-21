@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-  import { login, getUserInfo } from '@/api/base/index.js'
+  import { login, getUserInfo, fetchUserMenus } from '@/api'
   import { ref } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { useAuthStore } from '@/stores/auth'
@@ -68,6 +68,8 @@
 
       // 保存用户信息和token
       authStore.login(userInfo, res.token)
+      const menus = await fetchUserMenus()
+      console.log('menus', menus)
       // 检查是否有重定向路径
       const redirect = route.query.redirect
 

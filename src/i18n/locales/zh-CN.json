@@ -32,7 +32,8 @@
     "month": "月",
     "day": "日",
     "pending_orders": "待处理订单",
-    "selectAll": "全选"
+    "selectAll": "全选",
+    "noPermission": "无权限访问"
   },
   "login": {
     "welcome": "欢迎回来",
@@ -40,6 +41,7 @@
     "account": "账号",
     "password": "密码",
     "login": "登录",
+    "loginFail": "登录失败",
     "register": "注册",
     "forget": "忘记密码",
     "third": "第三方登录",
@@ -423,7 +425,7 @@
     "carDetail": "汽车详情",
     "carList": "汽车列表",
     "shoppingCart": "购物车",
-    "customerService": "客服",
+    "customerService": "联系客服",
     "brand": "品牌",
     "filterPage": "筛选",
     "login": "登录",

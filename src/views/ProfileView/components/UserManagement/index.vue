@@ -176,7 +176,8 @@
       // 构建查询参数
       const params = {
         pageNo: pageNo.value,
-        pageSize: pageSize.value
+        pageSize: pageSize.value,
+        userName: searchKeyword.value
       }
 
       // 调用API获取用户列表 - request.js已经返回response.data

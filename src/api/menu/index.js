@@ -34,7 +34,6 @@ export const updateMenu = (data) => {
 
 /**
  * @description 获取用户菜单
- * @param {string} roleId
  */
 export const fetchUserMenus = () => {
   return get(`sys-menu/user-menus`)

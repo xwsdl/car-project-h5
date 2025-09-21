@@ -104,6 +104,7 @@
             :right-icon="copied ? 'success' : 'copy'
 "
             @click-right-icon="copyPerms"
+            :readonly="!!props.menu"
           />
         </van-cell-group>
 
@@ -189,6 +190,10 @@
     type: Number,
     default: 1
   },
+  currentParentId: {
+    type: Number,
+    default: 0
+  },
   // 是否可修改上级菜单
   canChangeParentMenu: {
     type: Boolean,
@@ -206,6 +211,9 @@
   const showParentMenuPicker = ref(false)
   const selectedGroupIndex = ref(0)
   const selectedMenuItemId = ref(null)
+  
+  // 是否为编辑模式
+  const isEditMode = computed(() => !!props.menu)
   const formData = ref({
     id: 0,
     menuName: '',
@@ -286,7 +294,8 @@
       }
       return []
     } else if (fieldName === 'perms') {
-      if (formData.value.type === 3) {
+      // 新增模式下所有类型的菜单权限标识都必填
+      if (!props.menu) {
         return [{ required: true, message: t('menuManagement.permsRequired') }]
       }
       return []
@@ -431,7 +440,7 @@
       formData.value = {
         id: 0,
         menuName: '',
-        parentId: props.menu?.parentId || 0,
+        parentId: props.currentParentId || 0,
         path: '',
         component: '',
         icon: '',

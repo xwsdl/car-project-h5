@@ -153,6 +153,7 @@
         :menu="currentMenu"
         :parentMenus="parentMenus"
         :currentType="currentType"
+        :currentParentId="currentParentId"
         :canChangeParentMenu="canChangeParentMenu"
         @submit="handleMenuSubmit"
         @cancel="showMenuForm = false"
@@ -177,6 +178,7 @@
   const showMenuForm = ref(false)
   const currentMenu = ref(null)
   const currentType = ref(null) // 当前正在添加的菜单类型
+  const currentParentId = ref(0) // 当前正在添加的菜单的父级ID
   const canChangeParentMenu = ref(true) // 是否可以更改上级菜单
   const menus = ref([])
   const menuTree = ref([]) // 带展开状态的菜单树
@@ -291,10 +293,8 @@
 
   // 添加子菜单
   const handleAddSubMenu = (parentId, type) => {
-    currentMenu.value = {
-      parentId,
-      type
-    }
+    currentMenu.value = null
+    currentParentId.value = parentId
     currentType.value = type
     canChangeParentMenu.value = false // 添加子菜单时上级菜单不可更改
     showMenuForm.value = true
@@ -303,6 +303,7 @@
   // 编辑菜单
   const handleEditMenu = menu => {
     currentMenu.value = { ...menu }
+    currentParentId.value = menu.parentId || 0
     currentType.value = menu.type
     canChangeParentMenu.value = false // 编辑菜单时上级菜单不可更改
     showMenuForm.value = true

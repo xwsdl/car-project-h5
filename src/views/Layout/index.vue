@@ -1,8 +1,8 @@
 <!--
  * @Author: 肖蔚 xiaowei@yw105.wecom.work
  * @Date: 2025-06-20 20:46:32
- * @LastEditors: 肖蔚 xiaowei@yw105.wecom.work
- * @LastEditTime: 2025-06-22 17:21:01
+ * @LastEditors: xiaowei 2902267627@qq.com
+ * @LastEditTime: 2025-10-21 14:32:39
  * @FilePath: \car-project-h5\src\views\Layout\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -26,7 +26,8 @@
   import { computed } from 'vue'
   import { useRoute } from 'vue-router'
   import router from '@/router'
-
+  import { useAuthStore } from '@/stores/auth'
+  const authStore = useAuthStore()
   // 定义组件名称
   defineOptions({
     name: 'LayoutIndex'
@@ -42,10 +43,10 @@
     return import.meta.env.DEV
   })
 
-  // 根据路由路径判断是否显示Tabbar
+  // 根据路由路径判断是否显示Tabbar且需要是登录状态
   const tabbarRoutePath = ['/home', '/orderProcess', '/message', '/profile', '/pendingOrders']
   const isShowTabbar = computed(() => {
-    return tabbarRoutePath.includes(route.path)
+    return tabbarRoutePath.includes(route.path) && authStore.isAuthenticated && authStore.token
   })
 
   /**

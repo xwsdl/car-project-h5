@@ -157,7 +157,10 @@
 
   const handleBuy = () => {
     if (!authStore.isAuthenticated) {
-      showFailToast('请先登录')
+      router.push({
+        name: 'login',
+        query: { redirect: '/car?id=' + route.query.id }
+      })
       return false
     }
     const { id, username } = authStore.user
@@ -175,6 +178,14 @@
   }
 
   const handleSendMessage = () => {
+    if (!authStore.isAuthenticated) {
+      router.push({
+        name: 'login',
+        query: { redirect: '/car?id=' + route.query.id }
+      })
+      return false
+    }
+
     router.push({
       path: '/customerService',
       query: {

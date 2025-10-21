@@ -2,7 +2,7 @@
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
  * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-07-15 11:42:41
+ * @LastEditTime: 2025-10-21 14:58:57
  * @FilePath: \car-project-h5\src\router\guard.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,6 +15,13 @@ import { showToast } from 'vant'
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  // 如果是登录页面并且已经登录，则重定向到首页
+  if (to.name === 'login' && authStore.isAuthenticated) {
+    next({
+      name: 'homeIndex',
+    })
+    return
+  }
 
   // 设置页面标题
   document.title = i18n.global.t(to.meta.title) || '汽车云平台'

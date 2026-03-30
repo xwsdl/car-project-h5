@@ -1,8 +1,8 @@
 /*
  * @Author: xiaowei 2902267627@qq.com
  * @Date: 2025-06-11 11:20:46
- * @LastEditors: xiaowei 2902267627@qq.com
- * @LastEditTime: 2025-10-21 14:58:57
+ * @LastEditors: xiaowei
+ * @LastEditTime: 2025-10-22 10:47:47
  * @FilePath: \car-project-h5\src\router\guard.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     if (authStore.isAuthenticated) {
       // 用户已登录，检查权限
-      if (to.meta.permission1) {
+      if (to.meta.permission) {
         if (authStore.hasPermission(to.meta.permission)) {
           console.log('hasPermission:', authStore.hasPermission(to.meta.permission))
           // 有权限，允许访问
